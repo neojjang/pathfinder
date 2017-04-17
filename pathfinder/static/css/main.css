@@ -1,0 +1,19 @@
+html,body {
+    height:100%;
+    width: 100%;
+}
+
+body {
+    display: table;
+}
+
+.container {
+    height: auto;
+}
+
+.footer {
+    width: 100%;
+    display: table-row;
+    height: 1px;
+    background-color: #efefef;
+}
