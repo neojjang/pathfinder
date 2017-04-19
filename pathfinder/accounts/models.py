@@ -41,9 +41,29 @@ class Student(models.Model):
 
 
 @python_2_unicode_compatible
-class StudentResults(models.Model):
-    student =models.ForeignKey(Student)
+class StudentExam(models.Model):
+    '''
+    학생에 할당 된 시험을 관리 
+    '''
+    student = models.ForeignKey(Student)
     quiz = models.ForeignKey(Quiz)
+    create_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural=u"시험 관리"
+        verbose_name=u"시험 관리"
+
+    def __str__(self):
+        return "{}-{}시험".format(self.student.get_name(), self.quiz.title)
+
+
+@python_2_unicode_compatible
+class StudentScore(models.Model):
+    '''
+    같은 시험을 몇번이고 볼 수 있다는 가정으로 각 시험의 점수를 별도로 저장 
+    '''
+    exam = models.ForeignKey(StudentExam)
     score = models.PositiveSmallIntegerField(verbose_name=u"점수", default=0)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
@@ -60,6 +80,9 @@ class StudentResults(models.Model):
 
 @python_2_unicode_compatible
 class StudentAnswer(models.Model):
+    '''
+    각 시험의 문제별 학생이 입력한 답을 저장, 관리
+    '''
     student = models.ForeignKey(Student)
     quiz = models.ForeignKey(Quiz, default=None)
     question = models.ForeignKey(Question)

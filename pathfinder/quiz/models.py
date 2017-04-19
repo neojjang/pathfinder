@@ -7,6 +7,9 @@ from common.models import LEVEL_CHOICES
 
 @python_2_unicode_compatible
 class Question(models.Model):
+    '''
+    문제 관리
+    '''
     level = models.IntegerField(
         verbose_name=u"문제 수준",
         choices=LEVEL_CHOICES, default=0)
@@ -37,6 +40,9 @@ class Question(models.Model):
 
 @python_2_unicode_compatible
 class QuestionExample(models.Model):
+    '''
+    각 문제에 들어가는 보기
+    '''
     question = models.OneToOneField(Question)
     ex_sentence_1 = models.CharField(
         verbose_name=u"보기1",
@@ -75,6 +81,9 @@ class Explanations(models.Model):
 
 @python_2_unicode_compatible
 class Quiz(models.Model):
+    '''
+    퀴즈(시험) 관리
+    '''
     level = models.IntegerField(
         verbose_name=u"퀴즈 수준",
         choices=LEVEL_CHOICES, default=0)
@@ -87,7 +96,6 @@ class Quiz(models.Model):
     closing_date = models.DateTimeField(
         verbose_name=u"퀴즈 마감 날짜",
         null=True, blank=True)
-    # questions = models.ManyToManyField(Question)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 
@@ -100,6 +108,9 @@ class Quiz(models.Model):
 
 @python_2_unicode_compatible
 class Exam(models.Model):
+    '''
+    퀴즈별 할당한 문제들 매핑 관리
+    '''
     quiz = models.ForeignKey(Quiz)
     question = models.ForeignKey(Question)
     order = models.IntegerField(verbose_name=u"문제 번호", default=1)
@@ -107,6 +118,7 @@ class Exam(models.Model):
     class Meta:
         verbose_name_plural=u"문제지 관리"
         verbose_name=u"문제지 관리"
+        ordering=['quiz', 'order']
     def __str__(self):
         return "{}-{}번-{}".format(self.quiz.id, self.order,
                               self.question.title[:20])

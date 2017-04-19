@@ -6,7 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, StudentRedistrationForm
-from .models import Student, StudentResults, StudentAnswer
+from .models import Student, StudentExam, StudentAnswer
 # Create your views here.
 
 def regist_member(request):

@@ -1,12 +1,30 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.views.generic import View
+from accounts.models import StudentExam
+from quiz.models import Exam
 # Create your views here.
 
 
 
-@login_required
-def view_list(request):
-    pass
+class ExamListView(View):
+    @login_required
+    def get(self, request):
+        return self.show_list(request)
+
+    @login_required
+    def post(self, request):
+        return self.show_list(request)
+
+    def show_list(self, request):
+        exam_list = StudentExam.objects.filter(student=request.user)
+        return render(request, 'exam/exam_list.html', {
+            'exam_list': exam_list
+        })
+
+# @login_required
+# def view_list(request):
+#     pass
 
 
 
