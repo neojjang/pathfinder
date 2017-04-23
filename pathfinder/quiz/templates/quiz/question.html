@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}문제 : {{ question.title }}{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        {{ question.get_level_display }}<br />
+        {{ question.title }}<br />
+        {{ question.text }}<br />
+        {{ question.limit_time }}<br />
+        {{ question.correct }}
+        <hr />
+        {{ question.questionexample.ex_sentence_1 }}<br />
+        {{ question.questionexample.ex_sentence_2 }}<br />
+        {{ question.questionexample.ex_sentence_3 }}<br />
+        {{ question.questionexample.ex_sentence_4 }}<br />
+        {{ question.questionexample.ex_sentence_5 }}<br />
+        <hr />
+        {{ question.explanations.video }}<br />
+        {{ question.explanations.content }}
+        <div class="container">
+            <a href="{% url 'quiz:edit_question' question.id %}" class="btn btn-primary">문제 편집</a>
+            <a href="{% url 'quiz:delete_question' question.id %}" class="btn btn-danger">문제 삭제</a>
+            <a href="{% url 'quiz:show_question_list' %}" class="btn btn-default">문제 리스트</a>
+        </div>
+    </div>
+{% endblock content %}
+

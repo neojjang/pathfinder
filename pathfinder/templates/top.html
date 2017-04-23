@@ -1,20 +1,39 @@
 {% extends 'base.html' %}
 {% block title %}패스파인더{% endblock %}
 
-{% block content %}
-<h1>PathFinder</h1>
-    <h4>{{ request.user.get_full_name }}</h4>
 
+{% block currentmenu %}
 
-    <p>
-    <ul>
-        <li>
-        {% if user.is_authenticated %}
-            <a href="{% url 'accounts:logout' %}">Logout</a>
+    {%  if user.is_authenticated %}
+         {% if user.is_staff %}
+            <strong>관리자 페이지</strong>
         {% else %}
-            <a href="{% url 'accounts:login' %}">Login</a> | <a href="{% url 'accounts:regist' %}">Sign Up</a>
+            <strong>{{ user.get_full_name }}</strong>
         {% endif %}
-        </li>
-    </ul>
-    </p>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    {%  if user.is_authenticated %}
+         {% if user.is_staff %}
+            {% include 'manager_menu.html' %}
+        {% else %}
+            {% include 'student_menu.html' %}
+        {% endif %}
+    {% else %}
+    <div class="jumbotron" >
+        <div class="container">
+            <h1>
+                패스파인더
+            </h1>
+            <p>
+                전국 최고 영어 전문 학원
+            </p>
+            <a class="btn btn-primary" href="{% url 'accounts:login' %}">
+                로그인
+            </a>
+            <a class="btn btn-success"  href="{% url 'accounts:regist' %}">Sign Up</a>
+        </div>
+    </div>
+
+    {% endif %}
 {% endblock %}

@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from common.views import view_top
+from common.views import TopView
 
 urlpatterns = [
 
@@ -23,8 +23,9 @@ urlpatterns = [
     url(r'^exam/', include('exam.urls', namespace='exam')),
     url(r'^report/', include('report.urls', namespace='report')),
 
-    url(r'^$', view_top, name='top'),
+    url(r'^$', TopView.as_view(), name='top'),
+
     url(r'^manage/', include('quiz.urls', namespace='quiz')),
 
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin-of-admin/', admin.site.urls),
 ]

@@ -1,0 +1,18 @@
+{% load staticfiles %}
+
+<div class="container">
+
+    <div class="center-block" style="width:400px;max-width:100%;margin: 50px auto;">
+        <a class="btn btn-lg btn-block btn-primary">학생 관리</a><br />
+        <a class="btn btn-lg btn-block btn-primary" href="{% url 'quiz:show_question_list' %}">
+            문제 관리</a>
+        <br />
+        <a class="btn btn-lg btn-block btn-primary" href="{% url 'quiz:show_quiz_list' %}">
+            시험 관리
+        </a><br />
+        <a class="btn btn-lg btn-block btn-primary">
+            시험 배정</a>
+        <br />
+    </div>
+
+</div>

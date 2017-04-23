@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}테스트 : {{ exam.title }}{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <div class="row" style="margin-top: 20px;">
+            <ol class="breadcrumb">
+                <li><a href="/">관리자 페이지 </a></li>
+                <li><a href="{% url 'quiz:show_quiz_list' %}">시험 관리</a></li>
+                <li class="active">상세 정보</li>
+            </ol>
+        </div>
+        <div class="panel panel-primary" style="margin-top: 0px;">
+            <div class="panel-heading">
+                {{ exam.title }}
+            </div>
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt>테스트 수준</dt><dd>{{ exam.get_level_display }}</dd>
+                    <dt>테스트 시작 날짜</dt><dd>{{ exam.starting_date|date:"Y-m-d H:s:i" }}</dd>
+                    <dt>테스트 마감 날짜</dt><dd>{{ exam.closing_date|date:"Y-m-d H:s:i" }}</dd>
+                </dl>
+                <div class="container">
+                    <a href="{% url 'quiz:edit_quiz' exam.id %}" class="btn btn-primary">시험 편집</a>
+                    <a href="{% url 'quiz:delete_quiz' exam.id %}" class="btn btn-danger">시험 삭제</a>
+                    <a href="{% url 'quiz:show_quiz_list' %}" class="btn btn-default">시험 리스트</a>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                문제 리스트 <a href="#" class="btn btn-primary btn-xs">문제 추가</a>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    {% for item in exam.exam_set.all %}
+                    <li>{{ item.question.title }}</li>
+                    {% empty %}
+                        <li>할당 된 문제가 없습니다.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+{% endblock content %}
+>

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block title %}문제 은행 : 문제 리스트{% endblock %}
+{% block css %}
+{% endblock css %}
+
+{% block currentmenu %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row" style="margin-top: 20px;">
+            <ol class="breadcrumb">
+                <li><a href="/">관리자 페이지 </a></li>
+                <li class="active">시험 관리</li>
+            </ol>
+        </div>
+        <div class="row">
+            <ul class="list-inline">
+                <li ><h4>시험 관리</h4></li>
+                <li class=""><a class="btn btn-danger" href="{% url 'quiz:create_quiz' %}"> 테스트 작성 </a></li>
+            </ul>
+            <table class="table table-hover">
+                <thead>
+                    <th class="col-md-1">#</th>
+                    <th class="col-md-6">시험 제목</th>
+                    <th class="col-md-2">시작</th>
+                    <th class="col-md-2">종료</th>
+                    <th class="col-md-1">시험 수준</th>
+                </thead>
+                {% for exam in quizes %}
+                    <tr class="exam" exam_id="{{ exam.pk }}">
+                        <td class="col-md-1"><a href="{% url 'quiz:show_quiz' exam.pk %}">{{ exam.pk }}</a> </td>
+                        <td class="col-md-6">{{ exam.title }}</td>
+                        <td class="col-md-2">{{ exam.starting_date|date:"Y-m-d H:i:s" }}</td>
+                        <td class="col-md-2">{{ exam.closing_date|date:"Y-m-d H:i:s" }}</td>
+                        <td class="col-md-1">{{ exam.get_level_display }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td class="bg-info" colspan="5"> <p>등록 된 테스트가 없습니다. </p></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div>
+                {% include 'quiz/paginator.html' with paginator=quizes %}
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block aftercontent %}
+    <script type="application/javascript">
+    $(".exam").click(function(e) {
+        var no = $(this).attr("exam_id");
+        var link = "{% url 'quiz:show_quiz' 12345 %}";
+        link = link.replace('12345', no);
+        location.href = link;
+    })
+    </script>
+{% endblock %}

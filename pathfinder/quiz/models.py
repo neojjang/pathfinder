@@ -19,7 +19,7 @@ class Question(models.Model):
     text = models.CharField(
         verbose_name=u"지문",
         max_length=30000)
-    time = models.PositiveSmallIntegerField(
+    limit_time = models.PositiveSmallIntegerField(
         verbose_name=u"제한시간(초)",
         default=100
     )
@@ -34,7 +34,7 @@ class Question(models.Model):
         verbose_name_plural=u"문제 은행"
         verbose_name=u"문제 은행"
     def __str__(self):
-        return "{} [{}]".format(self.title, self.question_type.title)
+        return "{} [{}]".format(self.title, self.get_level_display())
 
 
 
@@ -65,7 +65,7 @@ class QuestionExample(models.Model):
 
 @python_2_unicode_compatible
 class Explanations(models.Model):
-    question = models.ForeignKey(Question)
+    question = models.OneToOneField(Question)
     video = models.FileField(upload_to="", null=True, blank=True)
     content = models.CharField(max_length=2000, null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)

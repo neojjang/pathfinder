@@ -1,4 +1,4 @@
-{% extends "base_test.html" %}
+{% extends "base.html" %}
 {% load staticfiles %}
 {% load static %}
    {% block title %}Log-in{% endblock %}
@@ -6,43 +6,7 @@
     <link href="{% static 'accounts/css/signin.css' %}" rel="stylesheet" />
 {% endblock %}
    {% block content %}
-    <div id="header">
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <a class="navbar-brand" href="/">PathFinder</a>
-        <p class="navbar-text navbar-right"></p>
-    </nav>
-    </div>
-{#     <h1>Log-in</h1>#}
-{#     {% if form.errors %}#}
-{#       <p>#}
-{#         Your username and password didn't match.#}
-{#         Please try again.#}
-{#       </p>#}
-{#     {% else %}#}
-{#       <p>Please, use the following form to log-in:</p>#}
-{#     {% endif %}#}
-<div class="login-form">
-
-
-{#    <form method="post" action="{% url 'accounts:login' %}">#}
-{#    {% csrf_token %}#}
-{#        <table summary="Login" id="login">#}
-{#            <tr>#}
-{#                <td>{{ form.username.label_tag }}:</td>#}
-{#                <td>{{ form.username }}</td>#}
-{#            </tr>#}
-{#            <tr>#}
-{#                <td>{{ form.password.label_tag }}:</td>#}
-{#                <td>{{ form.password }}</td>#}
-{#            </tr>#}
-{#            <tr>#}
-{#                <td colspan="2" class="right">#}
-{#                    <input type="submit" value="Login" />#}
-{#                </td>#}
-{#            </tr>#}
-{#        </table>#}
-{#        <input type="hidden" name="next" value="{{ next }}" />#}
-{#    </form>#}
+    <div class="login-form">
 
        <form class="form-signin" method="post" action="{% url 'accounts:login' %}">
        {% csrf_token %}
@@ -67,5 +31,5 @@
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit"> 로그인 </button>
       </form>
-</div>
+    </div>
 {% endblock %}
