@@ -52,13 +52,37 @@
 
 {% block content %}
     <div class="container">
-{% if not pk or question%}
-
+        <div class="row" style="margin-top: 20px;">
+            <ol class="breadcrumb">
+                <li><a href="/">관리자 페이지 </a></li>
+                <li><a href="{% url 'quiz:show_quiz_list' %}">문제 관리</a></li>
+                <li class="active">문제 작성</li>
+            </ol>
+        </div>
+ {% if not pk or question%}
     <form action="" method="post">
-    {% csrf_token %}
-    {{ question_form.as_p }}
-    {{ question_example_form.as_p }}
-    {{ explanation_form.as_p }}
+        {% csrf_token %}
+        <div class="panel panel-primary" style="margin-top: 0px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="container">
+                        <div class="row">
+                            {{ question_form.as_p }}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="container">
+                        <div class="row">
+                            {{ question_example_form.as_p }}
+                            {{ explanation_form.as_p }}
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     {% if not question %}
         <!-- 신규 작성 -->

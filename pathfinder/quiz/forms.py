@@ -104,21 +104,23 @@ class QuizForm(forms.ModelForm):
     '''
     level = forms.ChoiceField(
         choices=LEVEL_CHOICES,
-        widget=forms.Select(attrs={}),
+        widget=forms.Select(attrs={'class': 'form-control'}),
         label=u"시험 수준을 선택해 주세요."
     )
     title = forms.CharField(
         label=u"시험의 제목을 적어주세요.",
-        widget=forms.TextInput(attrs={}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=50
     )
     starting_date = forms.DateTimeField(
         label=u"시험 시작 날짜를 선택해 주세요.",
-        required=False
+        required=False,
+        widget=forms.DateTimeInput(attrs={'class':'form-control starting_date'})
     )
     closing_date = forms.DateTimeField(
         label=u"시험 마감 날짜를 선택해 주세요.",
-        required=False
+        required=False,
+        widget=forms.DateTimeInput(attrs={'class': 'form-control closing_date'})
     )
     class Meta:
         model=Quiz

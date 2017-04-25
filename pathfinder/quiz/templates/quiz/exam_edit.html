@@ -3,6 +3,7 @@
 
 {% block title %}테스트 만들기{% endblock title %}
 {% block css %}
+    <link href="{% static 'css/bootstrap-datetimepicker.css' %}" rel="stylesheet" media="screen" />
 <style>
     .vertical-center {
   min-height: 80%;  /* Fallback for vh unit */
@@ -44,19 +45,63 @@
             -ms-flex-pack : center;
   -webkit-justify-content : center;
           justify-content : center;
+    }
+dt {
+    vertical-align: middle;
 }
-
-
+dt label {
+    vertical-align: middle;
+    padding-top: 10px;
+}
+dd {
+    padding-top: 5px;
+}
 </style>
 {% endblock css %}
 
 {% block content %}
     <div class="container">
+        <div class="row" style="margin-top: 20px;">
+            <ol class="breadcrumb">
+                <li><a href="/">관리자 페이지 </a></li>
+                <li><a href="{% url 'quiz:show_quiz_list' %}">시험 관리</a></li>
+                <li class="active">테스트 작성</li>
+            </ol>
+        </div>
 {% if not pk or quiz%}
 
     <form action="" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    <div class="panel panel-primary" style="margin-top: 0px;">
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt><label id="{{ form.title.id_for_label }}">테스트 제목</label></dt>
+                    <dd>{{ form.title }}</dd>
+                    <dt><label id="{{ form.level.id_for_label }}">테스트 수준</label></dt>
+                    <dd>{{ form.level }}</dd>
+                    <dt><label id="{{ form.starting_date.id_for_label }}">테스트 시작 날짜</label></dt>
+                    <dd>
+                        <div class="input-group">
+                            <span class="input-group-addon " id="basic-addon1">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </span>
+                            {{ form.starting_date }}
+                        </div>
+
+                    </dd>
+                    <dt><label id="{{ form.closing_date.id_for_label }}">테스트 마감 날짜</label></dt>
+                    <dd>
+                        <div class="input-group">
+                            <span class="input-group-addon " id="basic-addon1">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </span>
+                            {{ form.closing_date }}
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </div>
 
     {% if not quiz %}
         <!-- 신규 작성 -->
@@ -80,3 +125,11 @@
 {% endif %}
     </div>
 {% endblock content %}
+
+{% block aftercontent %}
+    <script type="application/javascript" src="{% static 'js/bootstrap-datetimepicker.js' %}" ></script>
+    <script type="application/javascript">
+        $(".starting_date").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+        $(".closing_date").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+    </script>
+{% endblock aftercontent %}
