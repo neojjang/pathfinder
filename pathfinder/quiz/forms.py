@@ -13,30 +13,31 @@ class QuestionForm(forms.ModelForm):
     # Question --------------
     level = forms.ChoiceField(
         choices=LEVEL_CHOICES,
-        widget=forms.Select(attrs={}),
+        widget=forms.Select(attrs={'class':'form-control'}),
         label=u"문제 수준을 선택해 주세요."
     )
     title = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={}),
+        widget=forms.TextInput(attrs={'class':'form-control'}),
         required=True,
         label=u"문제를 입력해 주세요."
     )
     text = forms.CharField(
         max_length=4000,
-        widget=forms.Textarea(attrs={'rows':'4'}),
+        widget=forms.Textarea(attrs={'rows':'20', 'class':'form-control'}),
         required=True,
-        label=u"문제 지문을 규칙에 맞게 입력해 주세요."
+        label=u"문제 지문을 입력해 주세요."
     )
     limit_time = forms.IntegerField(
         min_value=60,
-        widget=forms.TextInput(attrs={}),
+        max_value=120,
+        widget=forms.NumberInput(attrs={'class':'form-control'}),
         required=True,
         label=u"제한 시간을 초단위로 입력해 주세요."
     )
     correct = forms.CharField(
         max_length=128,
-        widget=forms.TextInput(attrs={}),
+        widget=forms.TextInput(attrs={'class':'form-control'}),
         required=True,
         label=u"정답을 적어 주세요."
     )
@@ -52,24 +53,24 @@ class QuestionForm(forms.ModelForm):
 class QuestionExampleForm(forms.ModelForm):
     ex_sentence_1 = forms.CharField(max_length=100,
                                     required=False,
-                                    widget=forms.TextInput(attrs={}),
-                                    label=u"규칙에 맞게 객관식 보기를 입력하세요.")
+                                    widget=forms.TextInput(attrs={'class':'form-control'}),
+                                    label=u"보기(a)를 입력하세요.")
     ex_sentence_2 = forms.CharField(max_length=100,
                                     required=False,
-                                    widget=forms.TextInput(attrs={}),
-                                    label=u"규칙에 맞게 객관식 보기를 입력하세요.")
+                                    widget=forms.TextInput(attrs={'class':'form-control'}),
+                                    label=u"보기(b)를 입력하세요.")
     ex_sentence_3 = forms.CharField(max_length=100,
                                     required=False,
-                                    widget=forms.TextInput(attrs={}),
-                                    label=u"규칙에 맞게 객관식 보기를 입력하세요.")
+                                    widget=forms.TextInput(attrs={'class':'form-control'}),
+                                    label=u"보기(c)를 입력하세요.")
     ex_sentence_4 = forms.CharField(max_length=100,
                                     required=False,
-                                    widget=forms.TextInput(attrs={}),
-                                    label=u"규칙에 맞게 객관식 보기를 입력하세요.")
+                                    widget=forms.TextInput(attrs={'class':'form-control'}),
+                                    label=u"보기(d)를 입력하세요.")
     ex_sentence_5 = forms.CharField(max_length=100,
                                     required=False,
-                                    widget=forms.TextInput(attrs={}),
-                                    label=u"규칙에 맞게 객관식 보기 입력하세요.")
+                                    widget=forms.TextInput(attrs={'class':'form-control'}),
+                                    label=u"보기(e)를 입력하세요.")
     class Meta:
         model=QuestionExample
         fields = [
@@ -87,7 +88,7 @@ class ExplanationsForm(forms.ModelForm):
     content = forms.CharField(
         max_length=2000,
         required=False,
-        widget=forms.Textarea(attrs={'rows':'4'}),
+        widget=forms.Textarea(attrs={'rows':'4', 'class':'form-control'}),
         label=u"문제 해설을 적어 주세요."
     )
     class Meta:

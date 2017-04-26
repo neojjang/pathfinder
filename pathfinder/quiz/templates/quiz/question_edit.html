@@ -60,27 +60,122 @@
             </ol>
         </div>
  {% if not pk or question%}
-    <form action="" method="post">
+    <form action="" method="post" class="form-horizontal">
         {% csrf_token %}
         <div class="panel panel-primary" style="margin-top: 0px;">
-            <div class="container">
-                <div class="row">
+            <div class="panel-body">
+{#                <div class="row">#}
                     <div class="col-md-6">
-                        <div class="container">
-                        <div class="row">
-                            {{ question_form.as_p }}
-                        </div>
+                        <div class="form-group">
+                            <p>
+                                <label for="{{ question_form.level.id_for_label }}">
+                                {{ question_form.level.label }}
+                                </label>
+                                {{ question_form.level }}
+                            </p>
+                            <p>
+                                <label for="{{ question_form.title.id_for_label }}">
+                                {{ question_form.title.label }}
+                                </label>
+                                {{ question_form.title }}
+                            </p>
+                            <p>
+                                <label for="{{ question_form.text.id_for_label }}">
+                                {{ question_form.text.label }}
+                                </label>
+                                {{ question_form.text }}
+                            </p>
+{#                            <p>#}
+{#                                <label for="{{ question_form.limit_time.id_for_label }}">#}
+{#                                {{ question_form.limit_time.label }}#}
+{#                                </label>#}
+{#                                {{ question_form.limit_time }}#}
+{#                            </p>#}
+{#                            <p>#}
+{#                                <label for="{{ question_form.correct.id_for_label }}">#}
+{#                                {{ question_form.correct.label }}#}
+{#                                </label>#}
+{#                                {{ question_form.correct }}#}
+{#                            </p>#}
+{#                            {{ question_form.as_p }}#}
                         </div>
                     </div>
+{#                    <div class="col-md-1"> </div>#}
                     <div class="col-md-6">
-                        <div class="container">
-                        <div class="row">
-                            {{ question_example_form.as_p }}
-                            {{ explanation_form.as_p }}
+                        <div class="form-group">
+                            <p class="col-md-12">
+                                <label for="{{ question_form.limit_time.id_for_label }}">
+                                {{ question_form.limit_time.label }}
+                                </label>
+                                {{ question_form.limit_time }}
+                            </p>
+                            <p class="col-md-12">
+                                <label for="{{ question_form.correct.id_for_label }}">
+                                {{ question_form.correct.label }}
+                                </label>
+                                {{ question_form.correct }}
+                            </p>
+                            <label for="{{ question_example_form.ex_sentence_1.id_for_label }}"
+                                   class="col-md-5 text-right">
+                                {{ question_example_form.ex_sentence_1.label }}
+                            </label>
+                            <div class="col-md-7">
+                                {{ question_example_form.ex_sentence_1 }}
+                            </div>
                         </div>
+                        <div class="form-group">
+{#                            <div class="col-md-6 ">#}
+                                <label for="{{ question_example_form.ex_sentence_2.id_for_label }}"
+                                       class="col-md-5 text-right">
+                                    {{ question_example_form.ex_sentence_2.label }}
+                                </label>
+{#                            </div>#}
+                            <div class="col-md-7">
+                                {{ question_example_form.ex_sentence_2 }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+{#                            <div class="col-md-6 ">#}
+                                <label for="{{ question_example_form.ex_sentence_3.id_for_label }}"
+                                       class="col-md-5 text-right">
+                                    {{ question_example_form.ex_sentence_3.label }}
+                                </label>
+{#                            </div>#}
+                            <div class="col-md-7">
+                                {{ question_example_form.ex_sentence_3 }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+{#                            <div class="col-md-6 ">#}
+                                <label for="{{ question_example_form.ex_sentence_4.id_for_label }}"
+                                       class="col-md-5 text-right">
+                                    {{ question_example_form.ex_sentence_4.label }}
+                                </label>
+{#                            </div>#}
+                            <div class="col-md-7">
+                                {{ question_example_form.ex_sentence_4 }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+{#                            <div class="col-md-6 ">#}
+                                <label for="{{ question_example_form.ex_sentence_5.id_for_label }}"
+                                       class="col-md-5 text-right">
+                                    {{ question_example_form.ex_sentence_5.label }}
+                                </label>
+{#                            </div>#}
+                            <div class="col-md-7">
+                                {{ question_example_form.ex_sentence_5 }}
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                {{ explanation_form.as_p }}
+                            </div>
+
                         </div>
                     </div>
-                </div>
+{#                </div>#}
             </div>
         </div>
 
