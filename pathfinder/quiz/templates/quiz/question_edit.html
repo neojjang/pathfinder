@@ -50,15 +50,18 @@
 </style>
 {% endblock css %}
 
+{% block currentmenu %}
+    문제 작성
+{% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="row" style="margin-top: 20px;">
+{#    <div class="container">#}
+{#        <div class="row" style="margin-top: 20px;">#}
             <ol class="breadcrumb">
                 <li><a href="/">관리자 페이지 </a></li>
                 <li><a href="{% url 'quiz:show_quiz_list' %}">문제 관리</a></li>
                 <li class="active">문제 작성</li>
             </ol>
-        </div>
+{#        </div>#}
  {% if not pk or question%}
     <form action="" method="post" class="form-horizontal">
         {% csrf_token %}
@@ -178,16 +181,19 @@
 {#                </div>#}
             </div>
         </div>
-
+        <div class="panel-button">
     {% if not question %}
         <!-- 신규 작성 -->
         <input type="submit" name="submit" value=" 문제 등록 " class="btn btn-primary"/>
         <a href="{% url 'quiz:show_question_list' %}" class="btn btn-default"> 취 소 </a>
+        <a href="" class="btn btn-warning">미리보기</a>
     {% else %}
         <!-- 편집 -->
         <input type="submit" name="submit" value=" 문제 수정 " class="btn btn-primary"/>
         <a href="{% url 'quiz:show_question' question.pk %}" class="btn btn-default"> 취 소 </a>
+        <a href="" class="btn btn-warning">미리보기</a>
     {% endif %}
+        </div>
     </form>
 {% else %}
     <div class="row">
@@ -199,5 +205,5 @@
 
     </div>
 {% endif %}
-    </div>
+{#    </div>#}
 {% endblock content %}

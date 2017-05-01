@@ -59,21 +59,24 @@ dd {
 </style>
 {% endblock css %}
 
+{% block currentmenu %}
+    테스트 작성
+{% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="row" style="margin-top: 20px;">
+{#    <div class="container">#}
+{#        <div class="row" style="margin-top: 20px;">#}
             <ol class="breadcrumb">
                 <li><a href="/">관리자 페이지 </a></li>
                 <li><a href="{% url 'quiz:show_quiz_list' %}">시험 관리</a></li>
                 <li class="active">테스트 작성</li>
             </ol>
-        </div>
+{#        </div>#}
 {% if not pk or quiz%}
 
     <form action="" method="post">
     {% csrf_token %}
 
-    <div class="panel panel-primary" style="margin-top: 0px;">
+        <div class="panel panel-primary" style="margin-top: 0px;">
             <div class="panel-body">
                 <dl class="dl-horizontal">
                     <dt><label id="{{ form.title.id_for_label }}">테스트 제목</label></dt>
@@ -102,7 +105,7 @@ dd {
                 </dl>
             </div>
         </div>
-
+        <div class="panel-button">
     {% if not quiz %}
         <!-- 신규 작성 -->
         <input type="submit" name="submit" value=" 시험 등록 " class="btn btn-primary"/>
@@ -112,6 +115,7 @@ dd {
         <input type="submit" name="submit" value=" 시험 수정 " class="btn btn-primary"/>
         <a href="{% url 'quiz:show_quiz' quiz.pk %}" class="btn btn-default"> 취 소 </a>
     {% endif %}
+        </div>
     </form>
 {% else %}
     <div class="row">
@@ -123,7 +127,7 @@ dd {
 
     </div>
 {% endif %}
-    </div>
+{#    </div>#}
 {% endblock content %}
 
 {% block aftercontent %}

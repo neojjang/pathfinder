@@ -2,15 +2,18 @@
 {% load staticfiles %}
 {% block title %}테스트 : {{ exam.title }}{% endblock title %}
 
+{% block currentmenu %}
+    시험 상세 정보
+{% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="row" style="margin-top: 20px;">
+{#    <div class="container">#}
+{#        <div class="row" style="margin-top: 20px;">#}
             <ol class="breadcrumb">
                 <li><a href="/">관리자 페이지 </a></li>
                 <li><a href="{% url 'quiz:show_quiz_list' %}">시험 관리</a></li>
                 <li class="active">상세 정보</li>
             </ol>
-        </div>
+{#        </div>#}
         <div class="panel panel-primary" style="margin-top: 0px;">
             <div class="panel-heading">
                 {{ exam.title }}
@@ -43,6 +46,6 @@
             </div>
 
         </div>
-    </div>
+{#    </div>#}
 {% endblock content %}
 >

@@ -9,11 +9,22 @@ body {
 
 .container {
     height: auto;
+    min-height: 100%;
 }
 
-.footer {
-    width: 100%;
-    display: table-row;
-    height: 1px;
+#content {
+  padding-bottom: 50px;
+}
+
+#footer{
     background-color: #efefef;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    border-top: 1px solid #e7e7e7;
+}
+
+.panel-button {
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
