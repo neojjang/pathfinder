@@ -9,6 +9,7 @@ class StudentRedistrationForm(forms.ModelForm):
         model=User
         fields=['username', 'first_name', 'last_name', 'email']
 
+    first_name = forms.CharField(label='first_name', max_length=20, required=True)
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
 

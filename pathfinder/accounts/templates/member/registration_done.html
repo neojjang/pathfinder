@@ -1,7 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Welcome{% endblock %}
+{% block title %}패스파인더 회원 가입 완료{% endblock %}
+{% block currentmenu %}
+    회원 가입 완료
+{% endblock %}
 {% block content %}
- <h1>Welcome {{ new_user.first_name }}!</h1>
- <p>Your account has been successfully created. Now you can <a
-href="{% url "accounts:login" %}">log in</a>.</p>
+    <h1>회원 가입 완료</h1>
+
+       <div class="panel panel-primary col-md-8" style="margin-top: 0px;">
+           <div class="panel-body">
+               <span class="text-success">
+                   회원 가입이 완료 되었습니다. <a href="{% url "accounts:login" %}">로그인</a>
+               </span>
+           </div>
+       </div>
 {% endblock %}
