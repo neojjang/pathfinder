@@ -17,10 +17,10 @@
                 <li class="active">문제 은행</li>
             </ol>
 {#        </div>#}
-        <div class="row">
+        <div class="content-wrapper">
             <ul class="list-inline">
                 <li ><h4>문제 은행</h4></li>
-                <li class=""><a class="btn btn-danger" href="{% url 'quiz:create_question' %}"> 문제 작성 </a></li>
+                <li class=""><button class="btn btn-danger menu" data-href="{% url 'quiz:create_question' %}"> 문제 작성 </button></li>
             </ul>
             <table class="table table-hover">
                 <thead>
@@ -50,7 +50,7 @@
 {#    </div>#}
 {% endblock %}
 
-{% block aftercontent %}
+{% block extra_foot %}
     <script type="application/javascript">
     $(".question").click(function(e) {
         var no = $(this).attr("question_id");

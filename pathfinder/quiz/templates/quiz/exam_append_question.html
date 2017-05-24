@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block title %}패스파인더 : 시험 작성 : 문제 추가{% endblock %}
+
+
+{% block currentmenu %}
+    문제 추가
+{% endblock %}
+
+{% block extra_head %}
+    <style>
+    .background-ecf0f5 {
+        background-color: #ecf0f5;
+    }
+    </style>
+{% endblock %}
+
+{% block nav_header %}
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper" style="background-color: #ecf0f5;">
+        <section class="content-wrapper" style="margin:0 15px 0 15px;">
+            <ul class="list-inline">
+                <li ><h4>문제 추가</h4></li>
+            </ul>
+            <ul class="list-inline">
+                <li>
+                    검색 조건 :
+                </li>
+                <li>
+                    <select>
+                        <option>1</option><option>2</option>
+                    </select>
+                </li>
+                <li>
+                    <select>
+                        <option>1</option><option>2</option>
+                    </select>
+                </li>
+                <li>
+                    <select>
+                        <option>1</option><option>2</option>
+                    </select>
+                </li>
+                <li>
+                    <button class="btn btn-primary">선택한 문제 추가</button>
+                </li>
+            </ul>
+            <table class="table table-hover" style="height: 40%;">
+                <thead>
+                    <th class="">
+                        <label>
+                            <input type="checkbox" id="question-all" value="all" />전체선택
+                        </label>
+                    </th>
+                    <th class="">문제</th>
+                    <th class="">문제수준</th>
+                    <th class="">제한시간</th>
+                    <th class="">등록일</th>
+                    <th class=""></th>
+                </thead>
+                {% for question in questions %}
+                    <tr class="question" question_id="{{ question.pk }}">
+                        <td class="">
+                            <input type="checkbox" class="question-item" id="question-{{ question.pk }}" value="{{ question.pk }}" />
+                        </td>
+                        <td class="">{{ question.title }}</td>
+                        <td class="">{{ question.get_level_display }}</td>
+                        <td class="">{{ question.limit_time }}</td>
+                        <td class="">{{ question.create_date|date:"Y.m.d H:s" }}</td>
+                        <td class="">
+                            <button class="btn btn-xs">문제 추가</button>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td class="bg-info" colspan="5"> <p>등록 된 테스트가 없습니다. </p></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div>
+                {% include 'quiz/paginator.html' with paginator=questions %}
+
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="application/javascript">
+    $("#question-all").click(function(e) {
+        var checked = document.getElementById("question-all").checked;
+        console.log("question-all="+checked);
+        var checkbox_list = document.getElementsByClassName("question-item");
+        for(var i=0; i < checkbox_list.length; i++) {
+            checkbox_list[i].checked = checked;
+        }
+    });
+    $(".question").click(function(e) {
+        var no = $(this).attr("question_id");
+        // 해당하는 문제를 보여준다.
+{#        console.log(no);#}
+{#        if(document.getElementById("question-"+no).checked) {#}
+{#            $("#question-" + no).attr("checked", false);#}
+{#            document.getElementById("question-"+no).checked = false;#}
+{##}
+{#            console.log("remove "+no);#}
+{#        } else {#}
+{#            $("#question-" + no).attr("checked", true);#}
+{#            document.getElementById("question-"+no).checked = true;#}
+{##}
+{#            console.log("add "+no);#}
+{#        }#}
+    })
+    </script>
+{% endblock %}

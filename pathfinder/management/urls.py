@@ -5,7 +5,7 @@ Created by yoonju on 2017. 5. 24.
 from django.conf.urls import url
 from quiz.views import delete_question, delete_quiz
 from quiz.views import QuestionListView, QuestionDetailView, QuestionEditView, \
-    ExamListView, ExamEditView, ExamDetailView
+    ExamListView, ExamEditView, ExamDetailView, ExamAppendQuestion
 from accounts.views import list_member, view_member, edit_member
 
 urlpatterns = [
@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^exam/(\d+)/$', ExamDetailView.as_view(), name='show_quiz'),
     url(r'^exam/(\d+)/edit/$', ExamEditView.as_view(), name='edit_quiz'),
     url(r'^exam/(\d+)/delete/$', delete_quiz, name='delete_quiz'),
+    url(r'^exam/(\d+)/questions/$', ExamAppendQuestion.as_view(), name='append_question'),
     url(r'^exams/$', ExamListView.as_view(), name='show_quiz_list'),
 
     url(r'^question/create/$', QuestionEditView.as_view(), name='create_question'),

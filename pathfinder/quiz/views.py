@@ -208,6 +208,32 @@ class ExamEditView(StaffMemberRequiredMixin, View):
         })
 
 
+class ExamAppendQuestion(StaffMemberRequiredMixin, View):
+    def get(self, request, pk=None):
+        page = request.GET.get('p')
+        try:
+            exam = Quiz.objects.get(pk=pk)
+        except Quiz.DoesNotExist:
+            exam = None
+        questions = Question.objects.all().order_by('-pk')
+
+        paginator = Paginator(questions, 20)
+        try:
+            questions = paginator.page(page)
+        except PageNotAnInteger:
+            questions = paginator.page(1)
+        else:
+            questions = paginator.page(paginator.num_pages)
+
+        return render(request, 'quiz/exam_append_question.html', {
+            'exam': exam,
+            'questions': questions
+        })
+    def post(self, request, pk=None):
+
+        pass
+
+
 @staff_member_required
 def delete_quiz(request, pk=None):
     if pk:

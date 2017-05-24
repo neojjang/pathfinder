@@ -4,17 +4,17 @@
 
     <div class="center-block" style="width:400px;max-width:100%;margin: 50px auto;">
         <p>
-            <a class="btn btn-lg btn-block btn-primary">테스트</a>
+            <button class="btn btn-lg btn-block btn-primary menu" data-href="/test">테스트</button>
         </p>
         <p>
-            <a class="btn btn-lg btn-block btn-primary" href="">
+            <button class="btn btn-lg btn-block btn-primary menu" data-href="/">
                 평가 관리
-            </a>
+            </button>
         </p>
         <p>
-            <a class="btn btn-lg btn-block btn-primary" href="">
-                개인 정보 관리
-            </a>
+            <button class="btn btn-lg btn-block btn-primary menu" data-href="{% url 'accounts:view_profile' %}">
+                내 정보 관리
+            </button>
         </p>
 
     </div>

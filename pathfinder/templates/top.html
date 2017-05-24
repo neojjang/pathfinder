@@ -34,10 +34,10 @@
             <p>
                 전국 최고 영어 전문 학원
             </p>
-            <button class="btn btn-primary login" data-href="{% url 'accounts:login' %}">
+            <button class="btn btn-primary menu" data-href="{% url 'accounts:login' %}">
                 로그인
             </button>
-            <button class="btn btn-success regist"  data-href="{% url 'accounts:regist' %}">회원 가입</button>
+            <button class="btn btn-success menu"  data-href="{% url 'accounts:regist' %}">회원 가입</button>
         </div>
     </div>
 
@@ -50,13 +50,9 @@
 
 {% block extra_foot %}
     <script type="text/javascript">
-    $("button.login").click(function(e) {
+    $("button.menu").click(function(e) {
         e.preventDefault();
         location.href = $(this).data("href");
     });
-    $("button.regist").click(function(e) {
-        e.preventDefault();
-        location.href = $(this).data("href");
-    })
     </script>
 {% endblock %}

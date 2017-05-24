@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from .views import delete_question, delete_quiz
 from .views import QuestionListView, QuestionDetailView, QuestionEditView, \
-    ExamListView, ExamEditView, ExamDetailView
+    ExamListView, ExamEditView, ExamDetailView, ExamAppendQuestion
 
 urlpatterns = [
     url(r'^exam/create/$', ExamEditView.as_view(), name='create_quiz'),
@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^question/(\d+)/edit/$', QuestionEditView.as_view(), name='edit_question'),
     url(r'^question/(\d+)/delete/$', delete_question, name='delete_question'),
     url(r'^questions/$', QuestionListView.as_view(), name='show_question_list'),
+
 ]

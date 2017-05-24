@@ -84,8 +84,13 @@ def view_profile(request):
     :param request: 
     :return: 
     '''
-    student = Student.objects.get(user=request.user)
-    quiz_results = StudentScore.objects.filter(student=student)
+    try:
+        student = Student.objects.get(user=request.user)
+    except Student.DoesNotExist:
+        student = Student(user=request.user)
+        student.save()
+
+    quiz_results = StudentScore.objects.filter(exam__student=student)
 
     return render(request, 'member/mypage.html', {
         'student': student,

@@ -3,8 +3,7 @@
 {% load humanize %}
 
 {% block title %}문제 은행 : 문제 리스트{% endblock %}
-{% block css %}
-{% endblock css %}
+
 
 {% block currentmenu %}
     시험 관리
@@ -18,10 +17,10 @@
                 <li class="active">시험 관리</li>
             </ol>
 {#        </div>#}
-        <div class="row">
+        <div class="content-wrapper">
             <ul class="list-inline">
                 <li ><h4>시험 관리</h4></li>
-                <li class=""><a class="btn btn-danger" href="{% url 'quiz:create_quiz' %}"> 테스트 작성 </a></li>
+                <li class=""><button class="btn btn-danger menu" data-href="{% url 'quiz:create_quiz' %}"> 테스트 작성 </button></li>
             </ul>
             <table class="table table-hover">
                 <thead>
@@ -53,7 +52,7 @@
 {#    </div>#}
 {% endblock %}
 
-{% block aftercontent %}
+{% block extra_foot %}
     <script type="application/javascript">
     $(".exam").click(function(e) {
         var no = $(this).attr("exam_id");
