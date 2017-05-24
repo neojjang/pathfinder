@@ -58,6 +58,24 @@ def list_member(request):
     '''
     pass
 
+@staff_member_required
+def view_member(request):
+    '''
+    User(is_staff=False)인 학생 목록 페이지
+    :param request: 
+    :return: 
+    '''
+    pass
+
+@staff_member_required
+def edit_member(request):
+    '''
+    User(is_staff=False)인 학생 목록 페이지
+    :param request: 
+    :return: 
+    '''
+    pass
+
 
 @login_required
 def view_profile(request):

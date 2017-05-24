@@ -25,7 +25,7 @@ urlpatterns = [
 
     url(r'^$', TopView.as_view(), name='top'),
 
-    url(r'^manage/', include('quiz.urls', namespace='quiz')),
+    url(r'^manage/', include('management.urls', namespace='quiz')),
 
     url(r'^admin-of-admin/', admin.site.urls),
 ]
