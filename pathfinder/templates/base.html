@@ -1,46 +1,62 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}패스파인더 영어 학원{% endblock title %}</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen" />
-    <link href="{% static 'css/main.css' %}" rel="stylesheet" media="screen" />
-    {% block css %}
-    {% endblock css %}
+{% extends 'adminlte/base.html' %}
+{% block title %}패스파인더{% endblock %}
 
-    {% block javascript %}
-    {% endblock javascript %}
-</head>
-<body>
+{% block body_class %}layout-top-nav{% endblock %}
 
-    <nav class="navbar navbar-default navbar-static-top" role="navigation">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">
-                    <i class="glyphicon glyphicon-search"></i>패스파인더
-                </a>
-            </div>
-            <ul class="nav navbar-nav navbar-text">
-                <li class="active">{% block currentmenu %}Menu1{% endblock currentmenu %}</li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right" style="margin-right: 30px;">
-                {% if request.user.is_authenticated %}
-                    <li><a class="text-success" href="{% url 'accounts:logout' %}">로그 아웃</a></li>
-                {% endif %}
-            </ul>
-    </nav>
+{% block nav_header %}
+    {% include 'header.html' %}
+{% endblock %}
 
-    <div class="container" id="content">
-        <div class="row">
-        {% block content %}
+{% block nav_sidebar %} {% endblock %}
+{% block currentmenu %}
 
-        {% endblock content %}
+    {%  if user.is_authenticated %}
+         {% if user.is_staff %}
+            <strong>관리자 페이지</strong>
+        {% else %}
+            <strong>{{ user.get_full_name }}</strong>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+    {%  if user.is_authenticated %}
+         {% if user.is_staff %}
+            {% include 'manager_menu.html' %}
+        {% else %}
+            {% include 'student_menu.html' %}
+        {% endif %}
+    {% else %}
+    <div class="jumbotron" >
+        <div class="container">
+            <h1>
+                패스파인더
+            </h1>
+            <p>
+                전국 최고 영어 전문 학원
+            </p>
+            <button class="btn btn-primary login" data-href="{% url 'accounts:login' %}">
+                로그인
+            </button>
+            <button class="btn btn-success regist"  data-href="{% url 'accounts:regist' %}">회원 가입</button>
         </div>
     </div>
-    <div id="footer" class="navbar-fixed-bottom">&copy; 패스파인더</div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-{% block aftercontent %}
-{% endblock aftercontent %}
-</body>
-</html>
+
+    {% endif %}
+{% endblock %}
+
+{% block nav_footer %}
+    {% include 'footer.html' %}
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="text/javascript">
+    $("button.login").click(function(e) {
+        e.preventDefault();
+        location.href = $(this).data("href");
+    });
+    $("button.regist").click(function(e) {
+        e.preventDefault();
+        location.href = $(this).data("href");
+    })
+    </script>
+{% endblock %}

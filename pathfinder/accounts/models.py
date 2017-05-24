@@ -3,9 +3,18 @@
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.conf import settings
-from common.models import LEVEL_CHOICES
+# from common.models import LEVEL_CHOICES
 from quiz.models import Quiz, Question
 # Create your models here.
+LEVEL_CHOICES = (
+    (1, "중1초급"), (2, "중1중급"), (3, "중1상급"),
+    (4, "중2초급"), (5, "중2중급"), (6, "중2상급"),
+    (7, "중3초급"), (8, "중3중급"), (9, "중3상급"),
+    (10, "고1초급"), (12, "고1중급"), (13, "고1상급"),
+    (14, "고2초급"), (15, "고2중급"), (16, "고2상급"),
+    (17, "고3초급"), (18, "고3중급"), (19, "고3상급"),
+    (20, "수능"), (0, "모름")
+)
 
 @python_2_unicode_compatible
 class Student(models.Model):

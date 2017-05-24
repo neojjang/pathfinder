@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+import logging
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -6,8 +7,11 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, StudentRedistrationForm
-from .models import Student, StudentExam, StudentAnswer
+from .models import Student, StudentExam, StudentAnswer, StudentScore
 # Create your views here.
+
+log = logging.getLogger(__name__)
+
 
 def regist_member(request):
     '''
@@ -22,6 +26,10 @@ def regist_member(request):
             new_student = form.save(commit=False)
             new_student.set_password(form.cleaned_data['password'])
             new_student.save()
+
+            student = Student(user=new_student)
+            student.save()
+
             return render(request, 'member/registration_done.html', {'new_student':new_student})
     else:
         form = StudentRedistrationForm()
@@ -59,7 +67,7 @@ def view_profile(request):
     :return: 
     '''
     student = Student.objects.get(user=request.user)
-    quiz_results = StudentResults.objects.filter(student=student)
+    quiz_results = StudentScore.objects.filter(student=student)
 
     return render(request, 'member/mypage.html', {
         'student': student,
@@ -68,27 +76,34 @@ def view_profile(request):
 
 
 
-def login_view(request):
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cleaned_data = form.cleaned_data
-            user = authenticate(username=cleaned_data['username'],
-                                password=cleaned_data['password'])
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return # authenticated successfully
-                else:
-                    return # disable user
-    else:
-        form = LoginForm()
-    return render(request, '', {
-        'form': form
-    })
+# def login_view(request):
+#     log.debug("login_view")
+#     if request.method == "POST":
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             cleaned_data = form.cleaned_data
+#             user = authenticate(username=cleaned_data['username'],
+#                                 password=cleaned_data['password'])
+#             if user is not None:
+#                 if user.is_active:
+#                     login(request, user)
+#                     return # authenticated successfully
+#                 else:
+#                     return # disable user
+#
+#             form.add_error('username', '아이디 또는 비밀번호를 확인해주세요.')
+#         log.debug(form.errors)
+#
+#     else:
+#         form = LoginForm()
+#
+#     log.error(form.errors)
+#     return render(request, '', {
+#         'form': form
+#     })
 
-@login_required
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect(redirect_to='/')
+# @login_required
+# def logout_view(request):
+#     logout(request)
+#     return HttpResponseRedirect(redirect_to='/')
 

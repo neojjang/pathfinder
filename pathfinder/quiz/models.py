@@ -10,6 +10,8 @@ class Question(models.Model):
     '''
     문제 관리
     '''
+
+
     level = models.IntegerField(
         verbose_name=u"문제 수준",
         choices=LEVEL_CHOICES, default=0)
@@ -103,7 +105,7 @@ class Quiz(models.Model):
         verbose_name=u"퀴즈 관리"
         verbose_name_plural=u"퀴즈 관리"
     def __str__(self):
-        return "{}[{}]".format(self.title, self.level.get_level_display())
+        return "{}[{}]".format(self.title, self.get_level_display())
 
 
 @python_2_unicode_compatible
