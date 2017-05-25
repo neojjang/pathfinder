@@ -40,6 +40,8 @@ class Question(models.Model):
         verbose_name=u"문제 은행"
     def __str__(self):
         return "{} [{}]".format(self.title, self.get_level_display())
+    def get_used_count(self):
+        return self.quiz_set.all().count()
 
 
 

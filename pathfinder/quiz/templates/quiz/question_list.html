@@ -18,21 +18,45 @@
 {% block content %}
         <div class="content-wrapper">
             <ul class="list-inline">
+                <li>검색 : </li>
+                <li>
+                    <select name="level" onchange="this.form.submit()">
+                        <option value="all">문제 수준 선택</option>
+                        {% for item in level %}
+                        <option value="{{ item.id }}" {% if item.id == level_id %}selected{% endif %}>{{ item.title }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
+                    <select name="question_type" onchange="this.form.submit()">
+                        <option value="all">문제 유형 선택</option>
+                        {% for item in question_type %}
+                        <option value="{{ item.id }}" {% if item.id == question_type_id %}selected{% endif %}>{{ item.title }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
+                    |
+                </li>
                 <li class=""><button class="btn btn-danger menu" data-href="{% url 'quiz:create_question' %}"> 문제 작성 </button></li>
             </ul>
             <table class="table table-hover">
                 <thead>
                     <th class="col-md-1">#</th>
-                    <th class="col-md-9">문제</th>
+                    <th class="col-md-7">문제</th>
                     <th class="col-md-1">문제수준</th>
+                    <th class="col-md-1">문제유형</th>
                     <th class="col-md-1">제한시간</th>
+                    <th class="col-md-1">사용횟수</th>
                 </thead>
                 {% for question in questions %}
                     <tr class="question" question_id="{{ question.pk }}">
                         <td class="col-md-1"><a href="{% url 'quiz:show_question' question.pk %}">{{ question.pk }}</a> </td>
-                        <td class="col-md-9">{{ question.title }}</td>
+                        <td class="col-md-7">{{ question.title }}</td>
                         <td class="col-md-1">{{ question.get_level_display }}</td>
+                        <td class="col-md-1">{{ question.get_question_type_display }}</td>
                         <td class="col-md-1">{{ question.limit_time }}</td>
+                        <td class="col-md-1">{{ question.get_used_count }}</td>
                     </tr>
                 {% empty %}
                     <tr>

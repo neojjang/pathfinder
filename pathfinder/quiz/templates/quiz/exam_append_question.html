@@ -60,15 +60,16 @@
             </form>
             <table class="table table-hover" style="height: 40%;">
                 <thead>
-                    <th class="">
+                    <th class="col-md-1">
                         <label>
-                            <input type="checkbox" id="question-all" value="all" />전체선택
+                            <input type="checkbox" id="question-all" value="all" /> 전체
                         </label>
                     </th>
-                    <th class="">문제</th>
-                    <th class="">문제수준</th>
-                    <th class="">제한시간</th>
-                    <th class="">등록일</th>
+                    <th class="col-md-6">문제</th>
+                    <th class="col-md-1">문제수준</th>
+                    <th class="col-md-1">문제유형</th>
+                    <th class="col-md-1">제한시간</th>
+                    <th class="col-md-1">사용횟수</th>
                     <th class=""></th>
                 </thead>
                 {% for question in questions %}
@@ -78,8 +79,10 @@
                         </td>
                         <td class="question-title" question_id="{{ question.pk }}">{{ question.title }}</td>
                         <td class="">{{ question.get_level_display }}</td>
+                        <td class="">{{ question.get_question_type_display }}</td>
                         <td class="">{{ question.limit_time }}</td>
-                        <td class="">{{ question.create_date|date:"Y.m.d H:s" }}</td>
+                        <td class="">{{ question.get_used_count }}</td>
+{#                        <td class="">{{ question.create_date|date:"Y.m.d H:s" }}</td>#}
                         <td class="">
                             <button class="btn btn-xs btn-warning append" data-question-id="{{ question.pk }}">문제 추가</button>
                         </td>
