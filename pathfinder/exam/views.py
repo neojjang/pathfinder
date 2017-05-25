@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View
 from accounts.models import StudentExam
-from quiz.models import Exam
 # Create your views here.
 
 

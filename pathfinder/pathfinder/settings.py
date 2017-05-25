@@ -183,7 +183,7 @@ LOGGING = {
             'propagate': True,
             'level': 'INFO'
         },
-        'affinity': {
+        '': {
             'handlers': ['console'],
             'propagate': True,
             'level': 'DEBUG',

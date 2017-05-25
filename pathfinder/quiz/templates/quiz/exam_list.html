@@ -2,24 +2,22 @@
 {% load staticfiles %}
 {% load humanize %}
 
-{% block title %}문제 은행 : 문제 리스트{% endblock %}
+{% block title %}패스파인더 : 테스트 리스트{% endblock %}
 
-
-{% block currentmenu %}
-    시험 관리
+{% block page_name %}
+    테스트 관리
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li class="active">테스트 관리</li>
+    </ol>
 {% endblock %}
 
 {% block content %}
-{#    <div class="container">#}
-{#        <div class="row" style="margin-top: 20px;">#}
-            <ol class="breadcrumb">
-                <li><a href="/">관리자 페이지 </a></li>
-                <li class="active">시험 관리</li>
-            </ol>
-{#        </div>#}
+
         <div class="content-wrapper">
             <ul class="list-inline">
-                <li ><h4>시험 관리</h4></li>
                 <li class=""><button class="btn btn-danger menu" data-href="{% url 'quiz:create_quiz' %}"> 테스트 작성 </button></li>
             </ul>
             <table class="table table-hover">
@@ -49,7 +47,6 @@
             </div>
         </div>
 
-{#    </div>#}
 {% endblock %}
 
 {% block extra_foot %}

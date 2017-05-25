@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 from django import forms
-from common.models import LEVEL_CHOICES
+from common.models import LEVEL_CHOICES, TYPE_CHOICES
 from .models import Quiz, Question, Explanations, QuestionExample
 
 
@@ -15,6 +15,11 @@ class QuestionForm(forms.ModelForm):
         choices=LEVEL_CHOICES,
         widget=forms.Select(attrs={'class':'form-control'}),
         label=u"문제 수준을 선택해 주세요."
+    )
+    question_type = forms.ChoiceField(
+        choices=TYPE_CHOICES,
+        widget=forms.Select(attrs={'class':'form-control'}),
+        label=u"문제 유형을 선택해 주세요."
     )
     title = forms.CharField(
         max_length=100,
@@ -45,7 +50,7 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model=Question
         fields=[
-            'level', 'title', 'text', 'limit_time', 'correct'
+            'level', 'question_type', 'title', 'text', 'limit_time', 'correct'
         ]
 
 
@@ -129,3 +134,12 @@ class QuizForm(forms.ModelForm):
             'level', 'title', 'starting_date', 'closing_date'
         ]
 
+
+class QuizQuestionForm(forms.ModelForm):
+    questions = forms.ModelMultipleChoiceField(
+        queryset=Question.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
+    class Meta:
+        model=Quiz
+        fields=['questions']

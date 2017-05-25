@@ -1,76 +1,24 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
-{% block title %}테스트 만들기{% endblock title %}
+{% block title %}패스파인더 : 테스트 만들기{% endblock title %}
 {% block css %}
     <link href="{% static 'css/bootstrap-datetimepicker.css' %}" rel="stylesheet" media="screen" />
-<style>
-    .vertical-center {
-  min-height: 80%;  /* Fallback for vh unit */
-  min-height: 80vh; /* You might also want to use
-                        'height' property instead.
-
-                        Note that for percentage values of
-                        'height' or 'min-height' properties,
-                        the 'height' of the parent element
-                        should be specified explicitly.
-
-                        In this case the parent of '.vertical-center'
-                        is the <body> element */
-
-  /* Make it a flex container */
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-
-  /* Align the bootstrap's container vertically */
-    -webkit-box-align : center;
-  -webkit-align-items : center;
-       -moz-box-align : center;
-       -ms-flex-align : center;
-          align-items : center;
-
-  /* In legacy web browsers such as Firefox 9
-     we need to specify the width of the flex container */
-  width: 100%;
-
-  /* Also 'margin: 0 auto' doesn't have any effect on flex items in such web browsers
-     hence the bootstrap's container won't be aligned to the center anymore.
-
-     Therefore, we should use the following declarations to get it centered again */
-         -webkit-box-pack : center;
-            -moz-box-pack : center;
-            -ms-flex-pack : center;
-  -webkit-justify-content : center;
-          justify-content : center;
-    }
-dt {
-    vertical-align: middle;
-}
-dt label {
-    vertical-align: middle;
-    padding-top: 10px;
-}
-dd {
-    padding-top: 5px;
-}
-</style>
 {% endblock css %}
 
-{% block currentmenu %}
+{% block page_name %}
     테스트 작성
 {% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li><a href="{% url 'quiz:show_quiz_list' %}">테스트 관리</a></li>
+        <li class="active">테스트 작성</li>
+    </ol>
+{% endblock %}
+
 {% block content %}
-{#    <div class="container">#}
-{#        <div class="row" style="margin-top: 20px;">#}
-            <ol class="breadcrumb">
-                <li><a href="/">관리자 페이지 </a></li>
-                <li><a href="{% url 'quiz:show_quiz_list' %}">시험 관리</a></li>
-                <li class="active">테스트 작성</li>
-            </ol>
-{#        </div>#}
+
 {% if not pk or quiz%}
 
     <form action="" method="post" class="form-horizontal">
@@ -79,34 +27,6 @@ dd {
         <div class="panel panel-primary" style="margin-top: 0px;">
             <div class="panel-body">
 
-<!-- 여기 폼을 참고하여 수정한다. <dl><dt><dd>를 제거
-  <div class="form-group">
-    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
-    <div class="col-sm-10">
-      <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-    <div class="col-sm-10">
-      <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"> Remember me
-        </label>
-      </div>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">Sign in</button>
-    </div>
-  </div>
-// -->
                 <div class="form-group">
                     <label id="{{ form.title.id_for_label }}" class="col-sm-2 control-label">테스트 제목</label>
                     <div class="col-sm-10">
@@ -192,7 +112,7 @@ dd {
 
     </div>
 {% endif %}
-{#    </div>#}
+
 {% endblock content %}
 
 {% block aftercontent %}

@@ -1,66 +1,22 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
-{% block title %}문제 만들기{% endblock title %}
-{% block css %}
-<style>
-    .vertical-center {
-  min-height: 80%;  /* Fallback for vh unit */
-  min-height: 80vh; /* You might also want to use
-                        'height' property instead.
+{% block title %}패스파인더 : 문제 만들기{% endblock title %}
 
-                        Note that for percentage values of
-                        'height' or 'min-height' properties,
-                        the 'height' of the parent element
-                        should be specified explicitly.
-
-                        In this case the parent of '.vertical-center'
-                        is the <body> element */
-
-  /* Make it a flex container */
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-
-  /* Align the bootstrap's container vertically */
-    -webkit-box-align : center;
-  -webkit-align-items : center;
-       -moz-box-align : center;
-       -ms-flex-align : center;
-          align-items : center;
-
-  /* In legacy web browsers such as Firefox 9
-     we need to specify the width of the flex container */
-  width: 100%;
-
-  /* Also 'margin: 0 auto' doesn't have any effect on flex items in such web browsers
-     hence the bootstrap's container won't be aligned to the center anymore.
-
-     Therefore, we should use the following declarations to get it centered again */
-         -webkit-box-pack : center;
-            -moz-box-pack : center;
-            -ms-flex-pack : center;
-  -webkit-justify-content : center;
-          justify-content : center;
-}
-
-
-</style>
-{% endblock css %}
-
-{% block currentmenu %}
+{% block page_name %}
     문제 작성
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li><a href="{% url 'quiz:show_question_list' %}">문제 관리</a></li>
+        <li class="active">문제 작성</li>
+    </ol>
 {% endblock %}
 {% block content %}
 {#    <div class="container">#}
 {#        <div class="row" style="margin-top: 20px;">#}
-            <ol class="breadcrumb">
-                <li><a href="/">관리자 페이지 </a></li>
-                <li><a href="{% url 'quiz:show_quiz_list' %}">문제 관리</a></li>
-                <li class="active">문제 작성</li>
-            </ol>
+
 {#        </div>#}
  {% if not pk or question%}
     <form action="" method="post" class="form-horizontal">
@@ -77,6 +33,12 @@
                                 {{ question_form.level }}
                             </p>
                             <p>
+                                <label for="{{ question_form.question_type.id_for_label }}">
+                                {{ question_form.question_type.label }}
+                                </label>
+                                {{ question_form.question_type }}
+                            </p>
+                            <p>
                                 <label for="{{ question_form.title.id_for_label }}">
                                 {{ question_form.title.label }}
                                 </label>
@@ -88,19 +50,6 @@
                                 </label>
                                 {{ question_form.text }}
                             </p>
-{#                            <p>#}
-{#                                <label for="{{ question_form.limit_time.id_for_label }}">#}
-{#                                {{ question_form.limit_time.label }}#}
-{#                                </label>#}
-{#                                {{ question_form.limit_time }}#}
-{#                            </p>#}
-{#                            <p>#}
-{#                                <label for="{{ question_form.correct.id_for_label }}">#}
-{#                                {{ question_form.correct.label }}#}
-{#                                </label>#}
-{#                                {{ question_form.correct }}#}
-{#                            </p>#}
-{#                            {{ question_form.as_p }}#}
                         </div>
                     </div>
 {#                    <div class="col-md-1"> </div>#}
@@ -185,13 +134,13 @@
     {% if not question %}
         <!-- 신규 작성 -->
         <input type="submit" name="submit" value=" 문제 등록 " class="btn btn-primary"/>
-        <a href="{% url 'quiz:show_question_list' %}" class="btn btn-default"> 취 소 </a>
-        <a href="" class="btn btn-warning">미리보기</a>
+        <button data-href="{% url 'quiz:show_question_list' %}" class="btn btn-default menu"> 취 소 </button>
+        <button data-href="" class="btn btn-warning menu" disabled>미리보기</button>
     {% else %}
         <!-- 편집 -->
         <input type="submit" name="submit" value=" 문제 수정 " class="btn btn-primary"/>
-        <a href="{% url 'quiz:show_question' question.pk %}" class="btn btn-default"> 취 소 </a>
-        <a href="" class="btn btn-warning">미리보기</a>
+        <button data-href="{% url 'quiz:show_question' question.pk %}" class="btn btn-default menu"> 취 소 </button>
+        <button data-href="" class="btn btn-warning menu" disabled>미리보기</button>
     {% endif %}
         </div>
     </form>
@@ -207,3 +156,10 @@
 {% endif %}
 {#    </div>#}
 {% endblock content %}
+
+{% block extra_foot %}
+<script src="https://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+<script type="text/javascript">
+CKEDITOR.replace('id_text');
+</script>
+{% endblock %}

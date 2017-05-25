@@ -6,10 +6,12 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.db.models import Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 # from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Quiz, QuestionExample, Question, Exam, Explanations
-from .forms import QuizForm, QuestionForm, QuestionExampleForm, ExplanationsForm
+from .models import Quiz, QuestionExample, Question, Explanations
+from .forms import QuizForm, QuestionForm, QuestionExampleForm, ExplanationsForm, QuizQuestionForm
+from common.models import LEVEL_CHOICES, TYPE_CHOICES
 # Create your views here.
 
 log = logging.getLogger(__name__)
@@ -42,9 +44,13 @@ class QuestionListView(StaffMemberRequiredMixin, View):
 class QuestionDetailView(StaffMemberRequiredMixin, View):
     def get(self, request, pk=None):
         question = get_object_or_404(Question, pk=pk)
-
-        return render(request, 'quiz/question.html', {
-            'question': question
+        no_ui = request.GET.get("no_ui")
+        template_file = 'quiz/question.html'
+        if no_ui == 'yes':
+            template_file = 'quiz/question_no_ui.html'
+        return render(request, template_file, {
+            'question': question,
+            'no_ui': no_ui
         })
 
 
@@ -172,6 +178,27 @@ class ExamListView(StaffMemberRequiredMixin, View):
 class ExamDetailView(StaffMemberRequiredMixin, View):
     def get(self, request, pk=None):
         exam = get_object_or_404(Quiz, pk=pk)
+
+        return render(request, 'quiz/exam.html', {
+            'exam': exam
+        })
+
+    def post(self, request, pk=None):
+        exam = get_object_or_404(Quiz, pk=pk)
+        log.debug(request.POST)
+        cmd = request.POST.get("cmd")
+        questions = request.POST.get("questions")
+
+        if cmd == 'add':
+            if questions and len(questions) > 0:
+                for id in questions:
+                    exam.questions.add(Question.objects.get(pk=id))
+                exam.save()
+        elif cmd == 'delete':
+            if questions:
+                exam.questions.remove(Question.objects.get(pk=questions))
+                exam.save()
+        # my_obj.categories.add(fragmentCategory.objects.get(id=1))
         return render(request, 'quiz/exam.html', {
             'exam': exam
         })
@@ -211,12 +238,28 @@ class ExamEditView(StaffMemberRequiredMixin, View):
 class ExamAppendQuestion(StaffMemberRequiredMixin, View):
     def get(self, request, pk=None):
         page = request.GET.get('p')
+        level_id = request.GET.get("level")
+        question_type_id = request.GET.get("question_type")
+        log.info(request.GET)
+
         try:
             exam = Quiz.objects.get(pk=pk)
         except Quiz.DoesNotExist:
             exam = None
-        questions = Question.objects.all().order_by('-pk')
+        if (not level_id or level_id == 'all') and (not question_type_id or question_type_id == 'all'):
+            questions = Question.objects.all().order_by('-pk')
+        else:
+            query = Q();
+            if level_id and level_id != 'all':
+                query = Q(level=level_id)
+                level_id = int(level_id)
+            if question_type_id and question_type_id != 'all':
+                query = query & Q(question_type=question_type_id)
+                question_type_id = int(question_type_id)
+            log.info(query)
+            questions = Question.objects.filter(query).order_by('-pk')
 
+        log.debug("level_id=[%s]" % level_id)
         paginator = Paginator(questions, 20)
         try:
             questions = paginator.page(page)
@@ -225,9 +268,16 @@ class ExamAppendQuestion(StaffMemberRequiredMixin, View):
         else:
             questions = paginator.page(paginator.num_pages)
 
+
+        level = [{"id": id, "title": title} for id, title in LEVEL_CHOICES]
+        question_type = [{"id": id, "title": title} for id, title in TYPE_CHOICES]
         return render(request, 'quiz/exam_append_question.html', {
             'exam': exam,
-            'questions': questions
+            'questions': questions,
+            'level': level,
+            'question_type': question_type,
+            'level_id': level_id,
+            'question_type_id': question_type_id
         })
     def post(self, request, pk=None):
 
@@ -270,6 +320,6 @@ def get_question_list(request):
 
 
 
-# @staff_member_required
-# def make_test_paper(request):
-#     pass
+@staff_member_required
+def add_questions(request):
+    pass

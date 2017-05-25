@@ -5,21 +5,19 @@
 {% block css %}
 {% endblock css %}
 
-{% block currentmenu %}
-문제 은행
+{% block page_name %}
+    문제 은행
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li class="active">문제 은행</li>
+    </ol>
 {% endblock %}
 
 {% block content %}
-{#    <div class="container">#}
-{#        <div class="row" style="margin-top: 20px;">#}
-            <ol class="breadcrumb">
-                <li><a href="/">관리자 페이지 </a></li>
-                <li class="active">문제 은행</li>
-            </ol>
-{#        </div>#}
         <div class="content-wrapper">
             <ul class="list-inline">
-                <li ><h4>문제 은행</h4></li>
                 <li class=""><button class="btn btn-danger menu" data-href="{% url 'quiz:create_question' %}"> 문제 작성 </button></li>
             </ul>
             <table class="table table-hover">
@@ -47,7 +45,6 @@
             </div>
         </div>
 
-{#    </div>#}
 {% endblock %}
 
 {% block extra_foot %}

@@ -2,17 +2,22 @@
 {% load staticfiles %}
 {% block title %}패스파인더 : 시험 정보 : {{ exam.title }}{% endblock title %}
 
-{% block currentmenu %}
-    시험 상세 정보
+{% block page_name %}
+    테스트 상세 정보
 {% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li><a href="{% url 'quiz:show_quiz_list' %}">테스트 관리</a></li>
+        <li class="active">테스트 정보</li>
+    </ol>
+{% endblock %}
+
+
 {% block content %}
 {#    <div class="container">#}
 {#        <div class="row" style="margin-top: 20px;">#}
-            <ol class="breadcrumb">
-                <li><a href="/">관리자 페이지 </a></li>
-                <li><a href="{% url 'quiz:show_quiz_list' %}">시험 관리</a></li>
-                <li class="active">상세 정보</li>
-            </ol>
+
 {#        </div>#}
         <div class="panel panel-primary" style="margin-top: 0px;">
             <div class="panel-heading">
@@ -36,21 +41,39 @@
                 문제 리스트 <button data-href="{% url 'quiz:append_question' exam.id %}" class="btn btn-primary btn-xs add-question">문제 추가</button>
             </div>
             <div class="panel-body">
-                {% if exam.exam_set.all %}
-                <ol id="exam_set">
-                    {% for item in exam.exam_set.all %}
-                    <li>{{ item.question.title }}</li>
+                <table class="table ">
+                    <thead>
+                        <th>번호</th>
+                        <th>문제</th>
+                        <th>레벨</th>
+                        <th>유형</th>
+                        <th></th>
+                    </thead>
+                    {% for question in exam.questions.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ question.title }}</td>
+                        <td>{{ question.get_level_display }}</td>
+                        <td>{{ question.get_question_type_display }}</td>
+                        <td><button data-question-id="{{ question.id }}" class="btn btn-xs delete-question">삭제</button></td>
+                    </tr>
                     {% empty %}
-                        <li>할당 된 문제가 없습니다.</li>
+                        <tr><td colspan="5">문제를 등록해주세요.</td></tr>
                     {% endfor %}
-                </ol>
-                {% else %}
-                    할당 된 문제가 없습니다.
-                {% endif %}
+                </table>
             </div>
 
         </div>
 {#    </div>#}
+    <form action="." method="post" id="form-add-question">
+    {% csrf_token %}
+    <input type="hidden" name="cmd" value="add" />
+    </form>
+
+    <form action="." method="post" id="form-delete-question">
+    {% csrf_token %}
+    <input type="hidden" name="cmd" value="delete" />
+    </form>
 {% endblock content %}
 
 {% block extra_foot %}
@@ -63,6 +86,33 @@
             "add_question_window",
             "toolbar=no ,location=0, status=no,titlebar=no,menubar=no,width="+w+",height="+h);
         add_question_window.focus();
+    });
+
+    $("button.delete-question").click(function(e) {
+        var question_id = $(this).data("question-id");
+        var hidden_input = '<input type="hidden" name="questions"  value="'+question_id+'" />';
+        $("#form-delete-question").append(hidden_input);
+        $("#form-delete-question").submit();
+    });
+
+
+    function add_question(exam_id, question_id_list) {
+{#        alert(exam_id+" > "+question_id_list);#}
+        for(var i=0; i < question_id_list.length; i++) {
+            var hidden_input = '<input type="hidden" name="questions"  value="'+question_id_list[i]+'" />';
+            $("#form-add-question").append(hidden_input);
+        }
+{#        $("input[name='questions']").val(question_id_list);#}
+        $("#form-add-question").submit();
+    }
+
+
+    $(document).ready(function() {
+{#        // back버튼으로 뒤로 가기를 하는 경우를 방지 하기 위한 스크립트. HTML5에서만 가능#}
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+        });
     });
     </script>
 

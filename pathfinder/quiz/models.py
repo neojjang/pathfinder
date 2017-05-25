@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
-from common.models import LEVEL_CHOICES
+from common.models import LEVEL_CHOICES, TYPE_CHOICES
 # Create your models here.
 
 
@@ -10,11 +10,14 @@ class Question(models.Model):
     '''
     문제 관리
     '''
-
-
     level = models.IntegerField(
         verbose_name=u"문제 수준",
         choices=LEVEL_CHOICES, default=0)
+    question_type = models.IntegerField(
+        verbose_name=u"문제 유형",
+        choices=TYPE_CHOICES,
+        default=0
+    )
     title = models.CharField(
         verbose_name=u"문제",
         max_length=100)
@@ -84,20 +87,21 @@ class Explanations(models.Model):
 @python_2_unicode_compatible
 class Quiz(models.Model):
     '''
-    퀴즈(시험) 관리
+    테스트(시험) 관리
     '''
     level = models.IntegerField(
-        verbose_name=u"퀴즈 수준",
+        verbose_name=u"테스트 수준",
         choices=LEVEL_CHOICES, default=0)
     title = models.CharField(
-        verbose_name=u"퀴즈 제목",
+        verbose_name=u"테스트 제목",
         max_length=50)
     starting_date = models.DateTimeField(
-        verbose_name=u"퀴즈 시작 날짜",
+        verbose_name=u"테스트 시작 날짜",
         null=True, blank=True)
     closing_date = models.DateTimeField(
-        verbose_name=u"퀴즈 마감 날짜",
+        verbose_name=u"테스트 마감 날짜",
         null=True, blank=True)
+    questions = models.ManyToManyField(Question, verbose_name=u"문제")
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 
@@ -106,21 +110,3 @@ class Quiz(models.Model):
         verbose_name_plural=u"퀴즈 관리"
     def __str__(self):
         return "{}[{}]".format(self.title, self.get_level_display())
-
-
-@python_2_unicode_compatible
-class Exam(models.Model):
-    '''
-    퀴즈별 할당한 문제들 매핑 관리
-    '''
-    quiz = models.ForeignKey(Quiz)
-    question = models.ForeignKey(Question)
-    order = models.IntegerField(verbose_name=u"문제 번호", default=1)
-    create_date = models.DateTimeField(auto_now_add=True)
-    class Meta:
-        verbose_name_plural=u"문제지 관리"
-        verbose_name=u"문제지 관리"
-        ordering=['quiz', 'order']
-    def __str__(self):
-        return "{}-{}번-{}".format(self.quiz.id, self.order,
-                              self.question.title[:20])

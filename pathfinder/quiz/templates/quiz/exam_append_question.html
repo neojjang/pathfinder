@@ -20,35 +20,44 @@
 {% block nav_header %}
 {% endblock %}
 
+
+
 {% block body %}
+
     <div class="wrapper" style="background-color: #ecf0f5;">
-        <section class="content-wrapper" style="margin:0 15px 0 15px;">
+        <section class="content-wrapper" style="margin:0 15px 0 15px; ">
             <ul class="list-inline">
-                <li ><h4>문제 추가</h4></li>
+                <li >
+                    <h4>{{ exam.title }}[{{ exam.get_level_display }}] 테스트 </h4>
+                </li>
+                <li class="pull-right"><button onclick="window.close();" class="btn" style="margin-top:5px;"> X </button></li>
             </ul>
+            <form action="." method="get">
             <ul class="list-inline">
                 <li>
-                    검색 조건 :
-                </li>
-                <li>
-                    <select>
-                        <option>1</option><option>2</option>
+                    <select name="level" onchange="this.form.submit()">
+                        <option value="all">문제 수준 선택</option>
+                        {% for item in level %}
+                        <option value="{{ item.id }}" {% if item.id == level_id %}selected{% endif %}>{{ item.title }}</option>
+                        {% endfor %}
                     </select>
                 </li>
                 <li>
-                    <select>
-                        <option>1</option><option>2</option>
+                    <select name="question_type" onchange="this.form.submit()">
+                        <option value="all">문제 유형 선택</option>
+                        {% for item in question_type %}
+                        <option value="{{ item.id }}" {% if item.id == question_type_id %}selected{% endif %}>{{ item.title }}</option>
+                        {% endfor %}
                     </select>
                 </li>
                 <li>
-                    <select>
-                        <option>1</option><option>2</option>
-                    </select>
+                    |
                 </li>
                 <li>
-                    <button class="btn btn-primary">선택한 문제 추가</button>
+                    <button class="btn btn-primary append-all">선택한 문제 추가</button>
                 </li>
             </ul>
+            </form>
             <table class="table table-hover" style="height: 40%;">
                 <thead>
                     <th class="">
@@ -67,17 +76,17 @@
                         <td class="">
                             <input type="checkbox" class="question-item" id="question-{{ question.pk }}" value="{{ question.pk }}" />
                         </td>
-                        <td class="">{{ question.title }}</td>
+                        <td class="question-title" question_id="{{ question.pk }}">{{ question.title }}</td>
                         <td class="">{{ question.get_level_display }}</td>
                         <td class="">{{ question.limit_time }}</td>
                         <td class="">{{ question.create_date|date:"Y.m.d H:s" }}</td>
                         <td class="">
-                            <button class="btn btn-xs">문제 추가</button>
+                            <button class="btn btn-xs btn-warning append" data-question-id="{{ question.pk }}">문제 추가</button>
                         </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td class="bg-info" colspan="5"> <p>등록 된 테스트가 없습니다. </p></td>
+                        <td class="bg-info" colspan="5"> <p>조건에 맞는 문제가 없습니다. </p></td>
                     </tr>
                 {% endfor %}
             </table>
@@ -85,7 +94,11 @@
                 {% include 'quiz/paginator.html' with paginator=questions %}
 
             </div>
+            <hr />
+            <b>문제 보기</b>
+            <iframe id="view_question" width="100%" frameborder="0" src="" style="border:1px solid gray;"></iframe>
         </section>
+
     </div>
 {% endblock %}
 
@@ -99,21 +112,40 @@
             checkbox_list[i].checked = checked;
         }
     });
-    $(".question").click(function(e) {
+    $("input[class='question-item']").click(function(e) {
+{#        console.log($(this).val());#}
+        var checkbox_list = document.getElementsByClassName("question-item");
+{#        console.log("length="+$("input[class='question-item']:checked").length);#}
+        if($("input[class='question-item']:checked").length != checkbox_list.length) {
+            var obj = document.getElementById("question-all");
+            obj.checked = false;
+        }
+    });
+    $(".question-title").click(function(e) {
         var no = $(this).attr("question_id");
-        // 해당하는 문제를 보여준다.
-{#        console.log(no);#}
-{#        if(document.getElementById("question-"+no).checked) {#}
-{#            $("#question-" + no).attr("checked", false);#}
-{#            document.getElementById("question-"+no).checked = false;#}
-{##}
-{#            console.log("remove "+no);#}
-{#        } else {#}
-{#            $("#question-" + no).attr("checked", true);#}
-{#            document.getElementById("question-"+no).checked = true;#}
-{##}
-{#            console.log("add "+no);#}
-{#        }#}
-    })
+        var url = "/manage/question/"+no+"/?no_ui=yes";
+        $("#view_question").attr("src", url);
+    });
+    $("button.append-all").click(function(e) {
+        e.preventDefault();
+{#        alert("선택한 문제를 추가 한다.");#}
+        var question_id = [];
+        $("input[class='question-item']:checked").each(function() {
+            question_id.push($(this).val());
+        });
+
+        opener.add_question({{ exam.pk }}, question_id);
+    });
+    $("button.append").click(function(e) {
+        e.preventDefault();
+{#        alert($(this).data("question-id")+"번 문제를 추가 한다.");#}
+        var question_id = $(this).data("question-id");
+        if(undefined != question_id)
+            opener.add_question({{ exam.pk }}, [question_id]);
+    });
+    $(document).ready(function(e) {
+        $("#view_question").height(document.body.scrollHeight * 0.4);
+{#        alert($("#view_question").height());#}
+    });
     </script>
 {% endblock %}
