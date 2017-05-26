@@ -7,7 +7,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, StudentRedistrationForm
-from .models import Student, StudentExam, StudentAnswer, StudentScore
+from .models import Student
+from quiz.models import StudentAnswer, StudentScore
 # Create your views here.
 
 log = logging.getLogger(__name__)

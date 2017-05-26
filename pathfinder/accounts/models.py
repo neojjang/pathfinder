@@ -3,18 +3,17 @@
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.conf import settings
-# from common.models import LEVEL_CHOICES
-from quiz.models import Quiz, Question
+from common.models import LEVEL_CHOICES
 # Create your models here.
-LEVEL_CHOICES = (
-    (1, "중1초급"), (2, "중1중급"), (3, "중1상급"),
-    (4, "중2초급"), (5, "중2중급"), (6, "중2상급"),
-    (7, "중3초급"), (8, "중3중급"), (9, "중3상급"),
-    (10, "고1초급"), (12, "고1중급"), (13, "고1상급"),
-    (14, "고2초급"), (15, "고2중급"), (16, "고2상급"),
-    (17, "고3초급"), (18, "고3중급"), (19, "고3상급"),
-    (20, "수능"), (0, "모름")
-)
+# LEVEL_CHOICES = (
+#     (1, "중1초급"), (2, "중1중급"), (3, "중1상급"),
+#     (4, "중2초급"), (5, "중2중급"), (6, "중2상급"),
+#     (7, "중3초급"), (8, "중3중급"), (9, "중3상급"),
+#     (10, "고1초급"), (12, "고1중급"), (13, "고1상급"),
+#     (14, "고2초급"), (15, "고2중급"), (16, "고2상급"),
+#     (17, "고3초급"), (18, "고3중급"), (19, "고3상급"),
+#     (20, "수능"), (0, "모름")
+# )
 
 @python_2_unicode_compatible
 class Student(models.Model):
@@ -48,68 +47,24 @@ class Student(models.Model):
     def get_name(self):
         return "{} {}".format(self.user.last_name, self.user.first_name)
 
+    def get_latest_quiz(self):
+        quiz = self.studentscore_set.all().order_by('-pk')[:1]
+        return quiz
 
-@python_2_unicode_compatible
-class StudentExam(models.Model):
-    '''
-    학생에 할당 된 시험을 관리 
-    '''
-    student = models.ForeignKey(Student)
-    quiz = models.ForeignKey(Quiz)
-    create_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name_plural=u"시험 관리"
-        verbose_name=u"시험 관리"
-
-    def __str__(self):
-        return "{}-{}시험".format(self.student.get_name(), self.quiz.title)
-
-
-@python_2_unicode_compatible
-class StudentScore(models.Model):
-    '''
-    같은 시험을 몇번이고 볼 수 있다는 가정으로 각 시험의 점수를 별도로 저장 
-    '''
-    exam = models.ForeignKey(StudentExam)
-    score = models.PositiveSmallIntegerField(verbose_name=u"점수", default=0)
-    create_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name=u"성적"
-        verbose_name_plural=u"성적"
-
-    def __str__(self):
-        return "{}-{}시험-{}점".format(self.student.get_name(),
-                                    self.quiz.title,
-                                    self.score)
-
-
-@python_2_unicode_compatible
-class StudentAnswer(models.Model):
-    '''
-    각 시험의 문제별 학생이 입력한 답을 저장, 관리
-    '''
-    student = models.ForeignKey(Student)
-    quiz = models.ForeignKey(Quiz, default=None)
-    question = models.ForeignKey(Question)
-    answer = models.CharField(verbose_name=u"학생 답",
-                              max_length=512,
-                              blank=True, default='')
-    is_correct = models.BooleanField(verbose_name=u"정답?",
-                                     default=False)
-    create_date = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural=u"학생 답안지"
-        verbose_name=u"학생 답안지"
-
-    def __str__(self):
-        return "{} {}번:{}:{}".format(
-            self.student.get_name(),
-            self.question.id,
-            self.answer,
-            self.is_correct
-        )
+# @python_2_unicode_compatible
+# class StudentExam(models.Model):
+#     '''
+#     학생에 할당 된 시험을 관리
+#     '''
+#     student = models.ForeignKey(Student)
+#     quiz = models.ForeignKey(Quiz)
+#     create_date = models.DateTimeField(auto_now_add=True)
+#     update_date = models.DateTimeField(auto_now=True)
+#
+#     class Meta:
+#         verbose_name_plural=u"시험 관리"
+#         verbose_name=u"시험 관리"
+#
+#     def __str__(self):
+#         return "{}-{}시험".format(self.student.get_name(), self.quiz.title)
+#

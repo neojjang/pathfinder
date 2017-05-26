@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'quiz.apps.QuizConfig',
     'exam.apps.ExamConfig',
     'report.apps.ReportConfig',
+    'management.apps.ManagementConfig',
 
     'django_adminlte',
     'django_adminlte_theme',

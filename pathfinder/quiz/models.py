@@ -2,6 +2,7 @@
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from common.models import LEVEL_CHOICES, TYPE_CHOICES
+from accounts.models import Student
 # Create your models here.
 
 
@@ -104,6 +105,7 @@ class Quiz(models.Model):
         verbose_name=u"테스트 마감 날짜",
         null=True, blank=True)
     questions = models.ManyToManyField(Question, verbose_name=u"문제")
+    students = models.ManyToManyField(Student, verbose_name=u"학생")
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 
@@ -112,3 +114,53 @@ class Quiz(models.Model):
         verbose_name_plural=u"퀴즈 관리"
     def __str__(self):
         return "{}[{}]".format(self.title, self.get_level_display())
+
+
+
+@python_2_unicode_compatible
+class StudentScore(models.Model):
+    '''
+    같은 시험을 몇번이고 볼 수 있다는 가정으로 각 시험의 점수를 별도로 저장 
+    '''
+    quiz = models.ForeignKey(Quiz)
+    student = models.ForeignKey(Student)
+    score = models.PositiveSmallIntegerField(verbose_name=u"점수", default=0)
+    create_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name=u"성적"
+        verbose_name_plural=u"성적"
+
+    def __str__(self):
+        return "{}-{}시험-{}점".format(self.student.get_name(),
+                                    self.quiz.title,
+                                    self.score)
+
+
+@python_2_unicode_compatible
+class StudentAnswer(models.Model):
+    '''
+    각 시험의 문제별 학생이 입력한 답을 저장, 관리
+    '''
+    quiz = models.ForeignKey(Quiz)
+    student = models.ForeignKey(Student)
+    question = models.ForeignKey(Question)
+    answer = models.CharField(verbose_name=u"학생 답",
+                              max_length=512,
+                              blank=True, default='')
+    is_correct = models.BooleanField(verbose_name=u"정답?",
+                                     default=False)
+    create_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural=u"학생 답안지"
+        verbose_name=u"학생 답안지"
+
+    def __str__(self):
+        return "{} {}번:{}:{}".format(
+            self.student.get_name(),
+            self.question.id,
+            self.answer,
+            self.is_correct
+        )

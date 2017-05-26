@@ -12,6 +12,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Quiz, QuestionExample, Question, Explanations
 from .forms import QuizForm, QuestionForm, QuestionExampleForm, ExplanationsForm, QuizQuestionForm
 from common.models import LEVEL_CHOICES, TYPE_CHOICES
+from accounts.models import Student
 # Create your views here.
 
 log = logging.getLogger(__name__)
@@ -146,7 +147,7 @@ def delete_question(request, pk=None):
             except Explanations.DoesNotExist:
                 pass
             try:
-                Exam.objects.filter(question=question).delete()
+                Quiz.objects.filter(questions=question).delete()
             except Exception as e:
                 log.error(e)
                 pass
@@ -187,17 +188,32 @@ class ExamDetailView(StaffMemberRequiredMixin, View):
         exam = get_object_or_404(Quiz, pk=pk)
         log.debug(request.POST)
         cmd = request.POST.get("cmd")
-        questions = request.POST.get("questions")
-
+        questions = request.POST.getlist("questions")
+        students = request.POST.getlist("students")
         if cmd == 'add':
+            log.debug(questions)
             if questions and len(questions) > 0:
                 for id in questions:
                     exam.questions.add(Question.objects.get(pk=id))
                 exam.save()
         elif cmd == 'delete':
             if questions:
-                exam.questions.remove(Question.objects.get(pk=questions))
+                for id in questions:
+                    exam.questions.remove(Question.objects.get(pk=id))
                 exam.save()
+        elif cmd == 'add-member':
+            log.debug(students)
+            if students:
+                for id in students:
+                    log.debug('add-member.id=%s', id)
+                    exam.students.add(Student.objects.get(pk=id))
+                exam.save()
+        elif cmd == 'delete-member':
+            if students:
+                for id in students:
+                    exam.students.remove(Student.objects.get(pk=id))
+                exam.save()
+
         # my_obj.categories.add(fragmentCategory.objects.get(id=1))
         return render(request, 'quiz/exam.html', {
             'exam': exam
@@ -235,7 +251,7 @@ class ExamEditView(StaffMemberRequiredMixin, View):
         })
 
 
-class ExamAppendQuestion(StaffMemberRequiredMixin, View):
+class ExamAppendQuestionView(StaffMemberRequiredMixin, View):
     def get(self, request, pk=None):
         page = request.GET.get('p')
         level_id = request.GET.get("level")
@@ -282,6 +298,49 @@ class ExamAppendQuestion(StaffMemberRequiredMixin, View):
     def post(self, request, pk=None):
 
         pass
+
+class ExamAddMemberView(StaffMemberRequiredMixin, View):
+    def get(self, request, pk=None):
+        page = request.GET.get('p')
+        level_id = request.GET.get('level')
+        grade_id = request.GET.get('grade')
+        log.info(request.GET)
+
+        try:
+            quiz = Quiz.objects.get(pk=pk)
+        except Quiz.DoesNotExist:
+            quiz = None
+        if (not level_id or level_id =='all') and (not grade_id or grade_id == 'all'):
+            students = Student.objects.all().order_by('-pk')
+        else:
+            query = Q(is_activated=True)
+            if level_id != 'all':
+                query = Q(level=level_id)
+                level_id = int(level_id)
+            if grade_id != 'all':
+                query = query & Q(grade=grade_id)
+                grade_id = int(grade_id)
+            log.info(query)
+            students = Student.object.filter(query).order_by('-pk')
+        paginator = Paginator(students, 20)
+        try:
+            students = paginator.page(page)
+        except PageNotAnInteger:
+            students = paginator.page(1)
+        except EmptyPage:
+            students = paginator.page(paginator.num_pages)
+        level = [{"id": id, "title": title} for id, title in LEVEL_CHOICES]
+        grade = [{"id": id, "title": title} for id, title in Student.GRADE_CHOICES]
+        return render(request, 'quiz/exam_append_member.html', {
+            'quiz': quiz,
+            'students': students,
+            'level': level,
+            'grade': grade,
+            'level_id': level_id,
+            'grade_id': grade_id
+        })
+
+
 
 
 @staff_member_required

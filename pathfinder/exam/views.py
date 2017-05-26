@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View
-from accounts.models import StudentExam
+from quiz.models import Quiz
 # Create your views here.
 
 
@@ -16,7 +16,7 @@ class ExamListView(View):
         return self.show_list(request)
 
     def show_list(self, request):
-        exam_list = StudentExam.objects.filter(student=request.user)
+        exam_list = Quiz.objects.filter(students=request.user)
         return render(request, 'exam/exam_list.html', {
             'exam_list': exam_list
         })

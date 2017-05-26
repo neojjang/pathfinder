@@ -32,7 +32,8 @@
                 <div class="container">
                     <button data-href="{% url 'quiz:edit_quiz' exam.id %}" class="btn btn-primary menu">시험 편집</button>
                     <button data-href="{% url 'quiz:delete_quiz' exam.id %}" class="btn btn-danger menu">시험 삭제</button>
-                    <button data-href="{% url 'quiz:show_quiz_list' %}" class="btn btn-default menu">시험 리스트</button>
+                    |
+                    <button data-href="{% url 'quiz:show_quiz_list' %}" class="btn btn-default menu">시험 리스트 페이지로</button>
                 </div>
             </div>
         </div>
@@ -64,6 +65,38 @@
             </div>
 
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                학생 리스트 <button data-href="{% url 'quiz:add_member' exam.id %}" class="btn btn-primary btn-xs add-member">학생 추가</button>
+            </div>
+            <div class="panel-body">
+                <table class="table ">
+                    <thead>
+                        <th>번호</th>
+                        <th>이름</th>
+                        <th>학교</th>
+                        <th>학년</th>
+                        <th>레벨</th>
+                        <th>테스트 결과</th>
+                        <th></th>
+                    </thead>
+                    {% for student in exam.students.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ student.user.first_name }}</td>
+                        <td>{{ student.school_name }}</td>
+                        <td>{{ student.get_grade_display }}</td>
+                        <td>{{ student.get_level_display }}</td>
+                        <td></td>
+                        <td><button data-member-id="{{ student.id }}" class="btn btn-xs delete-member">삭제</button></td>
+                    </tr>
+                    {% empty %}
+                        <tr><td colspan="5">시험에 참가할 학생을 추가해 주세요.</td></tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+        </div>
 {#    </div>#}
     <form action="." method="post" id="form-add-question">
     {% csrf_token %}
@@ -74,6 +107,11 @@
     {% csrf_token %}
     <input type="hidden" name="cmd" value="delete" />
     </form>
+
+    <form action="." method="post" id="form-add-member">
+    {% csrf_token %}
+
+    </form>
 {% endblock content %}
 
 {% block extra_foot %}
@@ -81,6 +119,21 @@
     var add_question_window = null;
     var h = screen.height ; //$(window).height();
     var w = $(window).width() / 2;
+
+    $("button.add-member").click(function(e) {
+        add_question_window = window.open($(this).data("href"),
+            "add_question_window",
+            "toolbar=no ,location=0, status=no,titlebar=no,menubar=no,width="+w+",height="+h);
+        add_question_window.focus();
+    });
+    $("button.delete-member").click(function(e) {
+        var member_id = $(this).data("member-id");
+        $("#form-add-member").append('<input type="hidden" name="cmd" value="delete-member" />');
+        $("#form-add-member").append('<input type="hidden" name="students"  value="'+member_id+'" />');
+{#        $("input[name='questions']").val(question_id_list);#}
+        $("#form-add-member").submit();
+    });
+
     $("button.add-question").click(function(e) {
         add_question_window = window.open($(this).data("href"),
             "add_question_window",
@@ -106,6 +159,15 @@
         $("#form-add-question").submit();
     }
 
+    function add_member(exam_id, member_id_list) {
+        $("#form-add-member").append('<input type="hidden" name="cmd" value="add-member" />');
+        for(var i=0; i < member_id_list.length; i++) {
+            var hidden_input = '<input type="hidden" name="students"  value="'+member_id_list[i]+'" />';
+            $("#form-add-member").append(hidden_input);
+        }
+{#        $("input[name='questions']").val(question_id_list);#}
+        $("#form-add-member").submit();
+    }
 
     $(document).ready(function() {
 {#        // back버튼으로 뒤로 가기를 하는 경우를 방지 하기 위한 스크립트. HTML5에서만 가능#}

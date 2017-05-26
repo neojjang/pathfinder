@@ -4,7 +4,7 @@
 
     <div class="center-block" style="width:400px;max-width:100%;margin: 50px auto;">
         <p>
-            <button class="btn btn-lg btn-block btn-primary menu" data-href="">학생 관리</button>
+            <button class="btn btn-lg btn-block btn-primary menu" data-href="{% url 'quiz:list_member' %}">학생 관리</button>
         </p>
         <p>
             <button class="btn btn-lg btn-block btn-primary menu" data-href="{% url 'quiz:show_question_list' %}">
@@ -16,12 +16,6 @@
             시험 관리
             </button>
         </p>
-        <p>
-            <button class="btn btn-lg btn-block btn-primary menu" data-href="">
-            시험 배정
-            </button>
-        </p>
-
     </div>
 
 </div>

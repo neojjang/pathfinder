@@ -5,7 +5,8 @@ Created by yoonju on 2017. 5. 24.
 from django.conf.urls import url
 from quiz.views import delete_question, delete_quiz
 from quiz.views import QuestionListView, QuestionDetailView, QuestionEditView, \
-    ExamListView, ExamEditView, ExamDetailView, ExamAppendQuestion
+    ExamListView, ExamEditView, ExamDetailView, ExamAppendQuestionView, \
+    ExamAddMemberView
 from .views import ListMemberView, DetailMemberView, EditMemberView
 
 urlpatterns = [
@@ -13,7 +14,8 @@ urlpatterns = [
     url(r'^exam/(\d+)/$', ExamDetailView.as_view(), name='show_quiz'),
     url(r'^exam/(\d+)/edit/$', ExamEditView.as_view(), name='edit_quiz'),
     url(r'^exam/(\d+)/delete/$', delete_quiz, name='delete_quiz'),
-    url(r'^exam/(\d+)/questions/$', ExamAppendQuestion.as_view(), name='append_question'),
+    url(r'^exam/(\d+)/questions/$', ExamAppendQuestionView.as_view(), name='append_question'),
+    url(r'^exam/(\d+)/add-member/$', ExamAddMemberView.as_view(), name='add_member'),
     url(r'^exams/$', ExamListView.as_view(), name='show_quiz_list'),
 
     url(r'^question/create/$', QuestionEditView.as_view(), name='create_question'),
@@ -25,4 +27,5 @@ urlpatterns = [
     url(r'^student/list/$', ListMemberView.as_view(), name='list_member'),
     url(r'^student/(\d+)/$', DetailMemberView.as_view(), name='show_member'),
     url(r'^student/(\d+)/edit/$', EditMemberView.as_view(), name='edit_member'),
+    url(r'^student/(\d+)/delete/$', EditMemberView.as_view(), name='delete_member'),
 ]
