@@ -1,8 +1,151 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load humanize %}
+{% load custom_tags %}
 
+{% block title %}패스파인더 : {{ student.user.first_name }} 학생{% endblock %}
+
+{% block extra_head %}
+    <style>
+{#        table.quiz-table {#}
+{#                width: 100%;#}
+{#            }#}
+{##}
+{#        .quiz-table thead, tbody, tr, td, th { display: block; }#}
+{##}
+{#        .quiz-table  tr:after {#}
+{#            content: ' ';#}
+{#            display: block;#}
+{#            visibility: hidden;#}
+{#            clear: both;#}
+{#        }#}
+{##}
+{#        .quiz-table  thead th {#}
+{#            height: 30px;#}
+{##}
+{#            /*text-align: left;*/#}
+{#        }#}
+{##}
+{#        .quiz-table tbody {#}
+{#            min-height: 250px;#}
+{#            overflow-y: auto;#}
+{#        }#}
+{##}
+{#        .quiz-table thead {#}
+{#            /* fallback */#}
+{#        }#}
+{##}
+{##}
+{#        .quiz-table tbody td, .quiz-table > thead th {#}
+{#            width: 19.2%;#}
+{#            float: left;#}
+{#        }#}
+
+        .container.quiz-detail {
+            width: 100%;
+{#            background-color: white;#}
+        }
+        .row.quiz-detail-border {
+
+            border-bottom: 1px solid gray;
+        }
+    </style>
+{% endblock %}
+
+{% block page_name %}
+학생 관리 : {{ student.user.first_name }}
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li><a href="/manage/student/list/">학생 관리 </a></li>
+        <li class="active">학생 상황</li>
+    </ol>
+{% endblock %}
 
 
 {% block content %}
-학생 정보, 학생에게 할당 된 시험 리스트와 시험 결과 점수
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="box box-primary">
+                    <div class="box-body">
+                        <ul class="list-group ">
+                            <li class="list-group-item">
+                                <b>아이디</b> <span class="pull-right"><b>{{ student.user.username }}</b></span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>학교</b> <span class="pull-right">{% if student.school_name %}{{ student.school_name }}{% else %}모름{% endif %}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>학년</b> <span class="pull-right">{{ student.get_grade_display }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>현재 수준</b> <span class="pull-right">{{ student.get_level_display }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>등록일</b> <span class="pull-right">{{ student.create_date|date:"Y-m-d" }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="box box-warning">
+                    <div class="box-header">
+                        <h3 class="box-title">테스트 리스트</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover quiz-table">
+                                <thead class="quiz-table-thead">
+                                    <tr>
+                                        <th style="width:40%;">테스트 제목</th>
+                                        <th style="width:10%;">테스트 수준</th>
+                                        <th style="width:20%;">시작 날짜</th>
+                                        <th style="width:20%;">종료 날짜</th>
+                                        <th style="width:10%;">결과</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="quiz-table-tbody">
+                                    {% for quiz in student.quiz_set.all %}
+                                        <tr class="accordion-toggle" data-toggle="collapse" data-target="#{{ quiz.id }}-detail">
+                                            <td style="width:40%;">{{ quiz.title }}</td>
+                                            <td style="width:10%;">{{ quiz.get_level_display }}</td>
+                                            <td style="width:20%;">{{ quiz.starting_date|date:'Y.m.d' }} <span class="hidden-xs">{{ quiz.starting_date|date:'H:s:i' }}</span> </td>
+                                            <td style="width:20%;">{{ quiz.closing_date|date:'Y.m.d' }} <span class="hidden-xs">{{ quiz.closing_date|date:'H:s:i' }}</span> </td>
+                                            <td style="width:10%;">{{ quiz|get_score:student }}</td>
+                                        </tr>
+                                        <tr class="accordion-body collapse" id="{{ quiz.id }}-detail">
+                                            <td colspan="5">
+                                                <div class="box box-success quiz-detail" >
+                                                    <div class="box-body">
+                                                        <ul class="list-group ">
+                                                            <li class="list-group-item">
+                                                               <span>테스트 날짜</span>
+                                                                <span class="pull-right">점수</span>
+                                                            </li>
+                                                            {% for student_score in quiz|get_studentscore_list:student %}
+                                                                <li class="list-group-item">
+                                                                    <span>{{ student_score.create_date|date:'Y.m.d H:s:i' }}</span>
+                                                                    <b class="pull-right">{{ student_score.score }}</b>
+                                                                </li>
+                                                            {% empty %}
+                                                                <li class="list-group-item text-red">테스트 참여 자료가 없습니다.</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 {% endblock %}

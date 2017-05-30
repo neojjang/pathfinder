@@ -51,6 +51,13 @@ class Student(models.Model):
         quiz = self.studentscore_set.all().order_by('-pk')[:1]
         return quiz
 
+    def get_latest_score(self, quiz):
+        student_score = self.studentscore_set.filter(quiz=quiz).order_by('-update_date')
+        if len(student_score) == 0:
+            return 'X'
+        else:
+            return student_score[0].score
+
 # @python_2_unicode_compatible
 # class StudentExam(models.Model):
 #     '''

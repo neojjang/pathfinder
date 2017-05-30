@@ -115,6 +115,10 @@ class Quiz(models.Model):
     def __str__(self):
         return "{}[{}]".format(self.title, self.get_level_display())
 
+    def get_latest_score(self, student):
+        student_score = self.studentscore_set.filter(student=student).order_by('-update_date')
+        if len(student_score) == 0: return 'X'
+        return student_score[0].score
 
 
 @python_2_unicode_compatible
