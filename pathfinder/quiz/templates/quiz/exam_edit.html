@@ -2,9 +2,9 @@
 {% load staticfiles %}
 
 {% block title %}패스파인더 : 테스트 만들기{% endblock title %}
-{% block css %}
+{% block extra_head %}
     <link href="{% static 'css/bootstrap-datetimepicker.css' %}" rel="stylesheet" media="screen" />
-{% endblock css %}
+{% endblock extra_head %}
 
 {% block page_name %}
     테스트 작성
@@ -115,10 +115,10 @@
 
 {% endblock content %}
 
-{% block aftercontent %}
+{% block extra_foot %}
     <script type="application/javascript" src="{% static 'js/bootstrap-datetimepicker.js' %}" ></script>
     <script type="application/javascript">
         $(".starting_date").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
         $(".closing_date").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
     </script>
-{% endblock aftercontent %}
+{% endblock extra_foot %}

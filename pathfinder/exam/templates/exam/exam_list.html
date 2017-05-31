@@ -1,10 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% load custom_tags %}
 
-</body>
-</html>
+{% block title %}패스파인더 : 테스트 리스트{% endblock %}
+
+{% block page_name %}
+    테스트 리스트
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">홈 </a></li>
+        <li class="active">테스트 관리</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+        <div class="content-wrapper">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <th class="col-md-1">#</th>
+                            <th class="col-md-3">시험 제목</th>
+                            <th class="col-md-1">참여</th>
+                            <th class="col-md-2">시작</th>
+                            <th class="col-md-2">종료</th>
+                            <th class="col-md-1">시험 수준</th>
+                            <th class="col-md-2"></th>
+                        </thead>
+                        {% for exam in exam_list %}
+                            <tr class="" exam_id="{{ exam.pk }}">
+                                <td class="col-md-1"><a href="{% url 'quiz:show_quiz' exam.pk %}">{{ exam.pk }}</a> </td>
+                                <td class="col-md-3" id="exam-{{ exam.pk }}">{{ exam.title }}</td>
+                                <td class="col-md-1">
+                                    <b class="label bg-red">{{ exam|get_score:student }}</b>
+                                    {% if exam.is_timeover %}<b class="label bg-red">마감</b>{% endif %}
+                                </td>
+                                <td class="col-md-2">{{ exam.starting_date|date:"Y-m-d H:i" }}</td>
+                                <td class="col-md-2">{{ exam.closing_date|date:"Y-m-d H:i" }}</td>
+                                <td class="col-md-1">{{ exam.get_level_display }}</td>
+                                <td class="col-md-2">
+                                    {% if not exam.is_timeover %}
+                                    <button class="btn btn-primary exam" exam_id="{{ exam.pk }}">테스트 보기</button>
+                                    {% endif %}
+                                    <button class="btn btn-success menu" data-href="/">결과 보기</button>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td class="bg-info" colspan="5"> <p>등록 된 테스트가 없습니다. </p></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <div>
+                        {% include 'quiz/paginator.html' with paginator=exam_list %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="application/javascript">
+    $(".exam").click(function(e) {
+        var no = $(this).attr("exam_id");
+        var title = $("#exam-"+no).text();
+        var yesno = window.confirm("<"+title+">\n\n테스트를 시작하시겠습니까?");
+        if(yesno) {
+            var link = "{% url 'exam:start_exam' 12345 %}";
+            link = link.replace('12345', no);
+            location.href = link;
+        }
+
+    })
+    </script>
+{% endblock %}

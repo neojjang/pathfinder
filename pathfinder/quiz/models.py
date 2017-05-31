@@ -1,6 +1,8 @@
 #-*- coding: utf-8 -*-
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
+from django.utils import timezone
+
 from common.models import LEVEL_CHOICES, TYPE_CHOICES
 from accounts.models import Student
 # Create your models here.
@@ -119,6 +121,8 @@ class Quiz(models.Model):
         student_score = self.studentscore_set.filter(student=student).order_by('-update_date')
         if len(student_score) == 0: return 'X'
         return student_score[0].score
+    def is_timeover(self):
+        return self.closing_date < timezone.now()
 
 
 @python_2_unicode_compatible
