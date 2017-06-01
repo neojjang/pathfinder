@@ -114,6 +114,7 @@ class Quiz(models.Model):
     class Meta:
         verbose_name=u"퀴즈 관리"
         verbose_name_plural=u"퀴즈 관리"
+        ordering=['-pk']
     def __str__(self):
         return "{}[{}]".format(self.title, self.get_level_display())
 
