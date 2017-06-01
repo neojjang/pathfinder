@@ -5,6 +5,13 @@
 
 {% block title %}패스파인더 : 테스트 리스트{% endblock %}
 
+{% block extra_css %}
+{#    thead th {#}
+{#        font-size:14px;#}
+{#    }#}
+
+
+{% endblock %}
 {% block page_name %}
     테스트 리스트
 {% endblock %}
@@ -32,16 +39,20 @@
                         </thead>
                         {% for exam in exam_list %}
                             <tr class="" exam_id="{{ exam.pk }}">
-                                <td class="col-md-1"><a href="{% url 'quiz:show_quiz' exam.pk %}">{{ exam.pk }}</a> </td>
-                                <td class="col-md-3" id="exam-{{ exam.pk }}">{{ exam.title }}</td>
-                                <td class="col-md-1">
-                                    <b class="label bg-red">{{ exam|get_score:student }}</b>
+                                <td class="col-md-1" style=" vertical-align: middle;"><a href="{% url 'quiz:show_quiz' exam.pk %}">{{ exam.pk }}</a> </td>
+                                <td class="col-md-3" id="exam-{{ exam.pk }}" style=" vertical-align: middle;">
+                                    {{ exam.title }}
+                                </td>
+                                <td class="col-md-1" style=" vertical-align: middle;">
+                                {% with application=exam|get_score:student %}
+                                    <b class="label bg-red">{{ application }}</b>
+                                {% endwith %}
                                     {% if exam.is_timeover %}<b class="label bg-red">마감</b>{% endif %}
                                 </td>
-                                <td class="col-md-2">{{ exam.starting_date|date:"Y-m-d H:i" }}</td>
-                                <td class="col-md-2">{{ exam.closing_date|date:"Y-m-d H:i" }}</td>
-                                <td class="col-md-1">{{ exam.get_level_display }}</td>
-                                <td class="col-md-2">
+                                <td class="col-md-2" style=" vertical-align: middle;">{{ exam.starting_date|date:"Y-m-d H:i" }}</td>
+                                <td class="col-md-2" style=" vertical-align: middle;">{{ exam.closing_date|date:"Y-m-d H:i" }}</td>
+                                <td class="col-md-1" style=" vertical-align: middle;">{{ exam.get_level_display }}</td>
+                                <td class="col-md-2" style=" vertical-align: middle;">
                                     {% if not exam.is_timeover %}
                                     <button class="btn btn-primary exam" exam_id="{{ exam.pk }}">테스트 보기</button>
                                     {% endif %}

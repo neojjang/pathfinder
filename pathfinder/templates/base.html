@@ -1,6 +1,17 @@
 {% extends 'adminlte/base.html' %}
 {% block title %}패스파인더{% endblock %}
 
+{% block stylesheets %}
+    {% include 'adminlte/lib/_styles.html' %}
+    <style>
+    table tbody td, table thead th {
+        font-size: 14px;
+    }
+    {% block extra_css %}{% endblock %}
+    </style>
+
+{% endblock %}
+
 {% block extra_head %}{% endblock %}
 
 
