@@ -6,6 +6,11 @@
     <link href="{% static 'css/bootstrap-datetimepicker.css' %}" rel="stylesheet" media="screen" />
 {% endblock extra_head %}
 
+{% block nav_sidebar %}
+        {% include 'manager_side_menu.html' %}
+{% endblock %}
+
+
 {% block page_name %}
     테스트 작성
 {% endblock %}

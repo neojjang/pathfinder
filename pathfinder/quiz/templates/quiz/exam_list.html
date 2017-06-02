@@ -4,6 +4,11 @@
 
 {% block title %}패스파인더 : 테스트 리스트{% endblock %}
 
+{% block nav_sidebar %}
+        {% include 'manager_side_menu.html' %}
+{% endblock %}
+
+
 {% block page_name %}
     테스트 관리
 {% endblock %}
@@ -16,7 +21,7 @@
 
 {% block content %}
 
-        <div class="content-wrapper">
+{#        <div class="content-wrapper">#}
             <ul class="list-inline">
                 <li class=""><button class="btn btn-danger menu" data-href="{% url 'quiz:create_quiz' %}"> 테스트 작성 </button></li>
             </ul>
@@ -50,7 +55,7 @@
                 </div>
             </div>
 
-        </div>
+{#        </div>#}
 
 {% endblock %}
 

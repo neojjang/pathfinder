@@ -15,7 +15,14 @@ def view_top(request):
 
 class TopView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'top.html', {})
+        if request.user.is_authenticated:
+            # 학생/선생님에 따라 대시보드가 다름
+            if request.user.is_staff:
+                return render(request, 'manager-top.html', {})
+            else:
+                return render(request, 'student-top.html', {})
+        else:
+            return render(request, 'top.html', {})
 
 class DashboardView(View):
 

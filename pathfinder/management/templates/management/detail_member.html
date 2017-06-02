@@ -5,8 +5,11 @@
 
 {% block title %}패스파인더 : {{ student.user.first_name }} 학생{% endblock %}
 
-{% block extra_head %}
-    <style>
+{% block nav_sidebar %}
+        {% include 'manager_side_menu.html' %}
+{% endblock %}
+
+{% block extra_css %}
 {#        table.quiz-table {#}
 {#                width: 100%;#}
 {#            }#}
@@ -49,7 +52,6 @@
 
             border-bottom: 1px solid gray;
         }
-    </style>
 {% endblock %}
 
 {% block page_name %}
@@ -65,7 +67,6 @@
 
 
 {% block content %}
-    <div class="content-wrapper">
         <div class="row">
             <div class="col-md-3">
                 <div class="box box-primary">
@@ -147,5 +148,4 @@
 
             </div>
         </div>
-    </div>
 {% endblock %}

@@ -2,37 +2,14 @@
 {% load staticfiles %}
 {% load static %}
    {% block title %}Log-in{% endblock %}
-{#{% block css %}#}
-{#    <link href="{% static 'accounts/css/signin.css' %}" rel="stylesheet" />#}
-{#{% endblock %}#}
-{#{% block content %}#}
-{#    <div class="login-form">#}
-{##}
-{#       <form class="form-signin" method="post" action="{% url 'accounts:login' %}">#}
-{#       {% csrf_token %}#}
-{#       <input type="hidden" name="next" value="{{ next }}" />#}
-{#        <h2 class="form-signin-heading">로그인</h2>#}
-{#        {% if form.errors %}#}
-{#        <ul class="errorlist">#}
-{#        <li>You entered an invalid username or password.</li>#}
-{#        </ul>#}
-{#        <br />#}
-{#        {% endif %}#}
-{#        <label for="inputEmail" class="sr-only">{{ form.username.label_tag }}</label>#}
-{#        <input autofocus="" id="id_username" maxlength="254" class="form-control"#}
-{#              name="username" type="text" required="" placeholder="아이디">#}
-{#       <label for="inputPassword" class="sr-only">{{ form.password.label_tag }}</label>#}
-{#       <input id="id_password" name="password" type="password" required=""#}
-{#              class="form-control" placeholder="비밀번호">#}
-{#        <div class="checkbox">#}
-{#          <label>#}
-{#            <input type="checkbox" value="remember-me"> Remember me#}
-{#          </label>#}
-{#        </div>#}
-{#        <button class="btn btn-lg btn-primary btn-block" type="submit"> 로그인 </button>#}
-{#      </form>#}
-{#    </div>#}
-{#{% endblock %}#}
+
+{% block body_class %}{%  if not user.is_authenticated %}layout-top-nav{% endif %}{% endblock %}
+{% block nav_sidebar %}
+{% endblock %}
+
+{% block nav_header %}
+    {% include 'header.html' %}
+{% endblock %}
 
 {% block content %}
 <div class="login-box">

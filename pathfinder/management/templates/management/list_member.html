@@ -4,8 +4,12 @@
 
 {% block title %}패스파인더 : 학생 리스트{% endblock %}
 
-{% block page_name %}
+{% block nav_sidebar %}
+        {% include 'manager_side_menu.html' %}
+{% endblock %}
 
+{% block page_name %}
+학생 관리
 {% endblock %}
 {% block breadcrumbs %}
     <ol class="breadcrumb">
@@ -16,13 +20,13 @@
 
 {% block content %}
 
-    <div class="content-wrapper">
         <div class="box">
             <div class="box-header">
-                <h3>학생 관리</h3>
+                <h3>&nbsp;</h3>
                 <div class="box-tools" style="top:25px;">
                     <form action="." method="get">
                         <ul class="list-inline">
+                            <li>검색 :</li>
                             <li>
                                 <select name="level" onchange="this.form.submit()">
                                     <option value="all">모든 수준</option>
@@ -101,7 +105,6 @@
                 {% include 'quiz/paginator.html' with paginator=students %}
             </div>
         </div>
-    </div>
 
 {% endblock %}
 

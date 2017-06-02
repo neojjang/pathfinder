@@ -26,8 +26,23 @@ class StaffMemberRequiredMixin(object):
 class QuestionListView(StaffMemberRequiredMixin, View):
     def get(self, request):
         page = request.GET.get('p')
+        level_id = request.GET.get("level")
+        question_type_id = request.GET.get("question_type")
+        log.info(request.GET)
 
-        questions = Question.objects.all().order_by('-pk')
+        if (not level_id or level_id == 'all') and (not question_type_id or question_type_id == 'all'):
+            questions = Question.objects.all().order_by('-pk')
+        else:
+            query = Q();
+            if level_id and level_id != 'all':
+                query = Q(level=level_id)
+                level_id = int(level_id)
+            if question_type_id and question_type_id != 'all':
+                query = query & Q(question_type=question_type_id)
+                question_type_id = int(question_type_id)
+            log.info(query)
+            questions = Question.objects.filter(query).order_by('-pk')
+
         paginator = Paginator(questions, 20)
         try:
             questions = paginator.page(page)
@@ -36,8 +51,15 @@ class QuestionListView(StaffMemberRequiredMixin, View):
         except EmptyPage:
             questions = paginator.page(paginator.num_pages)
 
+        level = [{"id": id, "title": title} for id, title in LEVEL_CHOICES]
+        question_type = [{"id": id, "title": title} for id, title in TYPE_CHOICES]
+
         return render(request, 'quiz/question_list.html', {
-            'questions': questions
+            'questions': questions,
+            'level': level,
+            'level_id': level_id,
+            'question_type': question_type,
+            'question_type_id': question_type_id
         })
 
 
