@@ -1,47 +1,70 @@
 {% extends 'base.html' %}
 {% block title %}패스파인더{% endblock %}
 
-{% block body_class %}{%  if not user.is_authenticated %}layout-top-nav{% endif %}{% endblock %}
+{% block body_class %}{% endblock %}
 
 {% block nav_header %}
     {% include '_main_header.html' %}
 {% endblock %}
 
 {% block nav_sidebar %}
-    {%  if not user.is_authenticated %}
-{#        {% include 'adminlte/lib/_main_sidebar.html' %}#}
-    {% endif %}
+        {% include 'student_side_menu.html' %}
 {% endblock %}
 {% block currentmenu %}
 
     {%  if user.is_authenticated %}
-         {% if user.is_staff %}
-            <strong>관리자 페이지</strong>
-        {% else %}
-            <strong>{{ user.get_full_name }}</strong>
-        {% endif %}
+            <strong>{{ user.username }}</strong>
     {% endif %}
 {% endblock %}
 {% block content %}
-    {%  if user.is_authenticated %}
-         {% include 'student_menu.html' %}
-    {% else %}
-    <div class="jumbotron bg-blue-gradient" >
-        <div class="container">
-            <h1>
-                패스파인더
-            </h1>
-            <p>
-                전국 최고 영어 전문 학원
-            </p>
-            <button class="btn btn-primary menu" data-href="{% url 'accounts:login' %}">
-                로그인
-            </button>
-            <button class="btn btn-success menu"  data-href="{% url 'accounts:regist' %}">회원 가입</button>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-info col-md-12">
+                <div class="box-header">
+                    <h2>최근 참여한 테스트 </h2>
+                </div>
+                <div class="box-body">
+                    <table class="table-responsive">
+                        <tr>
+                            <td>테스트 </td>
+                            <td>날짜</td>
+                            <td>결과</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-danger col-md-12">
+                <div class="box-header">
+                    <h2>나의 테스트 </h2>
+                </div>
+                <div class="box-body">
+                    <table class="table-responsive">
+                        <tr>
+                            <td>테스트 </td>
+                            <td>날짜</td>
+                            <td>수준</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    {% endif %}
+
+
+{#    <div class="box box-info col-md-12">#}
+{#        <div class="box-header">#}
+{#            <h2> </h2>#}
+{#        </div>#}
+{#        <div class="box-body">#}
+{##}
+{#        </div>#}
+{#    </div>#}
 {% endblock %}
 
 {% block nav_footer %}
