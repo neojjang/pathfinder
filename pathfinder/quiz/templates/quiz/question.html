@@ -9,7 +9,7 @@
 
 
 {% block page_name %}
-    문제
+    문제 : {{ question.title }}
 {% endblock %}
 {% block breadcrumbs %}
     <ol class="breadcrumb">
@@ -32,15 +32,18 @@
                                 <dd>
                                     {{ question.get_question_type_display }}
                                 </dd>
-                                <dt>문제</dt>
-                                <dd>
-                                    {{ question.title }}
-                                </dd>
+{#                                <dt>문제</dt>#}
+{#                                <dd>#}
+{#                                    {{ question.title }}#}
+{#                                </dd>#}
                                 <dt>지문</dt>
                                 <dd>
-                                    <div style="height: 400px; overflow-y: scroll; border: 1px solid gray;">
+                                    <pre class="prettyprint">
                                         {{ question.text|safe }}
-                                    </div>
+                                    </pre>
+{#                                    <div style="height: 400px; overflow-y: scroll; border: 1px solid gray;">#}
+{#                                        #}
+{#                                    </div>#}
                                 </dd>
                             </dl>
                         </div>
@@ -75,7 +78,9 @@
                                     {% endif %}
                                 </dd>
                                 <dt>설명</dt>
-                                <dd>{{ question.explanations.content }}</dd>
+                                <dd>
+                                    <pre style="height:100px; width:auto;">{{ question.explanations.content }}</pre>
+                                </dd>
                             </dl>
                         </div>
                 </div>

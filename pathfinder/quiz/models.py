@@ -140,6 +140,7 @@ class StudentScore(models.Model):
     class Meta:
         verbose_name=u"성적"
         verbose_name_plural=u"성적"
+        ordering=['-pk',]
 
     def __str__(self):
         return "{}-{}시험-{}점".format(self.student.get_name(),
