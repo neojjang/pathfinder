@@ -5,12 +5,12 @@
 
 {% block title %}패스파인더 : 테스트 리스트{% endblock %}
 
-{% block extra_css %}
-{#    thead th {#}
-{#        font-size:14px;#}
-{#    }#}
+{% block nav_header %}
+    {% include '_main_header.html' %}
+{% endblock %}
 
-
+{% block nav_sidebar %}
+        {% include 'student_side_menu.html' %}
 {% endblock %}
 {% block page_name %}
     테스트 리스트
@@ -84,6 +84,6 @@
             location.href = link;
         }
 
-    })
+    });
     </script>
 {% endblock %}
