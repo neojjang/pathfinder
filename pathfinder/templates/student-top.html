@@ -24,12 +24,29 @@
                     <h2>최근 참여한 테스트 </h2>
                 </div>
                 <div class="box-body">
-                    <table class="table-responsive">
-                        <tr>
-                            <td>테스트 </td>
-                            <td>날짜</td>
-                            <td>결과</td>
-                        </tr>
+                    <table class="table table-hover table-responsive">
+                        <thead>
+                            <tr>
+                                <th class="col-md-7">테스트 </th>
+                                <th class="col-md-2">수준</th>
+                                <th class="col-md-2">날짜</th>
+                                <th class="col-md-1">결과</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for test in tested_exam %}
+                                <tr>
+                                    <td>{{ test.quiz.title }}</td>
+                                    <td>{{ test.quiz.get_level_display }}</td>
+                                    <td>{{ test.create_date|date:"Y.m.d H:s" }}</td>
+                                    <td>{{ test.score }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-red">최근 참여한 테스트가 없습니다.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -43,28 +60,34 @@
                     <h2>나의 테스트 </h2>
                 </div>
                 <div class="box-body">
-                    <table class="table-responsive">
-                        <tr>
-                            <td>테스트 </td>
-                            <td>날짜</td>
-                            <td>수준</td>
-                        </tr>
+                    <table class="table table-hover table-responsive">
+                        <thead>
+                            <tr>
+                                <th class="col-md-8">테스트 </th>
+                                <th class="col-md-2">수준</th>
+                                <th class="col-md-2">마감 날짜</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for exam in exam_list %}
+                            <tr class="exam" data-exam-id="{{ exam.pk }}">
+                                <td class="col-md-8" id="exam-{{ exam.pk }}">{{ exam.title }}</td>
+                                <td class="col-md-2">{{ exam.get_level_display }}</td>
+                                <td class="col-md-2">{{ exam.closing_date|date:"Y.m.d H:s" }}</td>
+                            </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-red">참여해야 할 테스트가 없습니다.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-{#    <div class="box box-info col-md-12">#}
-{#        <div class="box-header">#}
-{#            <h2> </h2>#}
-{#        </div>#}
-{#        <div class="box-body">#}
-{##}
-{#        </div>#}
-{#    </div>#}
+    {% include 'confirm-dialog.html' %}
 {% endblock %}
 
 {% block nav_footer %}
@@ -77,5 +100,28 @@
         e.preventDefault();
         location.href = $(this).data("href");
     });
+
+    var exam_id = 0;
+    $(".exam").click(function(e) {
+        exam_id = $(this).data("exam-id");
+        var title = $("#exam-"+exam_id).text();
+        $("#confirm-title").html(title);
+        $("#confirm-test").modal('toggle');
+
+{#        var yesno = window.confirm("<"+title+">\n\n테스트를 시작하시겠습니까?", "패스파인");#}
+{#        if(yesno) {#}
+{#            var link = "{% url 'exam:start_exam' 12345 %}";#}
+{#            link = link.replace('12345', no);#}
+{#            location.href = link;#}
+{#        }#}
+    });
+    $("#confirm-test-ok").click(function(e) {
+        e.preventDefault();
+        $("#confirm-test").modal('toggle');
+        var link = "{% url 'exam:start_exam' 12345 %}";
+        link = link.replace('12345', exam_id);
+        location.href = link;
+    })
+
     </script>
 {% endblock %}

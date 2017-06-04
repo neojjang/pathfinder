@@ -24,13 +24,31 @@
                     <h2>테스트 참여 현황</h2>
                 </div>
                 <div class="box-body">
-                    <table class="table-responsive">
-                        <tr>
-                            <td>이름</td>
-                            <td>테스트 </td>
-                            <td>시간</td>
-                            <td>결과</td>
-                        </tr>
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">이름</th>
+                                <th class="col-md-4">테스트 이름</th>
+                                <th class="col-md-2">테스트 수준</th>
+                                <th class="col-md-3">날짜</th>
+                                <th class="col-md-1">결과</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for test in tested_students %}
+                                <tr>
+                                    <td>{{ test.student.user.last_name }}{{ test.student.user.first_name }}</td>
+                                    <td>{{ test.quiz.title }}</td>
+                                    <td>{{ test.quiz.get_level_display }}</td>
+                                    <td>{{ test.create_date|date:"Y.m.d H:s" }}</td>
+                                    <td>{{ test.score }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-red">테스트에 참여한 학생이 없습니다.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
                 </div>
             </div>

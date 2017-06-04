@@ -20,6 +20,22 @@
 
     {% endblock %}
     <style>
+        pre.prettyprint {
+          background: white;
+          font-family: Menlo, 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Consolas, monospace;
+          font-size: 12px;
+          line-height: 1.5;
+          border: 1px solid #dedede!important;
+          padding: 10px;
+          max-height: 300px;
+          height: 300px;
+          width: auto;
+          overflow: auto!important;
+        }
+        pre.prettyprint > code {
+          width: auto;
+          overflow: auto!important;
+        }
     table tbody td, table thead th {
         font-size: 14px;
     }
@@ -27,6 +43,9 @@
     dd {
         padding-top: 3px;
         vertical-align: middle;
+    }
+    dd, dt {
+        font-size: 14px;
     }
 
     {% block extra_css %}{% endblock %}
