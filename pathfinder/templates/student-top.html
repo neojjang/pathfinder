@@ -35,7 +35,7 @@
                         </thead>
                         <tbody>
                             {% for test in tested_exam %}
-                                <tr>
+                                <tr class="report" data-exam-id="{{ test.id }}">
                                     <td>{{ test.quiz.title }}</td>
                                     <td>{{ test.quiz.get_level_display }}</td>
                                     <td>{{ test.create_date|date:"Y.m.d H:s" }}</td>
@@ -101,6 +101,14 @@
         location.href = $(this).data("href");
     });
 
+    $(".report").click(function(e) {
+        e.preventDefault();
+        var exam_id = $(this).data("exam-id");
+        var link = "{% url 'report:view_detail' 12345 %}";
+        link = link.replace('12345', exam_id);
+        location.href = link;
+    });
+
     var exam_id = 0;
     $(".exam").click(function(e) {
         exam_id = $(this).data("exam-id");
@@ -118,10 +126,10 @@
     $("#confirm-test-ok").click(function(e) {
         e.preventDefault();
         $("#confirm-test").modal('toggle');
-        var link = "{% url 'exam:start_exam' 12345 %}";
+        var link = "{% url 'exam:take_exam' 12345 %}";
         link = link.replace('12345', exam_id);
         location.href = link;
-    })
+    });
 
     </script>
 {% endblock %}

@@ -9,7 +9,7 @@
             <div class="pull-left image">
                 <img src="{% avatar_url size=90 %}" class="img-circle" alt="User Image">
             </div>
-            <div class="pull-left info">
+            <div class="pull-left info" data-href="{% url 'accounts:view_profile' %}" onclick="location.href=$(this).data('href');">
                 <p>{{ request.user.username }}({{ request.user.last_name }}{{ request.user.first_name }})</p>
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
