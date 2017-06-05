@@ -79,7 +79,7 @@
         var title = $("#exam-"+no).text();
         var yesno = window.confirm("<"+title+">\n\n테스트를 시작하시겠습니까?");
         if(yesno) {
-            var link = "{% url 'exam:start_exam' 12345 %}";
+            var link = "{% url 'exam:take_exam' 12345 %}";
             link = link.replace('12345', no);
             location.href = link;
         }

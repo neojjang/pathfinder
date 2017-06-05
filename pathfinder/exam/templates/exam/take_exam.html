@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% load custom_tags %}
+
+{% block title %}패스파인더 : 테스트 보기{% endblock %}
+
+{% block extra_css %}
+    .question{
+
+		display:none;
+	}
+{% endblock %}
+
+{% block body_class %}layout-top-nav{% endblock %}
+
+{% block nav_header %}
+    {% include 'header.html' %}
+{% endblock %}
+
+{% block nav_sidebar %}
+
+{% endblock %}
+
+{% block page_name %}
+    테스트 : {{ exam.title }}
+{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+
+
+{% block content %}
+    <div class="container">
+    <form action="." method="post">
+    {% for question in exam.questions.all %}
+        <div class="row question" id="question-id{{ forloop.counter }}" data-limit-time="{{ question.limit_time }}">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h4>[{{ forloop.counter }} / {{ exam.questions|length }}] {{ question.title }}</h4>
+                    <div class="box-tools" style="margin-top:15px;">
+                        <p>Time left: <span id="timer-{{ question.pk }}">00:00:00</span></p>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <pre style="height:400px; overflow-y:auto;">
+                        {{ question.text|safe }}
+                    </pre>
+                    <p>
+                        보기 :
+                    </p>
+                    {% with example=question.questionexample %}
+                    <div class="btn-group" data-toggle="buttons">
+                        <p>
+                            1. <label class="btn  active"  style="width:300px;">
+                                <input type="radio" id="question-{{ question.pk }}-1"
+                                       autocomplete="off"
+                                       value="1"
+                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_1 }}
+                            </label>
+                        </p>
+                        <p>
+                            2. <label class="btn  active " style="width:300px;">
+                                <input type="radio" id="question-{{ question.pk }}-2"
+                                       autocomplete="off"
+                                       value="2"
+                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_2 }}
+                            </label>
+                        </p>
+                        <p>
+                            <label class="btn  active"  style="width:300px;">
+                                3. <input type="radio" id="question-{{ question.pk }}-3"
+                                       autocomplete="off"
+                                       value="3"
+                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_3 }}
+                            </label>
+                        </p>
+                        <p>
+                            <label class="btn  active "  style="width:300px;">
+                                4. <input type="radio" id="question-{{ question.pk }}-4"
+                                       autocomplete="off"
+                                       value="4"
+                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_4 }}
+                            </label>
+                        </p>
+                        <p>
+                            <label class="btn  active "  style="width:300px;">
+                                5. <input type="radio" id="question-{{ question.pk }}-5"
+                                       autocomplete="off"
+                                       value="5"
+                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_5 }}
+                            </label>
+                        </p>
+                    </div>
+                    {% endwith %}
+                </div>
+                <div class="box-footer">
+                    <button class="btn btn-success" data-prev="">이전문제</button>
+                    <button class="btn btn-success" data-next="">다음문제</button>
+                    <button class="btn btn-danger pull-right">제출하기</button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </form>
+    </div>
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="text/javascript">
+        function show_question(qid) {
+            $(".question").hide();
+            $("#question-id"+qid).show();
+        }
+
+        $(document).ready(function() {
+            show_question(4);
+        })
+    </script>
+
+{% endblock %}

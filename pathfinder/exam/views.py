@@ -34,6 +34,16 @@ class ExamListView(LoginRequiredMixin, View):
 
 
 
-@login_required
-def take_quiz(request, quiz_no, order_no):
-    pass
+class TakeExamView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        exam_list = request.user.student.quiz_set.filter(pk=pk)
+
+        exam = exam_list[0] if len(exam_list) > 0 else None
+        return render(request, 'exam/take_exam.html', {
+            'exam': exam
+        })
+
+    def post(self, request):
+        return render(request, 'exam/take_exam.html', {
+
+        })
