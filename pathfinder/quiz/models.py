@@ -13,6 +13,7 @@ class Question(models.Model):
     '''
     문제 관리
     '''
+    ANSWER_TYPE_CHOICES=((0, "객관식"), (1,"주관식"), (2,"다중선택"),)
     level = models.IntegerField(
         verbose_name=u"문제 수준",
         choices=LEVEL_CHOICES, default=0)
@@ -30,6 +31,11 @@ class Question(models.Model):
     limit_time = models.PositiveSmallIntegerField(
         verbose_name=u"제한시간(초)",
         default=100
+    )
+    answer_type = models.IntegerField(
+        verbose_name=u"답변 방식",
+        choices=ANSWER_TYPE_CHOICES,
+        default=0
     )
     correct = models.CharField(
         verbose_name=u"정답 답안",

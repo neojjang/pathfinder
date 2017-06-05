@@ -40,6 +40,11 @@ class QuestionForm(forms.ModelForm):
         required=True,
         label=u"제한 시간을 초단위로 입력해 주세요."
     )
+    answer_type = forms.ChoiceField(
+        choices=Question.ANSWER_TYPE_CHOICES,
+        widget=forms.Select(attrs={'class':'form-control'}),
+        label=u"답변 유형을 선택해 주세요."
+    )
     correct = forms.CharField(
         max_length=128,
         widget=forms.TextInput(attrs={'class':'form-control'}),

@@ -28,8 +28,7 @@
         {% csrf_token %}
         <div class="panel panel-primary" style="margin-top: 0px;">
             <div class="panel-body">
-{#                <div class="row">#}
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <p>
                                 <label for="{{ question_form.level.id_for_label }}">
@@ -44,6 +43,12 @@
                                 {{ question_form.question_type }}
                             </p>
                             <p>
+                                <label for="{{ question_form.answer_type.id_for_label }}">
+                                {{ question_form.answer_type.label }}
+                                </label>
+                                {{ question_form.answer_type }}
+                            </p>
+                            <p>
                                 <label for="{{ question_form.title.id_for_label }}">
                                 {{ question_form.title.label }}
                                 </label>
@@ -56,9 +61,8 @@
                                 {{ question_form.text }}
                             </p>
                         </div>
-                    </div>
-{#                    <div class="col-md-1"> </div>#}
-                    <div class="col-md-6">
+{#                    </div>#}
+{#                    <div class="col-md-6">#}
                         <div class="form-group">
                             <p class="col-md-12">
                                 <label for="{{ question_form.limit_time.id_for_label }}">
@@ -73,54 +77,52 @@
                                 {{ question_form.correct }}
                             </p>
                             <label for="{{ question_example_form.ex_sentence_1.id_for_label }}"
-                                   class="col-md-5 text-right">
+                                   class="col-md-3 text-right">
                                 {{ question_example_form.ex_sentence_1.label }}
                             </label>
-                            <div class="col-md-7">
+                            <div class="col-md-9">
                                 {{ question_example_form.ex_sentence_1 }}
                             </div>
                         </div>
                         <div class="form-group">
-{#                            <div class="col-md-6 ">#}
-                                <label for="{{ question_example_form.ex_sentence_2.id_for_label }}"
-                                       class="col-md-5 text-right">
-                                    {{ question_example_form.ex_sentence_2.label }}
-                                </label>
-{#                            </div>#}
-                            <div class="col-md-7">
+                            <label for="{{ question_example_form.ex_sentence_2.id_for_label }}"
+                                   class="col-md-3 text-right">
+                                {{ question_example_form.ex_sentence_2.label }}
+                            </label>
+                            <div class="col-md-9">
                                 {{ question_example_form.ex_sentence_2 }}
                             </div>
                         </div>
                         <div class="form-group">
 {#                            <div class="col-md-6 ">#}
                                 <label for="{{ question_example_form.ex_sentence_3.id_for_label }}"
-                                       class="col-md-5 text-right">
+                                       class="col-md-3 text-right">
                                     {{ question_example_form.ex_sentence_3.label }}
                                 </label>
 {#                            </div>#}
-                            <div class="col-md-7">
+                            <div class="col-md-9">
                                 {{ question_example_form.ex_sentence_3 }}
                             </div>
                         </div>
                         <div class="form-group">
 {#                            <div class="col-md-6 ">#}
                                 <label for="{{ question_example_form.ex_sentence_4.id_for_label }}"
-                                       class="col-md-5 text-right">
+                                       class="col-md-3 text-right">
                                     {{ question_example_form.ex_sentence_4.label }}
                                 </label>
 {#                            </div>#}
-                            <div class="col-md-7">
+                            <div class="col-md-9">
                                 {{ question_example_form.ex_sentence_4 }}
                             </div>
                         </div>
                         <div class="form-group">
 {#                            <div class="col-md-6 ">#}
                                 <label for="{{ question_example_form.ex_sentence_5.id_for_label }}"
-                                       class="col-md-5 text-right">
+                                       class="col-md-3 text-right">
                                     {{ question_example_form.ex_sentence_5.label }}
                                 </label>
 {#                            </div>#}
-                            <div class="col-md-7">
+                            <div class="col-md-9">
                                 {{ question_example_form.ex_sentence_5 }}
                             </div>
                         </div>
@@ -132,7 +134,6 @@
 
                         </div>
                     </div>
-{#                </div>#}
             </div>
         </div>
         <div class="panel-button">
