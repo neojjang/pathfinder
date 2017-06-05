@@ -48,18 +48,19 @@
                     <p>
                         보기 :
                     </p>
+                    {% if question.answer_type == 0 %}
                     {% with example=question.questionexample %}
-                    <div class="btn-group" data-toggle="buttons">
-                        <p>
-                            1. <label class="btn  active"  style="width:300px;">
+                    <div class="btn-group btn-group-lg" data-toggle="buttons" style="width:100%;">
+                        <div >
+                            1. <label class="btn btn-lg" style="text-align: left;width:95%; ">
                                 <input type="radio" id="question-{{ question.pk }}-1"
                                        autocomplete="off"
                                        value="1"
                                        name="question-{{ question.pk }}"> {{ example.ex_sentence_1 }}
                             </label>
-                        </p>
+                        </div>
                         <p>
-                            2. <label class="btn  active " style="width:300px;">
+                            2. <label class="btn btn-lg " style="text-align: left; width:95%;">
                                 <input type="radio" id="question-{{ question.pk }}-2"
                                        autocomplete="off"
                                        value="2"
@@ -67,24 +68,24 @@
                             </label>
                         </p>
                         <p>
-                            <label class="btn  active"  style="width:300px;">
-                                3. <input type="radio" id="question-{{ question.pk }}-3"
+                            3. <label class="btn btn-lg"  style="text-align: left; width:95%;">
+                                <input type="radio" id="question-{{ question.pk }}-3"
                                        autocomplete="off"
                                        value="3"
                                        name="question-{{ question.pk }}"> {{ example.ex_sentence_3 }}
                             </label>
                         </p>
                         <p>
-                            <label class="btn  active "  style="width:300px;">
-                                4. <input type="radio" id="question-{{ question.pk }}-4"
+                            4. <label class="btn btn-lg"  style="text-align: left; width:95%;">
+                                <input type="radio" id="question-{{ question.pk }}-4"
                                        autocomplete="off"
                                        value="4"
                                        name="question-{{ question.pk }}"> {{ example.ex_sentence_4 }}
                             </label>
                         </p>
                         <p>
-                            <label class="btn  active "  style="width:300px;">
-                                5. <input type="radio" id="question-{{ question.pk }}-5"
+                            5. <label class="btn btn-lg"  style="text-align: left; width:95%;">
+                                <input type="radio" id="question-{{ question.pk }}-5"
                                        autocomplete="off"
                                        value="5"
                                        name="question-{{ question.pk }}"> {{ example.ex_sentence_5 }}
@@ -92,11 +93,12 @@
                         </p>
                     </div>
                     {% endwith %}
+                    {% endif %}
                 </div>
                 <div class="box-footer">
                     <button class="btn btn-success" data-prev="">이전문제</button>
                     <button class="btn btn-success" data-next="">다음문제</button>
-                    <button class="btn btn-danger pull-right">제출하기</button>
+                    <button class="btn btn-danger pull-right" disabled>제출하기</button>
                 </div>
             </div>
         </div>
