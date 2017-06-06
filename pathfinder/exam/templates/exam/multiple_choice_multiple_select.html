@@ -1,0 +1,41 @@
+{% load staticfiles %}
+{# 객관식 다중 선택 #}
+                    <p>
+                        보기 : <span class="text-warning">적절한 답을 하나이상 선택하세요.</span>
+                    </p>
+
+                    <div class="btn-group " data-toggle="buttons" style="width:100%;">
+                            <label class="btn  btn-default" style="border-radius: 6px;text-align: left;width:95%; ">
+                                <input type="checkbox" id="question-{{ question.pk }}-1"
+                                       autocomplete="off"
+                                       value="1"
+                                       name="question-{{ question.pk }}">1. {{ example.ex_sentence_1 }}
+                            </label>
+                        <br />
+                            <label class="btn  btn-default" style="border-radius: 6px;text-align: left; width:95%;">
+                                <input type="checkbox" id="question-{{ question.pk }}-2"
+                                       autocomplete="off"
+                                       value="2"
+                                       name="question-{{ question.pk }}">2. {{ example.ex_sentence_2 }}
+                            </label>
+                        <br />
+                            <label class="btn  btn-default"  style="border-radius: 6px;text-align: left; width:95%;">
+                                <input type="checkbox" id="question-{{ question.pk }}-3"
+                                       autocomplete="off"
+                                       value="3"
+                                       name="question-{{ question.pk }}">3. {{ example.ex_sentence_3 }}
+                            </label>
+                        <br />
+                            <label class="btn  btn-default"  style="border-radius: 6px;text-align: left; width:95%;">
+                                <input type="checkbox" id="question-{{ question.pk }}-4"
+                                       autocomplete="off"
+                                       value="4"
+                                       name="question-{{ question.pk }}">4. {{ example.ex_sentence_4 }}
+                            </label>
+                            <label class="btn  btn-default"  style="border-radius: 6px;text-align: left; width:95%;">
+                                <input type="checkbox" id="question-{{ question.pk }}-5"
+                                       autocomplete="off"
+                                       value="5"
+                                       name="question-{{ question.pk }}">5. {{ example.ex_sentence_5 }}
+                            </label>
+                    </div>

@@ -39,8 +39,10 @@ class TakeExamView(LoginRequiredMixin, View):
         exam_list = request.user.student.quiz_set.filter(pk=pk)
 
         exam = exam_list[0] if len(exam_list) > 0 else None
+
         return render(request, 'exam/take_exam.html', {
-            'exam': exam
+            'exam': exam,
+            'total_questions': exam.questions.all().count() if exam else 0
         })
 
     def post(self, request):

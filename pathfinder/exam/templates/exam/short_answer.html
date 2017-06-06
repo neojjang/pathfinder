@@ -1,0 +1,20 @@
+{% load staticfiles %}
+{# 단답형 #}
+                    <p>
+                        보기 : <span class="text-warning">적절한 답을 아래 빈칸에 입력해 주세요.</span>
+                    </p>
+                    <div class="form-group "  style="width:100%;">
+                        <input type="text" id="question-{{ question.pk }}-1"
+                               autocomplete="off"
+                               value=""
+                               placeholder=""
+                               name="question-{{ question.pk }}"
+                               style="text-align: left;width:95%; "
+                        >
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </div>

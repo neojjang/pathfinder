@@ -10,6 +10,28 @@
 
 		display:none;
 	}
+
+    body, .container {
+        height: 100%;
+    }
+
+    .container {
+        width: 95%;
+{#        display: table;#}
+    }
+    .row {
+        height: 100%;
+{#        display: table-row;#}
+    }
+
+    pre {
+        white-space: pre-wrap;       /* Since CSS 2.1 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    }
+
 {% endblock %}
 
 {% block body_class %}layout-top-nav{% endblock %}
@@ -32,73 +54,44 @@
 {% block content %}
     <div class="container">
     <form action="." method="post">
+    {% csrf_token %}
     {% for question in exam.questions.all %}
         <div class="row question" id="question-id{{ forloop.counter }}" data-limit-time="{{ question.limit_time }}">
             <div class="box box-info">
                 <div class="box-header">
-                    <h4>[{{ forloop.counter }} / {{ exam.questions|length }}] {{ question.title }}</h4>
+                    <h4>[{{ forloop.counter }} / {{ total_questions }}] {{ question.title }}</h4>
                     <div class="box-tools" style="margin-top:15px;">
                         <p>Time left: <span id="timer-{{ question.pk }}">00:00:00</span></p>
                     </div>
                 </div>
                 <div class="box-body">
-                    <pre style="height:400px; overflow-y:auto;">
+                    <pre style="height:200px; overflow:auto;">
                         {{ question.text|safe }}
                     </pre>
-                    <p>
-                        보기 :
-                    </p>
-                    {% if question.answer_type == 0 %}
-                    {% with example=question.questionexample %}
-                    <div class="btn-group btn-group-lg" data-toggle="buttons" style="width:100%;">
-                        <div >
-                            1. <label class="btn btn-lg" style="text-align: left;width:95%; ">
-                                <input type="radio" id="question-{{ question.pk }}-1"
-                                       autocomplete="off"
-                                       value="1"
-                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_1 }}
-                            </label>
-                        </div>
-                        <p>
-                            2. <label class="btn btn-lg " style="text-align: left; width:95%;">
-                                <input type="radio" id="question-{{ question.pk }}-2"
-                                       autocomplete="off"
-                                       value="2"
-                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_2 }}
-                            </label>
-                        </p>
-                        <p>
-                            3. <label class="btn btn-lg"  style="text-align: left; width:95%;">
-                                <input type="radio" id="question-{{ question.pk }}-3"
-                                       autocomplete="off"
-                                       value="3"
-                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_3 }}
-                            </label>
-                        </p>
-                        <p>
-                            4. <label class="btn btn-lg"  style="text-align: left; width:95%;">
-                                <input type="radio" id="question-{{ question.pk }}-4"
-                                       autocomplete="off"
-                                       value="4"
-                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_4 }}
-                            </label>
-                        </p>
-                        <p>
-                            5. <label class="btn btn-lg"  style="text-align: left; width:95%;">
-                                <input type="radio" id="question-{{ question.pk }}-5"
-                                       autocomplete="off"
-                                       value="5"
-                                       name="question-{{ question.pk }}"> {{ example.ex_sentence_5 }}
-                            </label>
-                        </p>
-                    </div>
-                    {% endwith %}
+                    {% if question.answer_type == 1 %}
+                        {% include 'exam/short_answer.html' with example=question.questionexample %}
+                    {% elif question.answer_type == 2 %}
+                        {% include 'exam/multiple_choice_multiple_select.html' with example=question.questionexample %}
+                    {% elif question.answer_type == 3 %}
+                        {% include 'exam/essay_question.html' with example=question.questionexample %}
+                    {% else %}
+                        {% include 'exam/multiple_choice_single_select.html' with example=question.questionexample %}
                     {% endif %}
                 </div>
                 <div class="box-footer">
-                    <button class="btn btn-success" data-prev="">이전문제</button>
-                    <button class="btn btn-success" data-next="">다음문제</button>
-                    <button class="btn btn-danger pull-right" disabled>제출하기</button>
+                    <button class="btn btn-prev {% if forloop.counter == 1 %}btn-default{% else %}btn-primary{% endif %}"
+                            data-prev="{{ forloop.counter|add:"-1" }}"
+                            {% if forloop.counter == 1 %}disabled{% endif %}
+                    >이전문제</button>
+                    <button class="btn btn-next {% if forloop.counter == total_questions %}btn-default{% else %}btn-primary{% endif %}"
+                            data-next="{{ forloop.counter|add:"1" }}"
+                            {% if forloop.counter == total_questions %}disabled{% endif %}
+                    >다음문제</button>
+                    <input type="submit" class="btn btn-danger pull-right"
+                           style="background-color: #dd4b39;border-color: #d73925;"
+                            {% if forloop.counter < total_questions %}disabled{% endif %}
+                           value="제출하기"
+                    />
                 </div>
             </div>
         </div>
@@ -107,15 +100,44 @@
     </div>
 {% endblock %}
 
+{% block nav_footer %} {% endblock %}
+
 {% block extra_foot %}
     <script type="text/javascript">
+        var total_questions = {{ total_questions }};
+        var current_timer = undefined;
+
         function show_question(qid) {
             $(".question").hide();
             $("#question-id"+qid).show();
+
+            start_timer(qid);
         }
 
+        function stop_timer() {
+            if(current_timer != undefined) {
+                killTimer(current_timer);
+            }
+        }
+        function start_timer(qid) {
+            stop_timer();
+
+        }
+
+        $(".btn-prev").click(function(e) {
+            e.preventDefault();
+            e.preventBubble = true;
+            var page = $(this).data('prev');
+            show_question(parseInt(page));
+        });
+        $(".btn-next").click(function(e) {
+            e.preventDefault();
+            e.preventBubble = true;
+            var page = $(this).data('next');
+            show_question(parseInt(page));
+        });
         $(document).ready(function() {
-            show_question(4);
+            show_question(1);
         })
     </script>
 
