@@ -13,7 +13,7 @@ class Question(models.Model):
     '''
     문제 관리
     '''
-    ANSWER_TYPE_CHOICES=((0, "객관식"), (1,"주관식"), (2,"다중선택"),)
+    ANSWER_TYPE_CHOICES=((0, "객관식"), (1,"주관식-단답형"), (2,"다중선택"), (3, "주관식-서술형"),)
     level = models.IntegerField(
         verbose_name=u"문제 수준",
         choices=LEVEL_CHOICES, default=0)
