@@ -56,12 +56,15 @@
     <form action="." method="post">
     {% csrf_token %}
     {% for question in exam.questions.all %}
-        <div class="row question" id="question-id{{ forloop.counter }}" data-limit-time="{{ question.limit_time }}">
+        <div class="row question" id="question-id{{ forloop.counter }}"
+             data-limit-time="{{ question.limit_time }}"
+             data-question-id="{{ question.id }}"
+        >
             <div class="box box-info">
                 <div class="box-header">
                     <h4>[{{ forloop.counter }} / {{ total_questions }}] {{ question.title }}</h4>
                     <div class="box-tools" style="margin-top:15px;">
-                        <p>Time left: <span id="timer-{{ question.pk }}">00:00:00</span></p>
+                        <p>남은 시간 : <span id="timer-{{ forloop.counter }}" class="text-black">00:00</span></p>
                     </div>
                 </div>
                 <div class="box-body">
@@ -103,25 +106,65 @@
 {% block nav_footer %} {% endblock %}
 
 {% block extra_foot %}
+    {% include 'modal-alert.html' %}
+
     <script type="text/javascript">
         var total_questions = {{ total_questions }};
         var current_timer = undefined;
+        var total_seconds = 0;
+        var current_qid = 0;
 
         function show_question(qid) {
             $(".question").hide();
             $("#question-id"+qid).show();
 
-            start_timer(qid);
+            current_qid = qid;
+            total_seconds = $("#question-id"+qid).data("limit-time");
+
+            stop_timer();
+            start_timer();
         }
 
+        function update_timer() {
+            var seconds = total_seconds;
+
+            var minutes = Math.floor(seconds/60);
+            seconds -= (minutes*60);
+
+            var time_string = ("00"+minutes).slice(-2) + ":" + ("00"+seconds).slice(-2);
+            $("#timer-"+current_qid).html(time_string);
+        }
+
+        function tick() {
+            if(total_seconds <= 0) {
+                $("#timer-"+current_qid).removeClass("text-red");
+                $("#timer-"+current_qid).addClass("text-black");
+
+                // 시간이 종료 되었다.
+                show_alert("제한 시간이 종료 되었습니다.");
+                // 문제 해설 부분 enable
+                return;
+            }
+            if(total_seconds <= 10) {
+                $("#timer-"+current_qid).removeClass("text-black");
+                $("#timer-"+current_qid).addClass("text-red");
+            }
+            total_seconds -= 1;
+
+            update_timer();
+
+            current_timer = window.setTimeout("tick();", 1000);
+        }
         function stop_timer() {
             if(current_timer != undefined) {
-                killTimer(current_timer);
+                clearTimeout(current_timer);
+                current_timer = undefined;
             }
         }
-        function start_timer(qid) {
+        function start_timer() {
             stop_timer();
 
+            current_timer = window.setTimeout("tick();", 1000)
         }
 
         $(".btn-prev").click(function(e) {
