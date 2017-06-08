@@ -1,0 +1,27 @@
+{% load staticfiles %}
+
+<div class="modal fade" id="alert-dialog" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;<span class="sr-only">Close</span></span>
+        </button>
+        <h5 class="modal-title">패스파인더</h5>
+      </div>
+      <div class="modal-body">
+        <p id="alert-content">Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    function show_alert(content) {
+        $("#alert-content").html(content);
+        $("#alert-dialog").modal();
+    }
+</script>
