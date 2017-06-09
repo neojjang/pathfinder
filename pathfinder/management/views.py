@@ -11,6 +11,7 @@ from django.shortcuts import render, reverse, redirect, get_object_or_404
 from common.models import LEVEL_CHOICES
 from accounts.models import Student
 from quiz.views import StaffMemberRequiredMixin
+from .forms import StudentForm
 # Create your views here.
 
 log = logging.getLogger(__name__)
@@ -68,10 +69,24 @@ class DetailMemberView(StaffMemberRequiredMixin, View):
 class EditMemberView(StaffMemberRequiredMixin, View):
     def get(self, request, pk=None):
         student = get_object_or_404(Student, pk=pk)
-
+        form = StudentForm(instance=student)
         return render(request, 'management/edit_member.html', {
-            'student': student
+            'student': student,
+            'form': form
         })
 
     def post(self, request, pk=None):
-        return render(request, '', {})
+        message = None
+        student = get_object_or_404(Student, pk=pk)
+
+        form = StudentForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            message = u"수정 되었습니다."
+        else:
+            log.error(form.errors)
+        return render(request, 'management/edit_member.html', {
+            'student': student,
+            'form': form,
+            'message': message
+        })
