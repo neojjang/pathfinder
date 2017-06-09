@@ -1,6 +1,77 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load humanize %}
+
+{% block title %}패스파인더 : 학생 정보 수정{% endblock %}
+
+{% block nav_sidebar %}
+        {% include 'manager_side_menu.html' %}
+{% endblock %}
+
+{% block page_name %}
+학생 정보 수정
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li><a href="/manage/student/list/">학생 관리</a> </li>
+        <li class="active">학생 정보 수정</li>
+    </ol>
+{% endblock %}
 
 {% block content %}
-학생 정보 수정,
+    <div class="col-md-7">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h4 class="box-title">이름 : {{ student.user.last_name }}{{ student.user.first_name }}</h4>
+            </div>
+            <form action="." method="post" role="form">
+                {% csrf_token %}
+                <div class="box-body">
+                    <div class="form-group">
+                        <label>학교 이름을 입력해 주세요.</label>
+                        {{ form.school_name }}
+                    </div>
+                    <div class="form-group">
+                        <label>학년을 결정해 주세요.</label>
+                        {{ form.grade }}
+                    </div>
+                    <div class="form-group">
+                        <label>학생의 수준을 결정해 주세요.</label>
+                        {{ form.level }}
+                    </div>
+                    <div class="checkbox">
+                        <label>{{ form.is_activated }} 이용 가능</label>
+                    </div>
+                    {% if form.errors %}
+                    <div class="callout callout-danger">
+                        <p>{{ form.errors }}</p>
+                    </div>
+                    {% endif %}
+                    {% if message %}
+                    <div class="callout callout-info">
+                        <p>{{ message }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="box-footer">
+                        <button name="" type="submit" value="수정" class="btn btn-primary"> 수  정 </button>
+                        <button class="cancel btn btn-default" id="cancel"> 취  소 </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="application/javascript">
+        $("#cancel").click(function(e) {
+            e.preventDefault();
+            e.preventBubble = true;
+            (window.referer)? location.href=widnow.referer:history.back();
+        })
+    </script>
 {% endblock %}
