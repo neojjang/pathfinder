@@ -24,9 +24,9 @@ class ListMemberView(StaffMemberRequiredMixin, View):
         grade_id = request.GET.get('grade')
         log.info(request.GET)
         if (not level_id or level_id == 'all') and (not grade_id or grade_id == 'all'):
-            students = Student.objects.all().order_by('-pk')
+            students = Student.objects.filter(user__is_staff=False).order_by('-pk')
         else:
-            query = Q()
+            query = Q(user__is_staff=False)
             if level_id != 'all':
                 query = query & Q(level=level_id)
                 level_id = int(level_id)
