@@ -139,7 +139,7 @@ class StudentScore(models.Model):
     '''
     quiz = models.ForeignKey(Quiz)
     student = models.ForeignKey(Student)
-    score = models.PositiveSmallIntegerField(verbose_name=u"점수", default=0)
+    score = models.PositiveSmallIntegerField(verbose_name=u"맞은 수", default=0)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 
@@ -165,6 +165,8 @@ class StudentAnswer(models.Model):
     answer = models.CharField(verbose_name=u"학생 답",
                               max_length=512,
                               blank=True, default='')
+    elapsed_time = models.PositiveIntegerField(verbose_name=u"걸린 시간",
+                                       default=0)
     is_correct = models.BooleanField(verbose_name=u"정답?",
                                      default=False)
     create_date = models.DateTimeField(auto_now_add=True)

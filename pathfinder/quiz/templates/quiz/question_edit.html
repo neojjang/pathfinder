@@ -164,8 +164,39 @@
 {% endblock content %}
 
 {% block extra_foot %}
-<script src="https://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/4.7.0/full/ckeditor.js"></script>
 <script type="text/javascript">
-CKEDITOR.replace('id_text');
+
+CKEDITOR.replace('id_text', {
+{#    toolbar :#}
+{#		[#}
+{#			{ name: 'basicstyles', items : [ 'Font','FontSize','Bold','Italic','Underline','Strike' ] },#}
+{#			{ name: 'paragraph', items : [ 'NumberedList','BulletedList' ] },#}
+{#            { name : 'styles', items: ['FontStyle','FontFormat','TextColor', 'BGColor' ]},#}
+{##}
+{#			{ name: 'tools', items : [ 'Maximize','-','About' ] }#}
+{#		]#}
+    toolbarGroups: [
+        { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+		{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+		{ name: 'links', groups: [ 'links' ] },
+		{ name: 'insert', groups: [ 'insert' ] },
+{#        { name: 'forms', groups: [ 'forms' ] },#}
+{#		{ name: 'tools', groups: [ 'tools' ] },#}
+        '/',
+		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align' ] }, //, 'bidi', 'paragraph'
+		{ name: 'styles', groups: [ 'styles'] },
+{#        { name : 'custom', items: ['Font', 'FontSize', 'FontStyle','FontFormat','TextColor', 'BGColor' ]},#}
+		{ name: 'colors', groups: [ 'colors' ] }
+    ]
+});
+CKEDITOR.config.font_names='맑은 고딕; 돋움; 바탕; 궁서; Nanum Gothic Coding; Quattrocento Sans;' + CKEDITOR.config.font_names;
+CKEDITOR.editorConfig = function(config) {
+    config.language = 'ko';
+{#    config.font_names = '맑은 고딕; 돋움; 바탕; 돋음; 궁서; Nanum Gothic Coding; Quattrocento Sans;' + CKEDITOR.config.font_names;#}
+{#    config.toolbar = 'Full';#}
+{#    config.extraPlugins = 'font'#}
+};
 </script>
 {% endblock %}
