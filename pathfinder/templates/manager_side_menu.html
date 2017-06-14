@@ -24,12 +24,12 @@
             {% block nav_links %}
                 <li>
                     <a href="{% url 'quiz:list_member' %}">
-                        <i class="fa fa-dashboard"></i> <span>학생 관리</span>
+                        <i class="fa fa-users"></i> <span>학생 관리</span>
                     </a>
                 </li>
                 <li class="treeview">
                     <a href="#">
-                        <i class="fa fa-dashboard"></i> <span>문제 관리</span>
+                        <i class="fa fa-file-text"></i> <span>문제 관리</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
@@ -37,19 +37,19 @@
                     <ul class="treeview-menu">
                         <li>
                             <a href="{% url 'quiz:show_question_list' %}">
-                                <i class="fa fa-user"></i> 문제 리스트
+                                <i class="fa fa-file-text"></i> 문제 리스트
                             </a>
                         </li>
                         <li>
                             <a href="{% url 'quiz:create_question' %}">
-                                <i class="fa fa-user"></i> 문제 만들기
+                                <i class="fa fa-file-text-o"></i> 문제 만들기
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li class="treeview">
                     <a href="#">
-                        <i class="fa fa-dashboard"></i> <span>테스트 관리</span>
+                        <i class="fa fa-book"></i> <span>테스트 관리</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
@@ -57,12 +57,12 @@
                     <ul class="treeview-menu">
                         <li>
                             <a href="{% url 'quiz:show_quiz_list' %}">
-                                <i class="fa fa-user"></i> 테스트 리스트
+                                <i class="fa fa-book"></i> 테스트 리스트
                             </a>
                         </li>
                         <li>
                             <a href="{% url 'quiz:create_quiz' %}">
-                                <i class="fa fa-user"></i> 테스트 만들기
+                                <i class="fa fa-address-book"></i> 테스트 만들기
                             </a>
                         </li>
                     </ul>
