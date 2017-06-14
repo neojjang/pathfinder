@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
 from django.contrib.auth import authenticate, login, logout
-from .forms import LoginForm, StudentRedistrationForm
+from .forms import LoginForm, StudentRedistrationForm, StudentForm
 from .models import Student
 from quiz.models import StudentAnswer, StudentScore
 # Create your views here.
@@ -91,11 +91,19 @@ def view_profile(request):
         student = Student(user=request.user)
         student.save()
 
-    quiz_results = StudentScore.objects.filter(exam__student=student)
+    if request.method == 'POST':
+        form = StudentForm(request.POST, instance=student)
+        form.is_activated = student.is_activated
+        if form.is_valid():
+            student = form.save(commit=False)
+            student.user = request.user
+            student.save()
+    else:
+        form = StudentForm(instance=student)
 
     return render(request, 'member/mypage.html', {
         'student': student,
-        'quiz_results': quiz_results
+        'form': form
     })
 
 

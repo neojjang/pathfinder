@@ -31,7 +31,7 @@ class Student(models.Model):
                                 choices=GRADE_CHOICES, default=0)
     level = models.IntegerField(verbose_name=u"학생 레벨",
                                 choices=LEVEL_CHOICES, default=0)
-    is_activated = models.BooleanField(default=True)
+    is_activated = models.BooleanField(default=False, verbose_name=u"등원여부")
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 

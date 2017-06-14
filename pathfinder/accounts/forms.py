@@ -38,7 +38,8 @@ class StudentForm(forms.ModelForm):
     )
     is_activated = forms.BooleanField(
         widget=forms.CheckboxInput,
-        label=u"등원중"
+        label=u"등원중",
+        required=False
     )
     class Meta:
         model = Student

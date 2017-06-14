@@ -1,15 +1,21 @@
 {% extends "base.html" %}
 {% block title %}패스파인더 회원 가입 완료{% endblock %}
-{% block currentmenu %}
-    회원 가입 완료
+{% block body_class %}{%  if not user.is_authenticated %}layout-top-nav{% endif %}{% endblock %}
+{% block nav_sidebar %}
 {% endblock %}
+
+{% block nav_header %}
+    {% include 'header.html' %}
+{% endblock %}
+
 {% block content %}
     <h1>회원 가입 완료</h1>
 
        <div class="panel panel-primary col-md-8" style="margin-top: 0px;">
            <div class="panel-body">
                <span class="text-success">
-                   회원 가입이 완료 되었습니다. <a href="{% url "accounts:login" %}">로그인</a>
+                   회원 가입이 완료 되었습니다. <br />
+                   <a href="{% url "accounts:login" %}">로그인</a> 후 학교와 헉년 정보를 설정해 주세요.
                </span>
            </div>
        </div>
