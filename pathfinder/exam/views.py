@@ -46,6 +46,7 @@ class TakeExamView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
+
         return render(request, 'exam/take_exam.html', {
 
         })

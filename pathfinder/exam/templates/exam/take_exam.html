@@ -126,12 +126,12 @@
         }
 
         function update_timer() {
-            var seconds = total_seconds;
+            var seconds = Math.abs(total_seconds);
 
             var minutes = Math.floor(seconds/60);
             seconds -= (minutes*60);
 
-            var time_string = ("00"+minutes).slice(-2) + ":" + ("00"+seconds).slice(-2);
+            var time_string = (total_seconds<0)?'-':'' + ("00"+minutes).slice(-2) + ":" + ("00"+seconds).slice(-2);
             $("#timer-"+current_qid).html(time_string);
         }
 
@@ -141,9 +141,9 @@
                 $("#timer-"+current_qid).addClass("text-black");
 
                 // 시간이 종료 되었다.
-                show_alert("제한 시간이 종료 되었습니다.");
+                //show_alert("제한 시간이 종료 되었습니다.");
                 // 문제 해설 부분 enable
-                return;
+                //return;
             }
             if(total_seconds <= 10) {
                 $("#timer-"+current_qid).removeClass("text-black");
