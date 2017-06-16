@@ -55,6 +55,7 @@
     <div class="container">
     <form action="." method="post">
     {% csrf_token %}
+        <input type="hidden" name="exam-key" value="{{ exam_key }}" />
     {% for question in exam.questions.all %}
         <div class="row question" id="question-id{{ forloop.counter }}"
              data-limit-time="{{ question.limit_time }}"
@@ -64,7 +65,8 @@
                 <div class="box-header">
                     <h4>[{{ forloop.counter }} / {{ total_questions }}] {{ question.title }}</h4>
                     <div class="box-tools" style="margin-top:15px;">
-                        <p>남은 시간 : <span id="timer-{{ forloop.counter }}" class="text-black">00:00</span></p>
+                        <p>시간 : <span id="timer-{{ forloop.counter }}" class="text-black">000</span>초 (제한시간 {{ question.limit_time }}초) </p>
+                        <input type="hidden" name="question-{{ question.pk }}-time" id="question-{{ forloop.counter }}-time" value="0" />
                     </div>
                 </div>
                 <div class="box-body">
@@ -90,17 +92,41 @@
                             data-next="{{ forloop.counter|add:"1" }}"
                             {% if forloop.counter == total_questions %}disabled{% endif %}
                     >다음문제</button>
-                    <input type="submit" class="btn btn-danger pull-right"
+                    <button type="submit" class="btn btn-danger pull-right"
                            style="background-color: #dd4b39;border-color: #d73925;"
                             {% if forloop.counter < total_questions %}disabled{% endif %}
                            value="제출하기"
-                    />
+                    >제출하기</button>
+                    <button class="btn btn-info question-explain pull-right"
+                            id="explain-btn-{{ forloop.counter }}" data-explain="{{ question.pk }}" style="margin-right: 5px;"
+                            >문제 해설보기</button>
                 </div>
             </div>
         </div>
     {% endfor %}
     </form>
     </div>
+{% for question in exam.questions.all %}
+    <div class="modal fade" id="explain-{{ question.pk }}"  role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">{{ forloop.counter }}번 문제 해설</h4>
+                </div>
+                <div class="modal-body">
+                    {% if question.explanations.video %}
+                    {{ question.explanations.video }}
+                    {% endif %}
+                    {{ question.explanations.content|safe }}
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 {% endblock %}
 
 {% block nav_footer %} {% endblock %}
@@ -109,9 +135,10 @@
     {% include 'modal-alert.html' %}
 
     <script type="text/javascript">
+        var ekey = "{{ exam_key }}";
         var total_questions = {{ total_questions }};
         var current_timer = undefined;
-        var total_seconds = 0;
+        var total_seconds = 0, current_seconds = 0;
         var current_qid = 0;
 
         function show_question(qid) {
@@ -119,41 +146,34 @@
             $("#question-id"+qid).show();
 
             current_qid = qid;
+            current_seconds = 0;
             total_seconds = $("#question-id"+qid).data("limit-time");
 
-            stop_timer();
+{#            stop_timer();#}
             start_timer();
         }
 
         function update_timer() {
-            var seconds = Math.abs(total_seconds);
+            if((current_seconds+10) == total_seconds) {  //total_seconds <= 10
+                $("#timer-"+current_qid).removeClass("text-black");
+                $("#timer-"+current_qid).addClass("text-red");
 
-            var minutes = Math.floor(seconds/60);
-            seconds -= (minutes*60);
+                $("#explain-"+current_qid).removeAttr("disabled");
+            }
 
-            var time_string = (total_seconds<0)?'-':'' + ("00"+minutes).slice(-2) + ":" + ("00"+seconds).slice(-2);
+            time_string = ("00"+current_seconds).slice(-3);
             $("#timer-"+current_qid).html(time_string);
+            $("#question-"+current_qid+"-time").attr('value', current_seconds);
         }
 
         function tick() {
-            if(total_seconds <= 0) {
-                $("#timer-"+current_qid).removeClass("text-red");
-                $("#timer-"+current_qid).addClass("text-black");
-
-                // 시간이 종료 되었다.
-                //show_alert("제한 시간이 종료 되었습니다.");
-                // 문제 해설 부분 enable
-                //return;
-            }
-            if(total_seconds <= 10) {
-                $("#timer-"+current_qid).removeClass("text-black");
-                $("#timer-"+current_qid).addClass("text-red");
-            }
-            total_seconds -= 1;
+            current_seconds += 1;
 
             update_timer();
 
-            current_timer = window.setTimeout("tick();", 1000);
+            // 최대 10분
+            if(current_seconds < 600)
+                current_timer = window.setTimeout("tick();", 1000);
         }
         function stop_timer() {
             if(current_timer != undefined) {
@@ -164,7 +184,16 @@
         function start_timer() {
             stop_timer();
 
-            current_timer = window.setTimeout("tick();", 1000)
+            current_timer = window.setTimeout("tick();", 1000);
+
+             $("#timer-"+current_qid).removeClass("text-red");
+             $("#timer-"+current_qid).addClass("text-black");
+
+             $("#explain-btn-"+current_qid).attr("disabled", "disabled");
+        }
+
+        function save_answer(data) {
+
         }
 
         $(".btn-prev").click(function(e) {
@@ -172,12 +201,23 @@
             e.preventBubble = true;
             var page = $(this).data('prev');
             show_question(parseInt(page));
+            return false;
         });
         $(".btn-next").click(function(e) {
             e.preventDefault();
             e.preventBubble = true;
+
+            // 현재 입력한 답을 기록해 둔다.
+
             var page = $(this).data('next');
             show_question(parseInt(page));
+            return false;
+        });
+
+        $(".question-explain").click(function(e) {
+            var id = $(this).data("explain");
+            $("#explain-"+id).modal("show");
+            return false;
         });
         $(document).ready(function() {
             show_question(1);
