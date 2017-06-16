@@ -83,7 +83,7 @@ class QuestionExample(models.Model):
 class Explanations(models.Model):
     question = models.OneToOneField(Question)
     video = models.FileField(upload_to="", null=True, blank=True)
-    content = models.CharField(max_length=2000, null=True, blank=True)
+    content = models.CharField(max_length=5000, null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 
@@ -139,6 +139,7 @@ class StudentScore(models.Model):
     '''
     quiz = models.ForeignKey(Quiz)
     student = models.ForeignKey(Student)
+    ekey = models.CharField(verbose_name=u"테스트키", max_length=14, null=False, blank=False)
     score = models.PositiveSmallIntegerField(verbose_name=u"맞은 수", default=0)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
@@ -162,6 +163,7 @@ class StudentAnswer(models.Model):
     quiz = models.ForeignKey(Quiz)
     student = models.ForeignKey(Student)
     question = models.ForeignKey(Question)
+    ekey = models.CharField(verbose_name=u"테스트키", max_length=14, null=False, blank=False)
     answer = models.CharField(verbose_name=u"학생 답",
                               max_length=512,
                               blank=True, default='')
