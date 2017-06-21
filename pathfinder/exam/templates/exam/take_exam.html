@@ -53,7 +53,7 @@
 
 {% block content %}
     <div class="container">
-    <form action="." method="post">
+    <form action="." method="post" >
     {% csrf_token %}
         <input type="hidden" name="exam-key" value="{{ exam_key }}" />
     {% for question in exam.questions.all %}
@@ -66,7 +66,7 @@
                     <h4>[{{ forloop.counter }} / {{ total_questions }}] {{ question.title }}</h4>
                     <div class="box-tools" style="margin-top:15px;">
                         <p>시간 : <span id="timer-{{ forloop.counter }}" class="text-black">000</span>초 (제한시간 {{ question.limit_time }}초) </p>
-                        <input type="hidden" name="question-{{ question.pk }}-time" id="question-{{ forloop.counter }}-time" value="0" />
+                        <input type="hidden" name="question-time-{{ question.pk }}" id="question-{{ forloop.counter }}-time" value="0" />
                     </div>
                 </div>
                 <div class="box-body">
@@ -92,8 +92,8 @@
                             data-next="{{ forloop.counter|add:"1" }}"
                             {% if forloop.counter == total_questions %}disabled{% endif %}
                     >다음문제</button>
-                    <button type="submit" class="btn btn-danger pull-right"
-                           style="background-color: #dd4b39;border-color: #d73925;"
+                    <button type="button" class="btn btn-danger submit-exam"
+                           style="background-color: #dd4b39;border-color: #d73925;margin-left: 10px;"
                             {% if forloop.counter < total_questions %}disabled{% endif %}
                            value="제출하기"
                     >제출하기</button>
@@ -127,6 +127,25 @@
         </div>
     </div>
 {% endfor %}
+    <div class="modal fade" id="confirm-submit" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"> </span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">패스파인더 </h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        답안을 제출 하시겠습니까?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">아니오</button>
+                    <button type="button" class="btn btn-primary" id="submit-form">예</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block nav_footer %} {% endblock %}
@@ -137,7 +156,8 @@
     <script type="text/javascript">
         var ekey = "{{ exam_key }}";
         var total_questions = {{ total_questions }};
-        var current_timer = undefined;
+        var current_timer = undefined,
+            limit_time = 0;
         var total_seconds = 0, current_seconds = 0;
         var current_qid = 0;
 
@@ -148,26 +168,32 @@
             current_qid = qid;
             current_seconds = 0;
             total_seconds = $("#question-id"+qid).data("limit-time");
+            limit_time = Math.floor(total_seconds * 0.8);
 
-{#            stop_timer();#}
+            stop_timer();
             start_timer();
+
+            if(qid == total_questions) {
+                $(".submit-exam").removeAttr('disabled');
+            }
         }
 
         function update_timer() {
-            if((current_seconds+10) == total_seconds) {  //total_seconds <= 10
-                $("#timer-"+current_qid).removeClass("text-black");
-                $("#timer-"+current_qid).addClass("text-red");
-
-                $("#explain-"+current_qid).removeAttr("disabled");
-            }
-
             time_string = ("00"+current_seconds).slice(-3);
             $("#timer-"+current_qid).html(time_string);
             $("#question-"+current_qid+"-time").attr('value', current_seconds);
         }
 
         function tick() {
+            console.log("tick...."+current_seconds);
             current_seconds += 1;
+
+            if(current_seconds == limit_time) {  //total_seconds <= 10
+                $("#timer-"+current_qid).removeClass("text-black");
+                $("#timer-"+current_qid).addClass("text-red");
+
+                $("#explain-btn-"+current_qid).removeAttr("disabled");
+            }
 
             update_timer();
 
@@ -176,24 +202,41 @@
                 current_timer = window.setTimeout("tick();", 1000);
         }
         function stop_timer() {
+            console.log("stop_timer : "+current_timer);
             if(current_timer != undefined) {
                 clearTimeout(current_timer);
                 current_timer = undefined;
             }
         }
         function start_timer() {
-            stop_timer();
+            console.log("start_timer : "+current_timer);
+{#            stop_timer();#}
 
             current_timer = window.setTimeout("tick();", 1000);
 
-             $("#timer-"+current_qid).removeClass("text-red");
-             $("#timer-"+current_qid).addClass("text-black");
+            $("#timer-"+current_qid).removeClass("text-red");
+            $("#timer-"+current_qid).addClass("text-black");
 
-             $("#explain-btn-"+current_qid).attr("disabled", "disabled");
+            $("#explain-btn-"+current_qid).attr("disabled", "disabled");
+        }
+        function continue_timer() {
+            console.log("continue_timer : "+current_timer);
+            current_timer = window.setTimeout("tick();", 1000);
         }
 
-        function save_answer(data) {
+        function save_answer(data, callback) {
+            console.log($("form").serialize());
+            data = $("form").serialize();
+            $.ajax({
+                type: "POST",
+                data: data,
+                url: "{% url 'exam:save_answer' exam.pk%}",
+                success: function (data) {
+                },
+                error: function (xhr, status, strErr) {
 
+                }
+            });
         }
 
         $(".btn-prev").click(function(e) {
@@ -208,6 +251,7 @@
             e.preventBubble = true;
 
             // 현재 입력한 답을 기록해 둔다.
+            save_answer();
 
             var page = $(this).data('next');
             show_question(parseInt(page));
@@ -215,12 +259,44 @@
         });
 
         $(".question-explain").click(function(e) {
+            stop_timer();
+
             var id = $(this).data("explain");
             $("#explain-"+id).modal("show");
+
+            $("#explain-"+id).unbind('hidden.bs.modal', continue_timer).on('hidden.bs.modal', continue_timer);
+            return false;
+        });
+
+        function submit_data() {
+            console.log("submit_data ");
+            stop_timer();
+
+            save_answer({}, function(success, error) {
+            });
+            $("#confirm-submit").modal("show");
+
+            return false;
+        }
+
+        $(".submit-exam").click(function(e) {
+            submit_data();
             return false;
         });
         $(document).ready(function() {
             show_question(1);
+
+
+            $("#confirm-submit").on("hidden.bs.modal", function() {
+                continue_timer();
+            });
+            $("#submit-form").on('click', function(e) {
+                console.log("submit-form");
+                $("#confirm-submit").modal('hide');
+                $("form").submit();
+
+            });
+
         })
     </script>
 

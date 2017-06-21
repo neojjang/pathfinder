@@ -47,7 +47,7 @@ def save_answer(request, exam_id=None):
 
 class TakeExamView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        exam_key = datetime.strptime(datetime.today(), "%Y%m%d%H%M%S")
+        exam_key = datetime.today().strftime("%Y%m%d%H%M%S")    # datetime.strptime(str(datetime.today()), "YmdHMS")
         # 학생에게 배정된 시험만 풀 수 있다.
         exam_list = request.user.student.quiz_set.filter(pk=pk)
 
@@ -65,3 +65,11 @@ class TakeExamView(LoginRequiredMixin, View):
         return render(request, 'exam/take_exam.html', {
 
         })
+
+
+class SaveAnswerView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        log.debug(request.META)
+        log.debug(request.POST)
+        log.debug("exam=%s", pk)
+        pass
