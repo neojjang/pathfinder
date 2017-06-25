@@ -43,10 +43,11 @@ class QuestionForm(forms.ModelForm):
     answer_type = forms.ChoiceField(
         choices=Question.ANSWER_TYPE_CHOICES,
         widget=forms.Select(attrs={'class':'form-control'}),
+        required=True,
         label=u"답변 유형을 선택해 주세요."
     )
     correct = forms.CharField(
-        max_length=128,
+        max_length=2000,
         widget=forms.TextInput(attrs={'class':'form-control'}),
         required=True,
         label=u"정답을 적어 주세요."
@@ -55,7 +56,7 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model=Question
         fields=[
-            'level', 'question_type', 'title', 'text', 'limit_time', 'correct'
+            'level', 'question_type', 'title', 'text', 'limit_time', 'answer_type', 'correct'
         ]
 
 

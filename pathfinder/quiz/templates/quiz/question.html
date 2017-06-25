@@ -54,6 +54,10 @@
                                 <dd>
                                     {{ question.limit_time }}초
                                 </dd>
+                                <dt>답안 유형</dt>
+                                <dd>
+                                    {{ question.get_answer_type_display }}
+                                </dd>
                                 <dt>정답 번호</dt>
                                 <dd>
                                     {{ question.correct }}

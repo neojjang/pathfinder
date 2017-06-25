@@ -72,60 +72,64 @@
                             </p>
                             <p class="col-md-12">
                                 <label for="{{ question_form.correct.id_for_label }}">
-                                {{ question_form.correct.label }}
+                                {{ question_form.correct.label }} (<span id="answer-type-label">{{ question.get_answer_type_display }}</span>)
                                 </label>
                                 {{ question_form.correct }}
                             </p>
+                        </div>
+                        <span id="question-example-list">
+                        <div class="form-group">
                             <label for="{{ question_example_form.ex_sentence_1.id_for_label }}"
-                                   class="col-md-3 text-right">
+                                   class="col-md-2 text-right">
                                 {{ question_example_form.ex_sentence_1.label }}
                             </label>
-                            <div class="col-md-9">
+                            <div class="col-md-10">
                                 {{ question_example_form.ex_sentence_1 }}
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="{{ question_example_form.ex_sentence_2.id_for_label }}"
-                                   class="col-md-3 text-right">
+                                   class="col-md-2 text-right">
                                 {{ question_example_form.ex_sentence_2.label }}
                             </label>
-                            <div class="col-md-9">
+                            <div class="col-md-10">
                                 {{ question_example_form.ex_sentence_2 }}
                             </div>
                         </div>
                         <div class="form-group">
 {#                            <div class="col-md-6 ">#}
                                 <label for="{{ question_example_form.ex_sentence_3.id_for_label }}"
-                                       class="col-md-3 text-right">
+                                       class="col-md-2 text-right">
                                     {{ question_example_form.ex_sentence_3.label }}
                                 </label>
 {#                            </div>#}
-                            <div class="col-md-9">
+                            <div class="col-md-10">
                                 {{ question_example_form.ex_sentence_3 }}
                             </div>
                         </div>
                         <div class="form-group">
 {#                            <div class="col-md-6 ">#}
                                 <label for="{{ question_example_form.ex_sentence_4.id_for_label }}"
-                                       class="col-md-3 text-right">
+                                       class="col-md-2 text-right">
                                     {{ question_example_form.ex_sentence_4.label }}
                                 </label>
 {#                            </div>#}
-                            <div class="col-md-9">
+                            <div class="col-md-10">
                                 {{ question_example_form.ex_sentence_4 }}
                             </div>
                         </div>
                         <div class="form-group">
 {#                            <div class="col-md-6 ">#}
                                 <label for="{{ question_example_form.ex_sentence_5.id_for_label }}"
-                                       class="col-md-3 text-right">
+                                       class="col-md-2 text-right">
                                     {{ question_example_form.ex_sentence_5.label }}
                                 </label>
 {#                            </div>#}
-                            <div class="col-md-9">
+                            <div class="col-md-10">
                                 {{ question_example_form.ex_sentence_5 }}
                             </div>
                         </div>
+                        </span>
                         <hr />
                         <div class="form-group">
                             <div class="col-md-12">
@@ -198,5 +202,27 @@ CKEDITOR.editorConfig = function(config) {
 {#    config.toolbar = 'Full';#}
 {#    config.extraPlugins = 'font'#}
 };
+
+    function show_example_list(answer_type) {
+        switch(answer_type) {
+           case 0: case 2:
+               $("#question-example-list").show();
+               break;
+           case 1: case 3:
+               $("#question-example-list").hide();
+               break;
+       }
+    }
+    $("#id_answer_type").change(function(e) {
+{#       console.log(e.target.selectedIndex);#}
+{#       console.log("selected="+$(e.target.options[e.target.selectedIndex]).val());#}
+       var answer_type = parseInt($(e.target.options[e.target.selectedIndex]).val());
+       $("#answer-type-label").text($(e.target.options[e.target.selectedIndex]).text());
+       show_example_list(answer_type);
+    });
+
+    $(document).ready(function(e) {
+        show_example_list({{ question.answer_type }});
+    });
 </script>
 {% endblock %}
