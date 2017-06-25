@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load custom_tags %}
 
-{% block title %}패스파인더 : 테스트 보기{% endblock %}
+{% block title %}패스파인더 : {{ exam.title }}{% endblock %}
 
 {% block extra_css %}
     .question{
@@ -56,7 +56,12 @@
     <form action="." method="post" >
     {% csrf_token %}
         <input type="hidden" name="exam-key" value="{{ exam_key }}" />
+        <input type="hidden" name="current-no" value="0" />
     {% for question in exam.questions.all %}
+        <input type="hidden" name="qid" value="{{ question.pk }}" />
+        <input type="hidden" name="elapsed-time" id="elapsed-time-{{ forloop.counter }}" value="0" />
+        <input type="hidden" name="show-explain" id="show-explain-{{ forloop.counter }}" value="0" />
+
         <div class="row question" id="question-id{{ forloop.counter }}"
              data-limit-time="{{ question.limit_time }}"
              data-question-id="{{ question.id }}"
@@ -66,7 +71,7 @@
                     <h4>[{{ forloop.counter }} / {{ total_questions }}] {{ question.title }}</h4>
                     <div class="box-tools" style="margin-top:15px;">
                         <p>시간 : <span id="timer-{{ forloop.counter }}" class="text-black">000</span>초 (제한시간 {{ question.limit_time }}초) </p>
-                        <input type="hidden" name="question-time-{{ question.pk }}" id="question-{{ forloop.counter }}-time" value="0" />
+{#                        <input type="hidden" name="question-time-{{ question.pk }}" id="question-time-{{ forloop.counter }}" value="0" />#}
                     </div>
                 </div>
                 <div class="box-body">
@@ -82,6 +87,8 @@
                     {% else %}
                         {% include 'exam/multiple_choice_single_select.html' with example=question.questionexample %}
                     {% endif %}
+
+{#                <input type="hidden" name="show-explain-{{ question.pk }}" id="show-explain-{{ forloop.counter }}" value="0" />#}
                 </div>
                 <div class="box-footer">
                     <button class="btn btn-prev {% if forloop.counter == 1 %}btn-default{% else %}btn-primary{% endif %}"
@@ -97,9 +104,13 @@
                             {% if forloop.counter < total_questions %}disabled{% endif %}
                            value="제출하기"
                     >제출하기</button>
+                    <button class="btn btn-warning exit-exam pull-right"
+                            style="margin-left: 10px;"
+                            >시험에서 탈출하기</button>
                     <button class="btn btn-info question-explain pull-right"
                             id="explain-btn-{{ forloop.counter }}" data-explain="{{ question.pk }}" style="margin-right: 5px;"
                             >문제 해설보기</button>
+
                 </div>
             </div>
         </div>
@@ -146,6 +157,29 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="exit-exam" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"> </span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">패스파인더 </h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        테스트 : [{{ exam.title }}]
+                    </p>
+                    <p>
+                        중지 하시겠습니까?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">아니오</button>
+                    <button type="button" class="btn btn-primary" id="exit-exam-yes">예</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block nav_footer %} {% endblock %}
@@ -160,6 +194,7 @@
             limit_time = 0;
         var total_seconds = 0, current_seconds = 0;
         var current_qid = 0;
+        var elapsed_time = 0, show_explain=0;
 
         function show_question(qid) {
             $(".question").hide();
@@ -181,11 +216,12 @@
         function update_timer() {
             time_string = ("00"+current_seconds).slice(-3);
             $("#timer-"+current_qid).html(time_string);
-            $("#question-"+current_qid+"-time").attr('value', current_seconds);
+{#            $("#question-time-"+current_qid).attr('value', current_seconds);#}
+            elapsed_time = current_seconds;
         }
 
         function tick() {
-            console.log("tick...."+current_seconds);
+{#            console.log("tick...."+current_seconds);#}
             current_seconds += 1;
 
             if(current_seconds == limit_time) {  //total_seconds <= 10
@@ -225,8 +261,15 @@
         }
 
         function save_answer(data, callback) {
-            console.log($("form").serialize());
+            console.log("show_explain="+show_explain);
+            console.log("elapsed_time="+elapsed_time);
+            console.log("current_qid="+current_qid);
+            $("input[name='current-no']").val(current_qid);
+            $("#elapsed-time-"+current_qid).val(elapsed_time);
+            $("#show-explain-"+current_qid).val(show_explain);
             data = $("form").serialize();
+
+            console.log(data);
             $.ajax({
                 type: "POST",
                 data: data,
@@ -249,10 +292,10 @@
         $(".btn-next").click(function(e) {
             e.preventDefault();
             e.preventBubble = true;
-
             // 현재 입력한 답을 기록해 둔다.
             save_answer();
 
+            show_explain = 0;
             var page = $(this).data('next');
             show_question(parseInt(page));
             return false;
@@ -265,6 +308,19 @@
             $("#explain-"+id).modal("show");
 
             $("#explain-"+id).unbind('hidden.bs.modal', continue_timer).on('hidden.bs.modal', continue_timer);
+
+{#            $("#show-explain-"+current_qid).val(1);#}
+            show_explain = 1;
+            return false;
+        });
+
+        $(".exit-exam").click(function(e) {
+            $("#exit-exam").modal("show");
+            return false;
+        });
+        $("#exit-exam-yes").click(function(e) {
+            $("#exit-exam").modal("hide");
+            location.href = (window.referer)?window.referer:"/";
             return false;
         });
 

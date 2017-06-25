@@ -34,15 +34,6 @@ class ExamListView(LoginRequiredMixin, View):
             'student': request.user.student
         })
 
-@login_required
-def save_answer(request, exam_id=None):
-    '''
-    시험 각 문제의 답을 저장한다.
-    StudentAnswer
-    '''
-    data = {}
-    return JsonResponse(data)
-
 
 
 class TakeExamView(LoginRequiredMixin, View):
@@ -72,4 +63,5 @@ class SaveAnswerView(LoginRequiredMixin, View):
         log.debug(request.META)
         log.debug(request.POST)
         log.debug("exam=%s", pk)
-        pass
+        log.debug(request.POST.keys())
+        return JsonResponse({})

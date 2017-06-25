@@ -2,57 +2,54 @@
                     <p>
                         보기 : <span class="text-warning">적절한 답을 하나만 선택하세요.</span>
                     </p>
-{#                    {% if question.answer_type == 0 %}#}
-{#                    {% with example=question.questionexample %}#}
+
                     <div class="btn-group " data-toggle="buttons" style="width:100%;">
-{#                        <div >#}
+                        {% if example.ex_sentence_1 != '' %}
                             <label class="btn  btn-default"
-                                   style="border-radius: 6px;text-align: left;width:95%; margin-bottom: 2px;">
+                                   style="border-radius: 6px;text-align: left;width:100%; margin-bottom: 2px;">
                                 <input type="radio" id="question-{{ question.pk }}-1"
                                        autocomplete="off"
-                                       value="1"
-                                       name="question-{{ question.pk }}">1. {{ example.ex_sentence_1 }}
+                                       value="a"
+                                       name="answer-{{ forloop.counter }}">a. {{ example.ex_sentence_1 }}
                             </label>
-{#                        </div>#}
+                        {% endif %}
                         <br />
-{#                        <p>#}
+                        {% if example.ex_sentence_2 != '' %}
                             <label class="btn  btn-default"
-                                   style="border-radius: 6px;text-align: left; width:95%; margin-bottom: 2px;">
+                                   style="border-radius: 6px;text-align: left; width:100%; margin-bottom: 2px;">
                                 <input type="radio" id="question-{{ question.pk }}-2"
                                        autocomplete="off"
-                                       value="2"
-                                       name="question-{{ question.pk }}">2. {{ example.ex_sentence_2 }}
+                                       value="b"
+                                       name="answer-{{ forloop.counter }}">b. {{ example.ex_sentence_2 }}
                             </label>
-{#                        </p>#}
+                        {% endif %}
                         <br />
-{#                        <p>#}
+                        {% if example.ex_sentence_3 != '' %}
                             <label class="btn  btn-default"
-                                   style="border-radius: 6px;text-align: left; width:95%; margin-bottom: 2px;">
+                                   style="border-radius: 6px;text-align: left; width:100%; margin-bottom: 2px;">
                                 <input type="radio" id="question-{{ question.pk }}-3"
                                        autocomplete="off"
-                                       value="3"
-                                       name="question-{{ question.pk }}">3. {{ example.ex_sentence_3 }}
+                                       value="c"
+                                       name="answer-{{ forloop.counter }}">c. {{ example.ex_sentence_3 }}
                             </label>
-{#                        </p>#}
+                        {% endif %}
                         <br />
-{#                        <p>#}
+                        {% if example.ex_sentence_4 != '' %}
                             <label class="btn  btn-default"
-                                   style="border-radius: 6px;text-align: left; width:95%; margin-bottom: 2px;">
+                                   style="border-radius: 6px;text-align: left; width:100%; margin-bottom: 2px;">
                                 <input type="radio" id="question-{{ question.pk }}-4"
                                        autocomplete="off"
-                                       value="4"
-                                       name="question-{{ question.pk }}">4. {{ example.ex_sentence_4 }}
+                                       value="d"
+                                       name="answer-{{ forloop.counter }}">d. {{ example.ex_sentence_4 }}
                             </label>
-{#                        </p>#}
-{#                        <p>#}
+                        {% endif %}
+                        {% if example.ex_sentence_5 != '' %}
                             <label class="btn  btn-default"
-                                   style="border-radius: 6px;text-align: left; width:95%; margin-bottom: 2px;">
+                                   style="border-radius: 6px;text-align: left; width:100%; margin-bottom: 2px;">
                                 <input type="radio" id="question-{{ question.pk }}-5"
                                        autocomplete="off"
-                                       value="5"
-                                       name="question-{{ question.pk }}">5. {{ example.ex_sentence_5 }}
+                                       value="e"
+                                       name="answer-{{ forloop.counter }}">e. {{ example.ex_sentence_5 }}
                             </label>
-{#                        </p>#}
+                        {% endif %}
                     </div>
-{#                    {% endwith %}#}
-{#                    {% endif %}#}

@@ -38,7 +38,7 @@
                         </thead>
                         {% for exam in exam_list %}
                             <tr class="" exam_id="{{ exam.pk }}">
-                                <td class="col-md-1" style=" vertical-align: middle;"><a href="{% url 'quiz:show_quiz' exam.pk %}">{{ exam.pk }}</a> </td>
+                                <td class="col-md-1" style=" vertical-align: middle;"><a href="{% url 'exam:take_exam' exam.pk %}">{{ exam.pk }}</a> </td>
                                 <td class="col-md-3" id="exam-{{ exam.pk }}" style=" vertical-align: middle;">
                                     {{ exam.title }}
                                 </td>
