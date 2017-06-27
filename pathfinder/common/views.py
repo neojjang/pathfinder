@@ -24,7 +24,7 @@ class TopView(View):
                     'tested_students': latest_tested_student
                 })
             else:
-                latest_tested_exam = request.user.student.studentscore_set.all()[:5]
+                latest_tested_exam = request.user.student.studentscore_set.all()
                 # 참여하지 않은 테스트들 중에서 최근 등록 된 것을 보여준다.
                 exam_list = request.user.student.quiz_set.all().order_by('-pk')[:5]
                 # Quiz.objects.filter(students=request.user.student)
