@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% load custom_tags %}
+
+{% block title %}패스파인더 : {{ exam.title }}{% endblock %}
+
+{% block extra_css %}
+    .question{
+
+		display:none;
+	}
+
+    body, .container {
+        height: 100%;
+    }
+
+    .container {
+        width: 95%;
+{#        display: table;#}
+    }
+    .row {
+        height: 100%;
+{#        display: table-row;#}
+    }
+
+    pre {
+        white-space: pre-wrap;       /* Since CSS 2.1 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    }
+
+{% endblock %}
+
+{% block body_class %}layout-top-nav{% endblock %}
+
+{% block nav_header %}
+    {% include 'header.html' %}
+{% endblock %}
+
+{% block nav_sidebar %}
+
+{% endblock %}
+
+{% block page_name %}
+    테스트 : {{ exam.title }}
+{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+
+
+{% block content %}
+    <div class="container">
+    </div>
+{% endblock %}
+
+{% block nav_footer %} {% endblock %}
+
+{% block extra_foot %}
+    {% include 'modal-alert.html' %}
+
+    <script type="text/javascript">
+        show_alert("수고하셨습니다.", function() {
+            location.href = "/";
+        });
+    </script>
+
+{% endblock %}

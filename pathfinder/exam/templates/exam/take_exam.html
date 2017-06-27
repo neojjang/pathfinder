@@ -267,13 +267,13 @@
             $("input[name='current-no']").val(current_qid);
             $("#elapsed-time-"+current_qid).val(elapsed_time);
             $("#show-explain-"+current_qid).val(show_explain);
-            data = $("form").serialize();
 
+            data = $("form").serialize();
             console.log(data);
             $.ajax({
                 type: "POST",
                 data: data,
-                url: "{% url 'exam:save_answer' exam.pk%}",
+                url: "{% url 'exam:save_answer' exam.pk %}",
                 success: function (data) {
                 },
                 error: function (xhr, status, strErr) {
