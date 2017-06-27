@@ -22,7 +22,12 @@
 </div>
 
 <script type="text/javascript">
-    function show_alert(content) {
+    var alert_callback = undefined;
+    $("#alert-dialog").on("hidden.bs.modal", function(e) {
+        if(alert_callback !== undefined) alert_callback();
+    });
+    function show_alert(content, callback) {
+        alert_callback = callback
         $("#alert-content").html(content);
         $("#alert-dialog").modal();
     }
