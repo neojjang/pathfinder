@@ -22,7 +22,7 @@
     {% block content %}
         <div class="panel panel-primary" style="margin-top: 0px;">
                 <div class="panel-body">
-                        <div class="col-md-7">
+                        <div class="col-md-12">
                             <dl class="dl-horizontal">
                                 <dt>문제 수준</dt>
                                 <dd>
@@ -38,18 +38,14 @@
 {#                                </dd>#}
                                 <dt>지문</dt>
                                 <dd>
-                                    <pre class="prettyprint">
+                                    <pre class="prettyprint" >
                                         {{ question.text|safe }}
                                     </pre>
 {#                                    <div style="height: 400px; overflow-y: scroll; border: 1px solid gray;">#}
 {#                                        #}
 {#                                    </div>#}
                                 </dd>
-                            </dl>
-                        </div>
-    {#                    <div class="col-md-1"> </div>#}
-                        <div class="col-md-5">
-                            <dl class="dl-horizontal">
+
                                 <dt>제한 시간</dt>
                                 <dd>
                                     {{ question.limit_time }}초
@@ -58,7 +54,7 @@
                                 <dd>
                                     {{ question.get_answer_type_display }}
                                 </dd>
-                                <dt>정답 번호</dt>
+                                <dt정답 번호</dt>
                                 <dd>
                                     {{ question.correct }}
                                 </dd>
