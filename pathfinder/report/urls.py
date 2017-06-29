@@ -1,7 +1,7 @@
 from django.conf.urls import url
-from .views import dashboard, view_detail
+from .views import dashboard, DetailView
 
 urlpatterns = [
-    url(r'^(\d+)/$', view_detail, name='view_detail'),
+    url(r'^(\d+)/$', DetailView.as_view(), name='view_detail'),
     url(r'^$', dashboard, name='dashboard'),
 ]

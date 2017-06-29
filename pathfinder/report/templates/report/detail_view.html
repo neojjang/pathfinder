@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+{% block title %}패스파인더 : {{ exam.title }} 결과{% endblock %}
+{% block extra_css %}
+    .score-view:hover {
+        cursor: pointer
+    }
+{% endblock %}
+{% block body_class %}{% endblock %}
+
+{% block nav_header %}
+    {% include '_main_header.html' %}
+{% endblock %}
+
+{% block nav_sidebar %}
+        {% include 'student_side_menu.html' %}
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">홈 </a></li>
+        <li><a href="{% url 'exam:view_list' %}">테스트 리스트</a> </li>
+        <li class="active">테스트 결과</li>
+    </ol>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-info col-md-12">
+                <div class="box-header">
+                    <h2>시험 : {{ exam.title }} </h2>
+                </div>
+                <div class="box-body">
+                    <table class="table table-hover table-responsive">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">수준</th>
+                                <th class="col-md-2">문제 수</th>
+                                <th class="col-md-1">마감 날짜</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <td>{{ exam.get_level_display }}</td>
+                            <td>{{ exam.questions.all.count }} 문제</td>
+                            <td>{{ exam.closing_date|date:'Y-m-d H:s' }}</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-danger col-md-12">
+                <div class="box-header">
+                    <h2>나의 테스트 결과</h2>
+                </div>
+                <div class="box-body">
+                    <table class="table table-hover table-responsive">
+                        <thead>
+                            <tr>
+                                <th class="col-md-8">테스트 날짜</th>
+                                <th class="col-md-2">맞은 문제 수</th>
+                                <th class="col-md-2">틀린 문제 수</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for score in score_list %}
+                            <tr class="score-view" data-answer="{{ score.ekey }}" data-toggle="collapse" data-target="#{{ score.ekey }}">
+                                <td>{{ score.create_date|date:"Y-m-d H:s" }}</td>
+                                <td>{{ score.score }}</td>
+                                <td>{{ exam.questions.all.count|sub:score.score }}</td>
+                            </tr>
+                            <tr class="score-detail collapse" id="{{ score.ekey }}">
+                                <td colspan="3">
+                                    <table class="table table-responsive " style="width:90%;">
+                                        <tbody>
+                                        <tr>
+                                            <th>문제 번호</th>
+                                            <th>시간</th>
+                                            <th>학생답</th>
+                                            <th>문제답</th>
+                                            <th>결과</th>
+                                            <th>해설</th>
+                                        </tr>
+                                        {% for answer in score.get_answers %}
+                                            <tr style="{% if not answer.is_correct %}background-color:#ee9794;{% endif %}">
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ answer.elapsed_time }} 초</td>
+                                            <td>{{ answer.answer }}</td>
+                                            <td>{{ answer.question.correct }}</td>
+                                            <td>{{ answer.get_is_correct_display }}</td>
+                                            <td>{{ answer.get_show_explain_display }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'confirm-dialog.html' %}
+{% endblock %}
+
+{% block nav_footer %}
+    {% include 'footer.html' %}
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="text/javascript">
+    $("button.menu").click(function(e) {
+        e.preventDefault();
+        location.href = $(this).data("href");
+    });
+
+{#    $(".score-view").click(function(e) {#}
+{#        var ekey = $(this).data("ekey");#}
+{#        $("#"+ekey).toggle();#}
+{#    });#}
+
+    </script>
+{% endblock %}
