@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'mathfilters',
 
     'accounts.apps.AccountsConfig',
     'quiz.apps.QuizConfig',

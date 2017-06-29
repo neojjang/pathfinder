@@ -34,7 +34,7 @@
                         </thead>
                         <tbody>
                             {% for test in tested_exam %}
-                                <tr class="report" data-exam-id="{{ test.id }}">
+                                <tr class="report" data-exam-id="{{ test.quiz.id }}">
                                     <td>{{ test.quiz.title }}</td>
                                     <td>{{ test.quiz.get_level_display }}</td>
                                     <td>{{ test.create_date|date:"Y.m.d H:s" }}</td>

@@ -55,7 +55,7 @@
                                     {% if not exam.is_timeover %}
                                     <button class="btn btn-primary exam" exam_id="{{ exam.pk }}">테스트 보기</button>
                                     {% endif %}
-                                    <button class="btn btn-success menu" data-href="/">결과 보기</button>
+                                    <button class="btn btn-success menu" data-href="{% url 'report:view_detail' exam.pk %}">결과 보기</button>
                                 </td>
                             </tr>
                         {% empty %}

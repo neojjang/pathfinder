@@ -157,6 +157,8 @@ class StudentScore(models.Model):
         return "{}-{}시험-{}점".format(self.student.get_name(),
                                     self.quiz.title,
                                     self.score)
+    def get_answers(self):
+        return StudentAnswer.objects.filter(ekey=self.ekey).order_by('pk')
 
 
 @python_2_unicode_compatible
@@ -194,3 +196,7 @@ class StudentAnswer(models.Model):
             self.answer,
             self.is_correct
         )
+    def get_show_explain_display(self):
+        return "O" if self.show_explain else "X"
+    def get_is_correct_display(self):
+        return "O" if self.is_correct else  "X"

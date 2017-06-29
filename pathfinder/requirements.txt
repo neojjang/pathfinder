@@ -6,3 +6,4 @@ pyparsing==2.2.0
 pytz==2017.2
 six==1.10.0
 Unipath==1.1
+django-mathfilters
