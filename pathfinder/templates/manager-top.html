@@ -10,18 +10,44 @@
 {% block nav_sidebar %}
         {% include 'manager_side_menu.html' %}
 {% endblock %}
+{% block page_name %}현황 {% now "Y-m-d" %}{% endblock %}
 {% block currentmenu %}
-
     {%  if user.is_authenticated %}
             <strong>{{ user.username }}</strong>
     {% endif %}
 {% endblock %}
 {% block content %}
     <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-blue">
+            <div class="inner">
+              <h3>{{ today_tested_students|length }}<sup style="font-size: 20px">명</sup></h3>
+
+              <p>오늘({% now "m월 d일" %})<br /> 테스트 참여자수</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+{#            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>#}
+          </div>
+        </div>
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-green">
+            <div class="inner">
+              <h3>{{ this_month_tested_students|length }}<sup style="font-size: 20px">명</sup></h3>
+
+              <p>이번달({% now "m" %}월)<br /> 테스트 참여자수</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+{#            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>#}
+          </div>
+        </div>
         <div class="col-md-12">
             <div class="box box-danger col-md-12">
                 <div class="box-header">
-                    <h2>테스트 참여 현황</h2>
+                    <h2>최근 테스트 참여 한 현황 10명</h2>
                 </div>
                 <div class="box-body">
                     <table class="table table-responsive">
@@ -35,7 +61,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for test in tested_students %}
+                            {% for test in latest_tested_students %}
                                 <tr>
                                     <td>{{ test.student.user.last_name }}{{ test.student.user.first_name }}</td>
                                     <td>{{ test.quiz.title }}</td>
