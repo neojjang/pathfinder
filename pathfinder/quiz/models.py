@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+import logging
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.utils import timezone
@@ -7,6 +8,7 @@ from common.models import LEVEL_CHOICES, TYPE_CHOICES
 from accounts.models import Student
 # Create your models here.
 
+log = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class Question(models.Model):
@@ -130,6 +132,18 @@ class Quiz(models.Model):
         return student_score[0].score
     def is_timeover(self):
         return self.closing_date < timezone.now()
+    def get_percent_ratio(self):
+        question_count = self.questions.all().count()
+        studentscore_list = self.studentscore_set.all()
+        ratio = 0.0
+        for student in studentscore_list:
+            ratio = ratio + (student.score / question_count)
+
+        if len(studentscore_list) > 0:
+            return ratio / len(studentscore_list)
+        else:
+            return 0.0
+
 
 
 @python_2_unicode_compatible
@@ -159,6 +173,21 @@ class StudentScore(models.Model):
                                     self.score)
     def get_answers(self):
         return StudentAnswer.objects.filter(ekey=self.ekey).order_by('pk')
+    def get_result_by_type(self):
+        '''
+        유형별 결과
+        :return:
+        '''
+        answer_list = StudentAnswer.objects.filter(ekey=self.ekey)
+        result = {}
+        for answer in answer_list:
+            qt = answer.question.get_question_type_display()
+            if not result.get(qt): result[qt] = [0,0]
+            result[qt][0] = result[qt][0] + 1
+            if answer.is_correct:
+                result[qt][1] = result[qt][1] + 1
+        log.debug(result)
+        return result
 
 
 @python_2_unicode_compatible
