@@ -46,7 +46,7 @@
                                 {% with application=exam|get_score:student %}
                                     <b class="label bg-red">{{ application }}</b>
                                 {% endwith %}
-                                    {% if exam.is_timeover %}<b class="label bg-red">마감</b>{% endif %}
+{#                                    {% if exam.is_timeover %}<b class="label bg-red">마감</b>{% endif %}#}
                                 </td>
                                 <td class="col-md-2" style=" vertical-align: middle;">{{ exam.starting_date|date:"Y-m-d H:i" }}</td>
                                 <td class="col-md-2" style=" vertical-align: middle;">{{ exam.closing_date|date:"Y-m-d H:i" }}</td>
