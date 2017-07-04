@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load humanize %}
+{% load mathfilters %}
 {% load custom_tags %}
 
 {% block title %}패스파인더 : {{ student.user.first_name }} 학생{% endblock %}
@@ -55,7 +56,7 @@
 {% endblock %}
 
 {% block page_name %}
-학생 관리 : {{ student.user.first_name }}
+학생 관리 : {{ student.user.last_name }}{{ student.user.first_name }}
 {% endblock %}
 {% block breadcrumbs %}
     <ol class="breadcrumb">
@@ -131,9 +132,11 @@
                                                                 <span class="pull-right">점수</span>
                                                             </li>
                                                             {% for student_score in quiz|get_studentscore_list:student %}
-                                                                <li class="list-group-item">
+                                                                <li class="list-group-item score-detail"
+                                                                    style="cursor:pointer;"
+                                                                    data-href="{% url 'report:view_detail' student_score.pk %}">
                                                                     <span>{{ student_score.create_date|date:'Y.m.d H:s:i' }}</span>
-                                                                    <b class="pull-right">{{ student_score.score }}</b>
+                                                                    <b class="pull-right">{{ student_score.score|div:student_score.quiz.questions.all.count|mul:'100' }}</b>
                                                                 </li>
                                                             {% empty %}
                                                                 <li class="list-group-item text-red">테스트 참여 자료가 없습니다.</li>
@@ -152,4 +155,13 @@
 
             </div>
         </div>
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="application/javascript">
+    $(".score-detail").click(function(e) {
+        var url = $(this).data('href');
+        location.href = url;
+    })
+    </script>
 {% endblock %}

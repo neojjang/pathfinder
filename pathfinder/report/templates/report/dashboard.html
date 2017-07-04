@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block title %}패스파인더 : 테스트 현황{% endblock %}
+
+{% block nav_sidebar %}
+        {% include 'manager_side_menu.html' %}
+{% endblock %}
+
+{% block page_name %}
+테스트 현황
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li class="active">테스트 현황</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+        <div class="box">
+            <div class="box-header">
+                <h3>&nbsp;</h3>
+                <div class="box-tools" style="top:25px;">
+                    <form action="." method="get">
+                        <ul class="list-inline">
+                            <li>검색 :</li>
+                            <li>
+                                <select name="level" onchange="this.form.submit()">
+                                    <option value="all">모든 수준</option>
+                                    {% for item in level %}
+                                    <option value="{{ item.id }}" {% if item.id == level_id %}selected{% endif %}>{{ item.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </li>
+                            <li>
+                                <select name="grade" onchange="this.form.submit()">
+                                    <option value="all">모든 학년</option>
+                                    {% for item in grade %}
+                                    <option value="{{ item.id }}" {% if item.id == grade_id %}selected{% endif %}>{{ item.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th class="col-md-1">이름</th>
+                            <th class="col-md-4">테스트 제목</th>
+                            <th class="col-md-2">수준</th>
+                            <th class="col-md-2">날짜</th>
+                            <th class="col-md-1">결과</th>
+                        </tr>
+                    {% for test in students %}
+                        <tr class="student" data-score-id="{{ test.pk }}">
+                            <td>{{ test.student.user.last_name }}{{ test.student.user.first_name }}</td>
+                            <td>{{ test.quiz.title }}</td>
+                            <td>{{ test.quiz.get_level_display }}</td>
+                            <td>{{ test.create_date|date:"Y.m.d H:s" }}</td>
+                            <td>{{ test.score }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="bg-info" colspan="9"> <p>테스트에 참여한 학생이 없습니다. </p></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'quiz/paginator.html' with paginator=students %}
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="application/javascript">
+    $(".student").click(function(e) {
+        var score_id = $(this).data('score-id');
+        var url = '{% url 'report:view_detail' 12345 %}';
+        url = url.replace('12345', score_id);
+        location.href = url;
+    })
+    </script>
+{% endblock %}

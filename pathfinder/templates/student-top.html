@@ -114,7 +114,7 @@
     $(".report").click(function(e) {
         e.preventDefault();
         var exam_id = $(this).data("exam-id");
-        var link = "{% url 'report:view_detail' 12345 %}";
+        var link = "{% url 'report:view_score' 12345 %}";
         link = link.replace('12345', exam_id);
         location.href = link;
     });

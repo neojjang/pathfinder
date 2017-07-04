@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+{% block title %}패스파인더 : {{ exam.title }} 결과{% endblock %}
+{% block extra_css %}
+    .score-view:hover {
+        cursor: pointer
+    }
+{% endblock %}
+{% block body_class %}{% endblock %}
+
+{% block nav_header %}
+    {% include '_main_header.html' %}
+{% endblock %}
+
+{% block nav_sidebar %}
+    {% include 'manager_side_menu.html' %}
+{% endblock %}
+{% block page_name %}
+테스트 결과
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li><a href="{% url 'report:dashboard' %}">테스트 현황 </a></li>
+        <li class="active">테스트 결과</li>
+    </ol>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-info col-md-12">
+                <div class="box-header">
+                    <h2>시험 : {{ exam.title }} </h2>
+                </div>
+                <div class="box-body">
+                    <table class="table table-hover table-responsive">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">이름</th>
+                                <th class="col-md-2">학생수준</th>
+                                <th class="col-md-2">문제수준</th>
+                                <th class="col-md-1">문제 수</th>
+{#                                <th class="col-md-1">맞은 문제 수</th>#}
+{#                                <th class="col-md-1">틀린 문제 수</th>#}
+                                <th class="col-md-1">정답율</th>
+                                <th class="col-md-2">마감 날짜</th>
+                                <th class="col-md-2">테스트 날짜</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <td>{{ score.student.user.last_name }}{{ score.student.user.first_name }}</td>
+                            <td>{{ score.student.get_level_display }}</td>
+                            <td>{{ exam.get_level_display }}</td>
+                            <td>{{ exam.questions.all.count }} 문제</td>
+{#                            <td>{{ score.score }}</td>#}
+{#                            <td >{{ exam.questions.all.count|sub:score.score }}</td>#}
+                            <td>{{ score.score|div:exam.questions.all.count|mul:100}}%</td>
+                            <td>{{ exam.closing_date|date:'Y-m-d H:s' }}</td>
+                            <td>{{ score.create_date|date:'Y-m-d H:s' }}</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-danger col-md-12">
+                <div class="box-header">
+                    <h2>결과</h2>
+                </div>
+                <div class="box-body">
+                    <div class="box box-solid box-info">
+                        <div class="box-header ">
+                            <div class="box-title">문제별 결과 : <small>정답 {{ score.score }}, 오답 {{ exam.questions.all.count|sub:score.score }}</small></div>
+                        </div>
+                        <div class="box-body">
+                            <table class="table table-responsive" >
+                                <tbody>
+                                <tr>
+                                    <th>번호</th>
+                                    <th>문제유형</th>
+                                    <th>소요시간</th>
+                                    <th>학생답</th>
+                                    <th>문제답</th>
+                                    <th class="col-md-1">결과</th>
+                                    <th class="col-md-1">해설</th>
+                                    <th class="col-md-1"></th>
+                                </tr>
+                                {% for answer in score.get_answers %}
+                                    <tr style="{% if not answer.is_correct %}background-color:#ee9794;{% endif %}">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ answer.question.get_question_type_display }}</td>
+                                    <td>{{ answer.elapsed_time }} 초</td>
+                                    <td>{% if answer.question.answer_type != 3 %}{{ answer.answer }}{% endif %}</td>
+                                    <td>{% if answer.question.answer_type != 3 %}{{ answer.question.correct }}{% endif %}</td>
+                                    <td>{{ answer.get_is_correct_display }}</td>
+                                    <td>{{ answer.get_show_explain_display }}</td>
+                                    <td><button class="btn btn-xs btn-primary show-explain">해설보기</button></td>
+                                    </tr>
+                                    {% if answer.question.answer_type == 3 %}
+                                        <tr>
+                                            <td></td>
+                                            <td>학생답</td>
+                                            <td colspan="6">{{ answer.answer }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td>문제답</td>
+                                            <td colspan="6">{{ answer.question.correct }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="box box-solid box-info">
+                        <div class="box-header">
+                            <div class="box-title">유형별 결과</div>
+                        </div>
+                        <div class="box-body">
+                            <table class="table table-responsive">
+                                <tr>
+                                    <th>문제유형</th>
+                                    <th>총문항수</th>
+                                    <th>정답</th>
+                                    <th>오답</th>
+                                    <th>정답율</th>
+                                </tr>
+                                {% for value in score.get_result_by_type.items %}
+                                    <tr>
+                                        <td>{{ value.0 }}</td>
+                                        <td>{{ value.1.0 }}</td>
+                                        <td>{{ value.1.1 }}</td>
+                                        <td>{{ value.1.0|sub:value.1.1 }}</td>
+                                        <td>{{ value.1.1|div:value.1.0|mul:100 }}%</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'confirm-dialog.html' %}
+{% endblock %}
+
+{% block nav_footer %}
+    {% include 'footer.html' %}
+{% endblock %}
+
+{% block extra_foot %}
+    <script type="text/javascript">
+    $("button.menu").click(function(e) {
+        e.preventDefault();
+        location.href = $(this).data("href");
+    });
+
+{#    $(".score-view").click(function(e) {#}
+{#        var ekey = $(this).data("ekey");#}
+{#        $("#"+ekey).toggle();#}
+{#    });#}
+
+    </script>
+{% endblock %}
