@@ -172,13 +172,25 @@ class StudentScore(models.Model):
                                     self.quiz.title,
                                     self.score)
     def get_answers(self):
-        return StudentAnswer.objects.filter(ekey=self.ekey).order_by('pk')
+        answers = []
+        questions = self.quiz.questions.all()
+        log.debug(questions)
+        for q in questions:
+            try:
+                answer = StudentAnswer.objects.get(ekey=self.ekey, question=q)
+            except StudentAnswer.DoesNotExist:
+                # 학생이 문제 답을 선택하지 않은 경우
+                answer = StudentAnswer(quiz=self.quiz,
+                                       student=self.student,
+                                       question=q,
+                                       ekey=self.ekey)
+            answers.append(answer)
+        return answers # StudentAnswer.objects.filter(ekey=self.ekey).order_by('pk')
     def get_result_by_type(self):
         '''
         유형별 결과
-        :return:
         '''
-        answer_list = StudentAnswer.objects.filter(ekey=self.ekey)
+        answer_list = self.get_answers()
         result = {}
         for answer in answer_list:
             qt = answer.question.get_question_type_display()

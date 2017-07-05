@@ -22,9 +22,9 @@
 
         <div class="box">
             <div class="box-header">
-                <h3>&nbsp;</h3>
-                <div class="box-tools" style="top:25px;">
-                    <form action="." method="get">
+                <button class="btn btn-primary add-student">학생 추가</button>
+                <div class="box-tools" style="top:10px;">
+                    <form action="." method="get" >
                         <ul class="list-inline">
                             <li>검색 :</li>
                             <li>
@@ -88,11 +88,11 @@
                             <td class="col-md-1">{{ student.get_level_display }}</td>
                             <td class="col-md-1">{{ student.get_latest_quiz.title }}</td>
                             <td class="col-md-1">{% if student.is_activated %}활성{% else %}비활성{% endif %}</td>
-                            <td class="col-md-1">{{ student.create_date|date:"Y-m-d H:i:s" }}</td>
+                            <td class="col-md-1">{{ student.create_date|date:"Y.m.d" }}</td>
                             <td class="col-md-2">
-                                <button class="btn btn-primary menu" data-href="{% url 'quiz:show_member' student.id %}">보기</button>
-                                <button class="btn btn-success menu" data-href="{% url 'quiz:edit_member' student.id %}">수정</button>
-                                <button class="btn btn-danger menu" data-href="{% url 'quiz:delete_member' student.id %}">삭제</button>
+                                <button class="btn btn-primary menu btn-xs" data-href="{% url 'quiz:show_member' student.id %}">보기</button>
+                                <button class="btn btn-success menu btn-xs" data-href="{% url 'quiz:edit_member' student.id %}">수정</button>
+                                <button class="btn btn-danger menu btn-xs" data-href="{% url 'quiz:delete_member' student.id %}">삭제</button>
                             </td>
                         </tr>
                     {% empty %}
@@ -116,5 +116,8 @@
 {#        url = url.replace('12345', student_id);#}
 {#        location.href = url;#}
 {#    })#}
+    $(".add-student").click(function(e) {
+        // 학생 회원 추가 폼 다이얼로그 팝업
+    })
     </script>
 {% endblock %}

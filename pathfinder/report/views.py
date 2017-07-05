@@ -1,14 +1,17 @@
+#-*- coding: utf-8 -*-
+import logging
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.core.paginator import PageNotAnInteger, Paginator, EmptyPage
 
+from accounts.models import Student
 from quiz.models import Quiz, StudentAnswer, StudentScore
 from quiz.views import StaffMemberRequiredMixin
 # Create your views here.
 
-
+log = logging.getLogger(__name__)
 
 class StudentScoreView(LoginRequiredMixin, View):
     def get(self, request, exam_id):
@@ -36,10 +39,21 @@ class DetailView(LoginRequiredMixin, View):
 
         score = StudentScore.objects.get(query)
 
+        question_count = score.quiz.questions.all().count()
+        ranking_list = []
+        for rank in StudentScore.objects.values(
+                'quiz','student'
+        ).annotate(Max('score')).order_by('-score__max').filter(quiz=score.quiz)[:10]:
+            rank['student'] = Student.objects.get(pk=rank['student'])
+            rank['score__max'] = (rank['score__max'] * 100 ) // question_count
+            ranking_list.append(rank)
+
+        log.debug(ranking_list)
+        log.debug(ranking_list[0].get('student'))
         return render(request, template_file, {
             'score': score,
             'exam': score.quiz,
-
+            'ranking_list': ranking_list,
         })
 
 
