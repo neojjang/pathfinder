@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 import logging
+from functools import reduce
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.utils import timezone
@@ -132,15 +133,22 @@ class Quiz(models.Model):
         return student_score[0].score
     def is_timeover(self):
         return self.closing_date < timezone.now()
-    def get_percent_ratio(self):
+    def get_percent_ratio(self, student):
         question_count = self.questions.all().count()
-        studentscore_list = self.studentscore_set.all()
+        studentscore_list = self.studentscore_set.filter(student=student)
         ratio = 0.0
         for student in studentscore_list:
-            ratio = ratio + (student.score / question_count)
-
+            ratio = ratio + round(student.score / question_count, 2)
+        # log.debug(studentscore_list)
+        # if len(studentscore_list) > 1:
+        #     ratio = reduce(lambda x,y: (x.score / question_count if isinstance(x, StudentScore) else x) \
+        #                                + (y.score / question_count if isinstance(y, StudentScore) else y) \
+        #                    , studentscore_list)
+        #
+        log.debug("ratio=%s",ratio)
         if len(studentscore_list) > 0:
-            return ratio / len(studentscore_list)
+            # log.debug(round(ratio / len(studentscore_list), 2))
+            return round(ratio / len(studentscore_list) * 100, 1)
         else:
             return 0.0
 

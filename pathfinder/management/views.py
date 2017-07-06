@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import logging
 from django.shortcuts import render
+from django.http import JsonResponse
 from django.views import View
 from django.db.models import Q
 from django.core.paginator import PageNotAnInteger, Paginator, EmptyPage
@@ -12,6 +13,7 @@ from common.models import LEVEL_CHOICES
 from accounts.models import Student
 from quiz.views import StaffMemberRequiredMixin
 from .forms import StudentForm
+from accounts.forms import StudentRedistrationForm
 # Create your views here.
 
 log = logging.getLogger(__name__)
@@ -46,13 +48,37 @@ class ListMemberView(StaffMemberRequiredMixin, View):
 
         level = [{"id": id, "title": title} for id, title in LEVEL_CHOICES]
         grade = [{"id": id, "title": title} for id, title in Student.GRADE_CHOICES]
+
+        form = StudentRedistrationForm()
+        student_form = StudentForm()
         return render(request, 'management/list_member.html', {
             'students': students,
             'level': level,
             'grade': grade,
             'level_id': level_id,
-            'grade_id': grade_id
+            'grade_id': grade_id,
+            'form': form,
+            'student_form': student_form
         })
+    def post(self, request):
+        user_form = StudentRedistrationForm(request.POST)
+        student_form = StudentForm(request.POST)
+        if user_form.is_valid() and student_form.is_valid():
+            new_user = user_form.save(commit=False)
+            new_user.set_password(user_form.cleaned_data['password'])
+            new_user.save()
+
+            student = student_form.save(commit=False)
+            student.user = new_user
+            student.save()
+            return  JsonResponse({"status": "OK"}) # redirect(reverse("quiz:list_member"))
+        else:
+            log.debug(user_form.errors.items())
+            log.debug(student_form.errors.items())
+            error = {key:value for key, value in user_form.errors.items()}
+            error.update({key:value for key, value in student_form.errors.items()})
+            error.update({"status": "ERROR"})
+            return JsonResponse(error)
 
 
 

@@ -15,6 +15,9 @@
 {% block nav_sidebar %}
         {% include 'student_side_menu.html' %}
 {% endblock %}
+{% block page_name %}
+테스트 결과
+{% endblock %}
 {% block breadcrumbs %}
     <ol class="breadcrumb">
         <li><a href="/">홈 </a></li>
@@ -43,8 +46,8 @@
                         <tbody>
                             <td>{{ exam.get_level_display }}</td>
                             <td>{{ exam.questions.all.count }} 문제</td>
-                            <td>{{ exam.studentscore_set.all.count }}</td>
-                            <td>{{ exam.get_percent_ratio|mul:100 }}%</td>
+                            <td>{{ score_list|length }}</td>
+                            <td>{{ exam_percent_ratio }}%</td>
                             <td>{{ exam.closing_date|date:'Y-m-d H:s' }}</td>
                         </tbody>
                     </table>
@@ -78,7 +81,8 @@
                                 <td class="col-md-3">{{ exam.questions.all.count|sub:score.score }}</td>
                                 <td class="col-md-3">{{ score.score|div:exam.questions.all.count|mul:100}}%</td>
                                 <td class="col-md-1">
-                                    <button class="btn btn-xs btn-primary" data-toggle="collapse" data-target="#{{ score.ekey }}">상세 보기</button>
+{#                                    <button class="btn btn-xs btn-primary" data-toggle="collapse" data-target="#{{ score.ekey }}">상세 보기</button>#}
+                                    <button class="btn btn-xs btn-primary menu" data-href="{% url 'report:view_detail'  score.pk %}">상세 보기</button>
                                 </td>
                             </tr>
                             <tr class="score-detail collapse" id="{{ score.ekey }}">

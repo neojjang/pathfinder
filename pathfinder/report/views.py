@@ -21,10 +21,12 @@ class StudentScoreView(LoginRequiredMixin, View):
             quiz=exam,
             student=request.user.student
         ).order_by('-pk')
-
+        log.debug(student_score)
+        exam_percent_ratio = exam.get_percent_ratio(request.user.student)
         return render(request, 'report/score_view.html', {
             'exam': exam,
-            'score_list': student_score
+            'score_list': student_score,
+            'exam_percent_ratio': exam_percent_ratio
         })
 
 
@@ -32,11 +34,11 @@ class DetailView(LoginRequiredMixin, View):
     def get(self, request, score_id):
         query = Q(pk=score_id)
         if not request.user.is_staff:
-            query = query + Q(student=request.user.student)
+            query = query & Q(student=request.user.student)
             template_file = 'report/detail_view.html'
         else:
             template_file = 'report/admin_detail_view.html'
-
+        log.debug(query)
         score = StudentScore.objects.get(query)
 
         question_count = score.quiz.questions.all().count()
