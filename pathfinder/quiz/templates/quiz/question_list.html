@@ -42,7 +42,7 @@
                 <li>
                     |
                 </li>
-                <li class=""><button class="btn btn-danger menu" data-href="{% url 'quiz:create_question' %}"> 문제 작성 </button></li>
+                <li class=""><button class="btn btn-primary menu" data-href="{% url 'quiz:create_question' %}"> 문제 작성 </button></li>
             </ul>
             </form>
             <div class="box">
@@ -50,20 +50,22 @@
                     <table class="table table-hover">
                         <thead>
                             <th class="col-md-1">#</th>
-                            <th class="col-md-7">문제</th>
+                            <th class="col-md-6">문제</th>
                             <th class="col-md-1">문제수준</th>
                             <th class="col-md-1">문제유형</th>
                             <th class="col-md-1">제한시간</th>
                             <th class="col-md-1">사용횟수</th>
+                            <th class="col-md-1">정답율</th>
                         </thead>
                         {% for question in questions %}
                             <tr class="question" question_id="{{ question.pk }}">
-                                <td class="col-md-1"><a href="{% url 'quiz:show_question' question.pk %}">{{ question.pk }}</a> </td>
-                                <td class="col-md-7">{{ question.title }}</td>
-                                <td class="col-md-1">{{ question.get_level_display }}</td>
-                                <td class="col-md-1">{{ question.get_question_type_display }}</td>
-                                <td class="col-md-1">{{ question.limit_time }}</td>
-                                <td class="col-md-1">{{ question.get_used_count }}</td>
+                                <td><a href="{% url 'quiz:show_question' question.pk %}">{{ question.pk }}</a> </td>
+                                <td >{{ question.title }}</td>
+                                <td >{{ question.get_level_display }}</td>
+                                <td >{{ question.get_question_type_display }}</td>
+                                <td >{{ question.limit_time }}</td>
+                                <td >{{ question.get_used_count }}</td>
+                                <td>{{ question.get_percent_ratio|floatformat }}%</td>
                             </tr>
                         {% empty %}
                             <tr>

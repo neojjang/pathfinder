@@ -44,7 +44,7 @@
                                 </td>
                                 <td class="col-md-1" style=" vertical-align: middle;">
                                 {% with application=exam|get_score:student %}
-                                    <b class="label bg-red">{{ application }}</b>
+                                    <b class="label bg-red">{{ application.score }}</b>
                                 {% endwith %}
 {#                                    {% if exam.is_timeover %}<b class="label bg-red">마감</b>{% endif %}#}
                                 </td>

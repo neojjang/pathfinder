@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
 from django.db.models import Q
+from django.db.models.aggregates import Max, Count
 from django.core.paginator import PageNotAnInteger, Paginator, EmptyPage
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 # from django.contrib.admin.views.decorators import staff_member_required
@@ -11,6 +12,7 @@ from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from common.models import LEVEL_CHOICES
 from accounts.models import Student
+from quiz.models import StudentScore
 from quiz.views import StaffMemberRequiredMixin
 from .forms import StudentForm
 from accounts.forms import StudentRedistrationForm
@@ -85,9 +87,15 @@ class ListMemberView(StaffMemberRequiredMixin, View):
 class DetailMemberView(StaffMemberRequiredMixin, View):
     def get(self, request, pk=None):
         student = get_object_or_404(Student, pk=pk)
+        score_list = StudentScore.get_score_list(student)
+        log.debug(student.id)
+
+        # score_list = StudentScore.objects.annotate(Max('score'))
+        # log.debug(score_list.query)
 
         return render(request, 'management/detail_member.html', {
-            'student': student
+            'student': student,
+            'score_list': score_list
         })
 
 

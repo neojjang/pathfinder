@@ -64,7 +64,7 @@
                             <td>{{ test.quiz.title }}</td>
                             <td>{{ test.quiz.get_level_display }}</td>
                             <td>{{ test.create_date|date:"Y.m.d H:s" }}</td>
-                            <td>{{ test.score|mul:'100'|intdiv:test.quiz.questions.all.count }}%</td>
+                            <td>{{ test.score|mul:'100'|div:test.quiz.questions.all.count|floatformat }}%</td>
                         </tr>
                     {% empty %}
                         <tr>

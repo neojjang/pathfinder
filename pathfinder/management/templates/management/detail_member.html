@@ -106,21 +106,28 @@
                             <table class="table table-hover quiz-table">
                                 <thead class="quiz-table-thead">
                                     <tr>
-                                        <th style="width:40%;">테스트 제목</th>
-                                        <th style="width:10%;">테스트 수준</th>
-                                        <th style="width:20%;">시작 날짜</th>
-                                        <th style="width:20%;">종료 날짜</th>
-                                        <th style="width:10%;">결과</th>
+                                        <th >테스트 제목</th>
+                                        <th >테스트 수준</th>
+                                        <th >시작 날짜</th>
+                                        <th >종료 날짜</th>
+                                        <th >결과</th>
                                     </tr>
                                 </thead>
                                 <tbody class="quiz-table-tbody">
                                     {% for quiz in student.quiz_set.all %}
                                         <tr class="accordion-toggle" data-toggle="collapse" data-target="#{{ quiz.id }}-detail">
-                                            <td style="width:40%;">{{ quiz.title }}</td>
-                                            <td style="width:10%;">{{ quiz.get_level_display }}</td>
-                                            <td style="width:20%;">{{ quiz.starting_date|date:'Y.m.d' }} <span class="hidden-xs">{{ quiz.starting_date|date:'H:s:i' }}</span> </td>
-                                            <td style="width:20%;">{{ quiz.closing_date|date:'Y.m.d' }} <span class="hidden-xs">{{ quiz.closing_date|date:'H:s:i' }}</span> </td>
-                                            <td style="width:10%;">{{ quiz|get_score:student }}</td>
+                                            <td >{{ quiz.title }}</td>
+                                            <td >{{ quiz.get_level_display }}</td>
+                                            <td >{{ quiz.starting_date|date:'Y.m.d' }} <span class="hidden-xs">{{ quiz.starting_date|date:'H:s:i' }}</span> </td>
+                                            <td >{{ quiz.closing_date|date:'Y.m.d' }} <span class="hidden-xs">{{ quiz.closing_date|date:'H:s:i' }}</span> </td>
+                                            <td >{% with exam_score=quiz|get_score:student %}
+                                                {% if exam_score != None %}
+                                                {{ exam_score.score|mul:100|div:quiz.questions.all.count|floatformat }}%
+                                                {% else %}
+                                                <small class="bg-red">미참가</small>
+                                                {% endif %}
+                                            {% endwith %}
+                                            </td>
                                         </tr>
                                         <tr class="accordion-body collapse" id="{{ quiz.id }}-detail">
                                             <td colspan="5">
@@ -129,14 +136,14 @@
                                                         <ul class="list-group ">
                                                             <li class="list-group-item">
                                                                <span>테스트 날짜</span>
-                                                                <span class="pull-right">점수</span>
+                                                                <span class="pull-right">정답율</span>
                                                             </li>
                                                             {% for student_score in quiz|get_studentscore_list:student %}
                                                                 <li class="list-group-item score-detail"
                                                                     style="cursor:pointer;"
                                                                     data-href="{% url 'report:view_detail' student_score.pk %}">
                                                                     <span>{{ student_score.create_date|date:'Y.m.d H:s:i' }}</span>
-                                                                    <b class="pull-right">{{ student_score.score|div:student_score.quiz.questions.all.count|mul:'100' }}</b>
+                                                                    <b class="pull-right">{{ student_score.score|div:student_score.quiz.questions.all.count|mul:'100'|floatformat }}%</b>
                                                                 </li>
                                                             {% empty %}
                                                                 <li class="list-group-item text-red">테스트 참여 자료가 없습니다.</li>
@@ -155,13 +162,133 @@
 
             </div>
         </div>
+
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">테스트 결과</div>
+                </div>
+                <div class="box-body">
+                    <div class="chart">
+                        <canvas id="scoreChart" style="height: 230px; width: 447px;" width="447" height="230"></canvas>
+                    </div>
+                </div>
+            </div>
+
 {% endblock %}
 
 {% block extra_foot %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript" ></script>
     <script type="application/javascript">
     $(".score-detail").click(function(e) {
         var url = $(this).data('href');
         location.href = url;
+    });
+
+    var ctx = document.getElementById("scoreChart").getContext('2d');
+    $(function() {
+{#        Chart.pluginService.register({#}
+{#            beforeInit: function (chart) {#}
+{#                var hasWrappedTicks = chart.config.data.labels.some(function (label) {#}
+{#                    return label.indexOf('\n') !== -1;#}
+{#                });#}
+{##}
+{#                if (hasWrappedTicks) {#}
+{#                    // figure out how many lines we need - use fontsize as the height of one line#}
+{#                    var tickFontSize = Chart.helpers.getValueOrDefault(chart.options.scales.xAxes[0].ticks.fontSize, Chart.defaults.global.defaultFontSize);#}
+{#                    var maxLines = chart.config.data.labels.reduce(function (maxLines, label) {#}
+{#                        return Math.max(maxLines, label.split('\n').length);#}
+{#                    }, 0);#}
+{#                    var height = (tickFontSize + 2) * maxLines + (chart.options.scales.xAxes[0].ticks.padding || 0);#}
+{##}
+{#                    // insert a dummy box at the bottom - to reserve space for the labels#}
+{#                    Chart.layoutService.addBox(chart, {#}
+{#                        draw: Chart.helpers.noop,#}
+{#                        isHorizontal: function () {#}
+{#                            return true;#}
+{#                        },#}
+{#                        update: function () {#}
+{#                            return {#}
+{#                                height: this.height#}
+{#                            };#}
+{#                        },#}
+{#                        height: height,#}
+{#                        options: {#}
+{#                            position: 'bottom',#}
+{#                            fullWidth: 1,#}
+{#                        }#}
+{#                    });#}
+{##}
+{#                    // turn off x axis ticks since we are managing it ourselves#}
+{#                    chart.options = Chart.helpers.configMerge(chart.options, {#}
+{#                        scales: {#}
+{#                            xAxes: [{#}
+{#                                ticks: {#}
+{#                                    display: false,#}
+{#                                    // set the fontSize to 0 so that extra labels are not forced on the right side#}
+{#                                    fontSize: 0#}
+{#                                }#}
+{#                            }]#}
+{#                        }#}
+{#                    });#}
+{##}
+{#                    chart.hasWrappedTicks = {#}
+{#                        tickFontSize: tickFontSize#}
+{#                    };#}
+{#                }#}
+{#            },#}
+{#            afterDraw: function (chart) {#}
+{#                if (chart.hasWrappedTicks) {#}
+{#                    // draw the labels and we are done!#}
+{#                    chart.chart.ctx.save();#}
+{#                    var tickFontSize = chart.hasWrappedTicks.tickFontSize;#}
+{#                    var tickFontStyle = Chart.helpers.getValueOrDefault(chart.options.scales.xAxes[0].ticks.fontStyle, Chart.defaults.global.defaultFontStyle);#}
+{#                    var tickFontFamily = Chart.helpers.getValueOrDefault(chart.options.scales.xAxes[0].ticks.fontFamily, Chart.defaults.global.defaultFontFamily);#}
+{#                    var tickLabelFont = Chart.helpers.fontString(tickFontSize, tickFontStyle, tickFontFamily);#}
+{#                    chart.chart.ctx.font = tickLabelFont;#}
+{#                    chart.chart.ctx.textAlign = 'center';#}
+{#                    var tickFontColor = Chart.helpers.getValueOrDefault(chart.options.scales.xAxes[0].fontColor, Chart.defaults.global.defaultFontColor);#}
+{#                    chart.chart.ctx.fillStyle = tickFontColor;#}
+{##}
+{#                    var meta = chart.getDatasetMeta(0);#}
+{#                    var xScale = chart.scales[meta.xAxisID];#}
+{#                    var yScale = chart.scales[meta.yAxisID];#}
+{##}
+{#                    chart.config.data.labels.forEach(function (label, i) {#}
+{#                        label.split('\n').forEach(function (line, j) {#}
+{#                            chart.chart.ctx.fillText(line, xScale.getPixelForTick(i + 0.5), (chart.options.scales.xAxes[0].ticks.padding || 0) + yScale.getPixelForValue(yScale.min) +#}
+{#                                // move j lines down#}
+{#                                j * (chart.hasWrappedTicks.tickFontSize + 2));#}
+{#                        });#}
+{#                    });#}
+{##}
+{#                    chart.chart.ctx.restore();#}
+{#                }#}
+{#            }#}
+{#        });#}
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [{% for score in score_list %}['{{ score.quiz.title }}','{{ score.create_date|date:"Y.m.d" }}'],{% endfor %}
+                ],
+                datasets: [{
+                    label: '점수',
+                    data: [{% for score in score_list %}{{ score.score__max|floatformat }},{% endfor %}
+                    ],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
     })
     </script>
 {% endblock %}

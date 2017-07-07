@@ -71,10 +71,11 @@
                         <tr>
                             <th class="col-md-1">#</th>
                             <th class="col-md-2">이름</th>
+                            <th class="col-md-1">아이디</th>
                             <th class="col-md-2">학교</th>
                             <th class="col-md-1">학년</th>
                             <th class="col-md-1">학생 수준</th>
-                            <th class="col-md-1">최근 시험</th>
+{#                            <th class="col-md-1">최근 시험</th>#}
                             <th class="col-md-1">상태</th>
                             <th class="col-md-1">등록일</th>
                             <th class="col-md-2"></th>
@@ -82,11 +83,12 @@
                     {% for student in students %}
                         <tr class="student" data-student-id="{{ student.pk }}">
                             <td class="col-md-1">{{ student.pk }}</td>
-                            <td class="col-md-2">{{ student.user.first_name }}</td>
+                            <td class="col-md-2">{{ student.user.last_name }}{{ student.user.first_name }}</td>
+                            <td class="col-md-1">{{ student.user.username }}</td>
                             <td class="col-md-2">{{ student.school_name }}</td>
                             <td class="col-md-1">{{ student.get_grade_display }}</td>
                             <td class="col-md-1">{{ student.get_level_display }}</td>
-                            <td class="col-md-1">{{ student.get_latest_quiz.title }}</td>
+{#                            <td class="col-md-1">{{ student.get_latest_quiz.title|truncatechars:10 }}</td>#}
                             <td class="col-md-1">{% if student.is_activated %}활성{% else %}비활성{% endif %}</td>
                             <td class="col-md-1">{{ student.create_date|date:"Y.m.d" }}</td>
                             <td class="col-md-2">
@@ -255,9 +257,11 @@
             success: function(e) {
                 if(e.status == "ERROR") {
                     for(var key in e) {
-                    console.log(key)
-                    $("#"+key+"-error").html(e[key]);
-                }
+                        console.log(key)
+                        $("#"+key+"-error").html(e[key]);
+                    }
+                } else if(e.status == "OK") {
+                    location.href = ".";
                 }
             },
             error: function(xhr, status, e) {

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load mathfilters %}
+{% load custom_tags %}
 {% block title %}패스파인더 : {{ exam.title }} 결과{% endblock %}
 {% block extra_css %}
     .score-view:hover {
@@ -55,7 +56,7 @@
                             <td>{{ exam.questions.all.count }} 문제</td>
 {#                            <td>{{ score.score }}</td>#}
 {#                            <td >{{ exam.questions.all.count|sub:score.score }}</td>#}
-                            <td>{{ score.score|mul:'100'|intdiv:exam.questions.all.count}}%</td>
+                            <td>{{ score.score|mul:'100'|div:exam.questions.all.count|floatformat }}%</td>
                             <td>{{ exam.closing_date|date:'Y-m-d H:s' }}</td>
                             <td>{{ score.create_date|date:'Y-m-d H:s' }}</td>
                         </tbody>
@@ -83,6 +84,7 @@
                                     <th>번호</th>
                                     <th>문제유형</th>
                                     <th>소요시간</th>
+                                    <th>전체정답율</th>
                                     <th>학생답</th>
                                     <th>문제답</th>
                                     <th class="col-md-1">결과</th>
@@ -94,6 +96,7 @@
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ answer.question.get_question_type_display }}</td>
                                     <td>{{ answer.elapsed_time }} 초</td>
+                                    <td>{{ answer.question|percentratio_of_question_exam:answer.quiz|floatformat }}%</td>
                                     <td>{% if answer.question.answer_type != 3 %}{{ answer.answer }}{% endif %}</td>
                                     <td>{% if answer.question.answer_type != 3 %}{{ answer.question.correct }}{% endif %}</td>
                                     <td>{{ answer.get_is_correct_display }}</td>
@@ -137,7 +140,7 @@
                                         <td>{{ value.1.0 }}</td>
                                         <td>{{ value.1.1 }}</td>
                                         <td>{{ value.1.0|sub:value.1.1 }}</td>
-                                        <td>{{ value.1.1|mul:100|intdiv:value.1.0 }}%</td>
+                                        <td>{{ value.1.1|mul:100|div:value.1.0|floatformat }}%</td>
                                     </tr>
                                 {% endfor %}
                             </table>
@@ -177,7 +180,7 @@
     $(function() {
         var chartData = {
             labels : [
-                {% for item in ranking_list %}'{{ item.student.user.username }}',{% endfor %}
+                {% for item in ranking_list %}'{{ item.student.user.username|truncatechars:7 }}',{% endfor %}
             ],
             datasets: [
                 {

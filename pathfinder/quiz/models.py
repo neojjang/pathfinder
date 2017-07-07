@@ -3,6 +3,7 @@ import logging
 from functools import reduce
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
+from django.db.models import Max, Count
 from django.utils import timezone
 
 from common.models import LEVEL_CHOICES, TYPE_CHOICES
@@ -54,6 +55,24 @@ class Question(models.Model):
         return "{} [{}]".format(self.title, self.get_level_display())
     def get_used_count(self):
         return self.quiz_set.all().count()
+    def get_percent_ratio(self):
+        quiz_list = self.quiz_set.all()
+        student_count = 0
+        studentscore_count = 0
+        for quiz in quiz_list:
+            sc = quiz.students.all().count()  #문제에 배정된 학생수
+            ssc = quiz.studentscore_set.all().count() # 문제에 참여한 학생 수
+            student_count = student_count + (sc if sc >= ssc else ssc)
+
+        log.debug(student_count)
+        all_answer_count = self.studentanswer_set.all().count()
+        # 각 문제는 최소 시험에 참여하는 학생 수만큼 답지를 가져야 한다.
+        all_answer_count = all_answer_count if all_answer_count >= student_count else student_count
+        correct_answer_count = self.studentanswer_set.filter(is_correct=True).count()
+        if all_answer_count > 0:
+            return (correct_answer_count / all_answer_count) * 100
+        else:
+            return 0
 
 
 
@@ -138,7 +157,7 @@ class Quiz(models.Model):
         studentscore_list = self.studentscore_set.filter(student=student)
         ratio = 0.0
         for student in studentscore_list:
-            ratio = ratio + round(student.score / question_count, 2)
+            ratio = ratio + student.score / question_count
         # log.debug(studentscore_list)
         # if len(studentscore_list) > 1:
         #     ratio = reduce(lambda x,y: (x.score / question_count if isinstance(x, StudentScore) else x) \
@@ -148,7 +167,7 @@ class Quiz(models.Model):
         log.debug("ratio=%s",ratio)
         if len(studentscore_list) > 0:
             # log.debug(round(ratio / len(studentscore_list), 2))
-            return round(ratio / len(studentscore_list) * 100, 1)
+            return ratio / len(studentscore_list) * 100
         else:
             return 0.0
 
@@ -173,8 +192,7 @@ class StudentScore(models.Model):
     class Meta:
         verbose_name=u"성적"
         verbose_name_plural=u"성적"
-        ordering=['-pk',]
-
+        # ordering=['-pk',]
     def __str__(self):
         return "{}-{}시험-{}점".format(self.student.get_name(),
                                     self.quiz.title,
@@ -208,6 +226,17 @@ class StudentScore(models.Model):
                 result[qt][1] = result[qt][1] + 1
         log.debug(result)
         return result
+    @staticmethod
+    def get_score_list(student):
+        score_list = StudentScore.objects.filter(student=student).values('quiz', 'student').annotate(
+            Max('score')).order_by()
+        # log.debug(score_list.query)
+        # log.debug(score_list)
+        for score in score_list:
+            log.debug(score)
+            score['quiz'] = Quiz.objects.get(pk=score.get('quiz'))
+            score['score__max'] = score['score__max']*100 / score['quiz'].questions.all().count()
+        return score_list
 
 
 @python_2_unicode_compatible

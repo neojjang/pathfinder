@@ -47,7 +47,7 @@
                             <td>{{ exam.get_level_display }}</td>
                             <td>{{ exam.questions.all.count }} 문제</td>
                             <td>{{ score_list|length }}</td>
-                            <td>{{ exam_percent_ratio }}%</td>
+                            <td>{{ exam_percent_ratio|floatformat }}%</td>
                             <td>{{ exam.closing_date|date:'Y-m-d H:s' }}</td>
                         </tbody>
                     </table>
