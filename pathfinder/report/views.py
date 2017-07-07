@@ -63,7 +63,7 @@ class DashboardView(StaffMemberRequiredMixin, View):
     def get(self, request):
         page = request.GET.get('p')
 
-        tested_students = StudentScore.objects.all()
+        tested_students = StudentScore.objects.all().order_by('-create_date')
         paginator = Paginator(tested_students, 20)
         try:
             tested_students = paginator.page(page)
