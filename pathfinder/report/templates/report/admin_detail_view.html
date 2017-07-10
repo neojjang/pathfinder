@@ -180,7 +180,7 @@
     $(function() {
         var chartData = {
             labels : [
-                {% for item in ranking_list %}'{{ item.student.user.username|truncatechars:7 }}',{% endfor %}
+                {% for item in ranking_list %}'{{ item.student.user.username }}',{% endfor %}
             ],
             datasets: [
                 {

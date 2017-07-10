@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load mathfilters %}
+{% load custom_tags %}
 {% block title %}패스파인더 : {{ exam.title }} 결과{% endblock %}
 {% block extra_css %}
     .score-view:hover {
@@ -84,6 +85,7 @@
                                     <th>번호</th>
                                     <th>문제유형</th>
                                     <th>소요시간</th>
+                                    <th>전체정답율</th>
                                     <th>학생답</th>
                                     <th>문제답</th>
                                     <th class="col-md-1">결과</th>
@@ -95,6 +97,7 @@
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ answer.question.get_question_type_display }}</td>
                                     <td>{{ answer.elapsed_time }} 초</td>
+                                    <td>{{ answer.question|percentratio_of_question_exam:answer.quiz|floatformat }}%</td>
                                     <td>{% if answer.question.answer_type != 3 %}{{ answer.answer }}{% endif %}</td>
                                     <td>{% if answer.question.answer_type != 3 %}{{ answer.question.correct }}{% endif %}</td>
                                     <td>{{ answer.get_is_correct_display }}</td>
@@ -178,11 +181,15 @@
     $(function() {
         var chartData = {
             labels : [
-                {% for item in ranking_list %}'{{ item.student.user.username|truncatechars:7 }}',{% endfor %}
+                {% for item in ranking_list %}
+                    {% if item.student.user == request.user %}'본인',
+                    {% else %}'{{ item.student.user.username|truncatechars:7 }}',
+                    {% endif %}
+                {% endfor %}
             ],
             datasets: [
                 {
-                  label               : '정답율',
+                  label: '정답율',
                   fill: false,
                   "backgroundColor"     : [
                       {% for item in ranking_list %}
@@ -195,7 +202,7 @@
                       {% endfor %}
                   ],
                   "borderWidth": 1,
-                  data                : [{% for item in ranking_list %}{{ item.score__max }},{% endfor %}]
+                  data                : [{% for item in ranking_list %}{{ item.score__max|floatformat }},{% endfor %}]
                 },
 {#                {#}
 {#                  label               : 'Digital Goods',#}

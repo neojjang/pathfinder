@@ -43,7 +43,7 @@
                                     <td>{{ test.quiz.title }}</td>
                                     <td>{{ test.quiz.get_level_display }}</td>
                                     <td>{{ test.create_date|date:"Y.m.d H:s" }}</td>
-                                    <td>{{ test.score|div:test.quiz.questions.all.count|mul:100}}%</td>
+                                    <td>{{ test.score|div:test.quiz.questions.all.count|mul:100|floatformat}}%</td>
                                 </tr>
                             {% empty %}
                                 <tr>
@@ -96,6 +96,16 @@
             </div>
         </div>
     </div>
+    <div class="box">
+        <div class="box-header">
+            <div class="box-title">테스트 결과(최근 10건)</div>
+        </div>
+        <div class="box-body">
+            <div class="chart">
+                <canvas id="scoreChart" style="height: 230px; width: 447px;" width="447" height="230"></canvas>
+            </div>
+        </div>
+    </div>
 
     {% include 'confirm-dialog.html' %}
 {% endblock %}
@@ -105,6 +115,8 @@
 {% endblock %}
 
 {% block extra_foot %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript" ></script>
+
     <script type="text/javascript">
     $("button.menu").click(function(e) {
         e.preventDefault();
@@ -141,5 +153,32 @@
         location.href = link;
     });
 
+    var ctx = document.getElementById("scoreChart").getContext('2d');
+    $(function() {
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [{% for score in score_list %}['{{ score.quiz.title }}','{{ score.create_date|date:"Y.m.d" }}'],{% endfor %}
+                ],
+                datasets: [{
+                    label: '점수',
+                    data: [{% for score in score_list %}{{ score.score__max|floatformat }},{% endfor %}
+                    ],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    })
     </script>
 {% endblock %}

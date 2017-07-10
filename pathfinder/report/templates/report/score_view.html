@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% load mathfilters %}
 {% block title %}패스파인더 : {{ exam.title }} 결과{% endblock %}
 {% block extra_css %}
@@ -79,7 +80,7 @@
                                 <td class="col-md-3">{{ score.create_date|date:"Y-m-d H:s" }}</td>
                                 <td class="col-md-3">{{ score.score }}</td>
                                 <td class="col-md-3">{{ exam.questions.all.count|sub:score.score }}</td>
-                                <td class="col-md-3">{{ score.score|div:exam.questions.all.count|mul:100}}%</td>
+                                <td class="col-md-3">{{ score.score|div:exam.questions.all.count|mul:100|floatformat}}%</td>
                                 <td class="col-md-1">
 {#                                    <button class="btn btn-xs btn-primary" data-toggle="collapse" data-target="#{{ score.ekey }}">상세 보기</button>#}
                                     <button class="btn btn-xs btn-primary menu" data-href="{% url 'report:view_detail'  score.pk %}">상세 보기</button>

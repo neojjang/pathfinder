@@ -86,8 +86,19 @@ class ListMemberView(StaffMemberRequiredMixin, View):
 
 class DetailMemberView(StaffMemberRequiredMixin, View):
     def get(self, request, pk=None):
+        page = request.GET.get('p')
         student = get_object_or_404(Student, pk=pk)
         score_list = StudentScore.get_score_list(student)
+
+        quiz_list = student.quiz_set.all()
+        paginator = Paginator(quiz_list, 20)
+        try:
+            quiz_list = paginator.page(page)
+        except PageNotAnInteger:
+            quiz_list = paginator.page(1)
+        except EmptyPage:
+            quiz_list = paginator.page(paginator.num_pages)
+
         log.debug(student.id)
 
         # score_list = StudentScore.objects.annotate(Max('score'))
@@ -95,6 +106,7 @@ class DetailMemberView(StaffMemberRequiredMixin, View):
 
         return render(request, 'management/detail_member.html', {
             'student': student,
+            'quiz_list': quiz_list,
             'score_list': score_list
         })
 

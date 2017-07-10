@@ -43,9 +43,9 @@ class DetailView(LoginRequiredMixin, View):
 
         question_count = score.quiz.questions.all().count()
         ranking_list = []
-        for rank in StudentScore.objects.values(
+        for rank in StudentScore.objects.filter(quiz=score.quiz).values(
                 'quiz','student'
-        ).annotate(Max('score')).order_by('-score__max').filter(quiz=score.quiz)[:10]:
+        ).annotate(Max('score')).order_by('-score__max')[:10]:  #.filter(quiz=score.quiz)
             rank['student'] = Student.objects.get(pk=rank['student'])
             rank['score__max'] = (rank['score__max'] * 100 ) / question_count
             ranking_list.append(rank)

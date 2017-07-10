@@ -47,7 +47,7 @@ class TopView(View):
             else:
                 latest_tested_exam = request.user.student.studentscore_set.filter(
                     create_date__gte=last_weeks
-                )
+                ).order_by('-create_date')
                 # 참여하지 않은 테스트들 중에서 최근 등록 된 것을 보여준다.
                 log.debug([score.quiz.id for score in StudentScore.objects.filter(
                     student=request.user.student
@@ -59,9 +59,12 @@ class TopView(View):
                 ).order_by('-pk')
                 # Quiz.objects.filter(students=request.user.student)
 
+                score_list = StudentScore.get_score_list(request.user.student)
+
                 return render(request, 'student-top.html', {
                     'tested_exam': latest_tested_exam,
-                    'exam_list': exam_list
+                    'exam_list': exam_list,
+                    'score_list': score_list,
                 })
         else:
             return render(request, 'top.html', {})

@@ -12,6 +12,15 @@ from accounts.models import Student
 
 log = logging.getLogger(__name__)
 
+
+def dictfetchall(cursor):
+    "Return all rows from a cursor as a dict"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+
 @python_2_unicode_compatible
 class Question(models.Model):
     '''
@@ -228,13 +237,30 @@ class StudentScore(models.Model):
         return result
     @staticmethod
     def get_score_list(student):
-        score_list = StudentScore.objects.filter(student=student).values('quiz', 'student').annotate(
-            Max('score')).order_by()
+        "return group by "
+        # score_list = StudentScore.objects.filter(student=student).order_by('-pk')
         # log.debug(score_list.query)
-        # log.debug(score_list)
+        sql_query = """
+        SELECT "quiz_studentscore"."quiz_id", "quiz_studentscore"."student_id", 
+               MAX("quiz_studentscore"."score") AS "score__max", "quiz_studentscore"."id" 
+        FROM "quiz_studentscore" 
+        WHERE "quiz_studentscore"."student_id" = %s 
+        GROUP BY "quiz_studentscore"."quiz_id", "quiz_studentscore"."student_id"
+        ORDER BY "quiz_studentscore"."id" ASC
+        LIMIT 10
+        """
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute(sql_query, [student.id])
+        score_list = dictfetchall(cursor)
+        # score_list = StudentScore.objects.filter(
+        #     student=student
+        # ).values('quiz', 'student').annotate(Max('score'))
+        # log.debug(score_list.query)
+        log.debug(score_list)
         for score in score_list:
             log.debug(score)
-            score['quiz'] = Quiz.objects.get(pk=score.get('quiz'))
+            score['quiz'] = Quiz.objects.get(pk=score.get('quiz_id'))
             score['score__max'] = score['score__max']*100 / score['quiz'].questions.all().count()
         return score_list
 

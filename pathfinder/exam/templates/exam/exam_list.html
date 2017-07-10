@@ -18,7 +18,7 @@
 {% block breadcrumbs %}
     <ol class="breadcrumb">
         <li><a href="/">홈 </a></li>
-        <li class="active">테스트 관리</li>
+        <li class="active">테스트 리스트</li>
     </ol>
 {% endblock %}
 
@@ -31,12 +31,13 @@
                             <th class="col-md-1">#</th>
                             <th class="col-md-3">시험 제목</th>
                             <th class="col-md-1">참여</th>
-                            <th class="col-md-2">시작</th>
-                            <th class="col-md-2">종료</th>
+                            <th class="col-md-2">종료 날짜</th>
+                            <th class="col-md-2">테스트 날짜</th>
                             <th class="col-md-1">시험 수준</th>
                             <th class="col-md-2"></th>
                         </thead>
                         {% for exam in exam_list %}
+                            {% with exam_score=exam|get_score:request.user.student %}
                             <tr class="" exam_id="{{ exam.pk }}">
                                 <td class="col-md-1" style=" vertical-align: middle;"><a href="{% url 'exam:take_exam' exam.pk %}">{{ exam.pk }}</a> </td>
                                 <td class="col-md-3" id="exam-{{ exam.pk }}" style=" vertical-align: middle;">
@@ -48,16 +49,17 @@
                                 {% endwith %}
 {#                                    {% if exam.is_timeover %}<b class="label bg-red">마감</b>{% endif %}#}
                                 </td>
-                                <td class="col-md-2" style=" vertical-align: middle;">{{ exam.starting_date|date:"Y-m-d H:i" }}</td>
                                 <td class="col-md-2" style=" vertical-align: middle;">{{ exam.closing_date|date:"Y-m-d H:i" }}</td>
+                                <td class="col-md-2" style=" vertical-align: middle;">{{ exam_score.create_date|date:"Y-m-d H:i" }}</td>
                                 <td class="col-md-1" style=" vertical-align: middle;">{{ exam.get_level_display }}</td>
                                 <td class="col-md-2" style=" vertical-align: middle;">
-                                    {% if not exam.is_timeover %}
-                                    <button class="btn btn-primary exam" exam_id="{{ exam.pk }}">테스트 보기</button>
-                                    {% endif %}
-                                    <button class="btn btn-success menu" data-href="{% url 'report:view_score' exam.pk %}">결과 보기</button>
+{#                                    {% if not exam.is_timeover %}#}
+                                    <button class="btn btn-primary exam btn-xs" data-exam-id="{{ exam.pk }}">테스트 보기</button>
+{#                                    {% endif %}#}
+                                    <button class="btn btn-success menu btn-xs" data-href="{% url 'report:view_score' exam.pk %}">결과 보기</button>
                                 </td>
                             </tr>
+                            {% endwith %}
                         {% empty %}
                             <tr>
                                 <td class="bg-info" colspan="7"> <p>등록 된 테스트가 없습니다. </p></td>
@@ -69,21 +71,42 @@
                     </div>
                 </div>
             </div>
-
+{% include 'confirm-dialog.html' %}
 {% endblock %}
 
 {% block extra_foot %}
     <script type="application/javascript">
+{#    $(".exam").click(function(e) {#}
+{#        var no = $(this).attr("exam_id");#}
+{#        var title = $("#exam-"+no).text();#}
+{#        var yesno = window.confirm("<"+title+">\n\n테스트를 시작하시겠습니까?");#}
+{#        if(yesno) {#}
+{#            var link = "{% url 'exam:take_exam' 12345 %}";#}
+{#            link = link.replace('12345', no);#}
+{#            location.href = link;#}
+{#        }#}
+{##}
+{#    });#}
+    var exam_id = 0;
     $(".exam").click(function(e) {
-        var no = $(this).attr("exam_id");
-        var title = $("#exam-"+no).text();
-        var yesno = window.confirm("<"+title+">\n\n테스트를 시작하시겠습니까?");
-        if(yesno) {
-            var link = "{% url 'exam:take_exam' 12345 %}";
-            link = link.replace('12345', no);
-            location.href = link;
-        }
+        exam_id = $(this).data("exam-id");
+        var title = $("#exam-"+exam_id).text();
+        $("#confirm-title").html(title);
+        $("#confirm-test").modal('toggle');
 
+{#        var yesno = window.confirm("<"+title+">\n\n테스트를 시작하시겠습니까?", "패스파인");#}
+{#        if(yesno) {#}
+{#            var link = "{% url 'exam:start_exam' 12345 %}";#}
+{#            link = link.replace('12345', no);#}
+{#            location.href = link;#}
+{#        }#}
+    });
+    $("#confirm-test-ok").click(function(e) {
+        e.preventDefault();
+        $("#confirm-test").modal('toggle');
+        var link = "{% url 'exam:take_exam' 12345 %}";
+        link = link.replace('12345', exam_id);
+        location.href = link;
     });
     </script>
 {% endblock %}
