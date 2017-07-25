@@ -8,3 +8,5 @@ six==1.10.0
 Unipath==1.1
 django-mathfilters
 mysqlclient
+boto3
+django-storages

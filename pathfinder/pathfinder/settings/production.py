@@ -213,3 +213,11 @@ LOGGING = {
         },
     },
 }
+
+# AWS S3 storage
+AWS_ACCESS_KEY = ""
+AWS_SECRET_ACCESS_KEY = ""
+S3_BUCKET_NAME = ""
+REGION_NAME = ""
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto.S3BotoStorage"
+
