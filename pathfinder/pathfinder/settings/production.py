@@ -33,7 +33,7 @@ SECRET_KEY = 'hk_xcub&i!$_)-e(yy4m)t+87(fi(c$df8z=z2@plh+vh8boy%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -99,7 +99,10 @@ if 'RDS_DB_NAME' in os.environ:
             'USER': os.environ['RDS_USERNAME'], # 'pathfinder!23',
             'PASSWORD': os.environ['RDS_PASSWORD'],
             'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT']
+            'PORT': os.environ['RDS_PORT'],
+            'OPTIONS': {
+                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            }
         }
     }
 else:
@@ -148,7 +151,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 #static file directory inclusion
 
-# STATIC_ROOT = './static/'
+
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
@@ -165,6 +168,9 @@ STATICFILES_FINDERS = [
   'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 STATIC_URL = '/static/'
+STATIC_ROOT =  PROJECT_DIR.child('www_static')
+print(STATIC_ROOT)
+
 # if DEBUG:
 #     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

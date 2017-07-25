@@ -8,7 +8,12 @@ from django.conf import settings
 
 
 class Command(BaseCommand):
+    help = "Create superuser."
     def handle(self, *args, **options):
         # User = settings.AUTH_USER_MODEL
+        print("check admin ----")
         if not User.objects.filter(username='admin').exists():
             User.objects.create_superuser('admin', 'neojjang@gmail.com', 'pathf1nder!234')
+            print("complete to create superuser...")
+        else:
+            print("Already exist admin user")

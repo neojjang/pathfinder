@@ -137,7 +137,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 #static file directory inclusion
 
-# STATIC_ROOT = './static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
@@ -154,6 +153,9 @@ STATICFILES_FINDERS = [
   'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 STATIC_URL = '/static/'
+STATIC_ROOT = PROJECT_DIR.child('www_static') # os.path.join(BASE_DIR, 'www_static')
+print(STATIC_ROOT)
+
 # if DEBUG:
 #     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
