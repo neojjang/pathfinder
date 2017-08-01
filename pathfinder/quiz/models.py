@@ -7,7 +7,7 @@ from django.db.models import Max, Count
 from django.utils import timezone
 
 from common.models import LEVEL_CHOICES, TYPE_CHOICES
-from accounts.models import Student
+from accounts.models import Student, Teacher
 # Create your models here.
 
 log = logging.getLogger(__name__)
@@ -54,6 +54,7 @@ class Question(models.Model):
         verbose_name=u"정답 답안",
         max_length=2000
     )
+    teacher = models.ForeignKey(Teacher)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 
@@ -143,6 +144,7 @@ class Quiz(models.Model):
     closing_date = models.DateTimeField(
         verbose_name=u"테스트 마감 날짜",
         null=True, blank=True)
+    teacher = models.ForeignKey(Teacher)
     questions = models.ManyToManyField(Question, verbose_name=u"문제")
     students = models.ManyToManyField(Student, verbose_name=u"학생")
     create_date = models.DateTimeField(auto_now_add=True)

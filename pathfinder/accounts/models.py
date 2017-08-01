@@ -58,20 +58,23 @@ class Student(models.Model):
         else:
             return student_score[0].score
 
-# @python_2_unicode_compatible
-# class StudentExam(models.Model):
-#     '''
-#     학생에 할당 된 시험을 관리
-#     '''
-#     student = models.ForeignKey(Student)
-#     quiz = models.ForeignKey(Quiz)
-#     create_date = models.DateTimeField(auto_now_add=True)
-#     update_date = models.DateTimeField(auto_now=True)
-#
-#     class Meta:
-#         verbose_name_plural=u"시험 관리"
-#         verbose_name=u"시험 관리"
-#
-#     def __str__(self):
-#         return "{}-{}시험".format(self.student.get_name(), self.quiz.title)
-#
+
+class Teacher(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    students = models.ManyToManyField(Student)
+    is_admin = models.BooleanField(default=False)
+    is_activated = models.BooleanField(default=False, verbose_name=u"활성화")
+    create_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(auto_now=True)
+    class Meta:
+        verbose_name_plural=u"선생님"
+        verbose_name=u"선생님"
+    def __str__(self):
+        return "{}{} 선생님".format(self.user.last_name,
+                         self.user.first_name)
+
+    def get_questions(self):
+        return self.question_set.all()
+
+    def get_quiz(self):
+        return self.quiz_set.all()

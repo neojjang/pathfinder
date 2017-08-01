@@ -11,7 +11,7 @@ from django.shortcuts import render, reverse, redirect, get_object_or_404
 # from django.utils.decorators import method_decorator
 
 from common.models import LEVEL_CHOICES
-from accounts.models import Student
+from accounts.models import Student, Teacher
 from quiz.models import StudentScore
 from quiz.views import StaffMemberRequiredMixin
 from .forms import StudentForm
@@ -113,7 +113,7 @@ class DetailMemberView(StaffMemberRequiredMixin, View):
 
 
 class EditMemberView(StaffMemberRequiredMixin, View):
-    def get(self, request, pk=None):
+    def get(self, request, pk=None, cmd='edit'):
         student = get_object_or_404(Student, pk=pk)
         form = StudentForm(instance=student)
         return render(request, 'management/edit_member.html', {
@@ -121,18 +121,88 @@ class EditMemberView(StaffMemberRequiredMixin, View):
             'form': form
         })
 
-    def post(self, request, pk=None):
+    def post(self, request, pk=None, cmd='edit'):
         message = None
         student = get_object_or_404(Student, pk=pk)
-
-        form = StudentForm(request.POST, instance=student)
-        if form.is_valid():
-            form.save()
-            message = u"수정 되었습니다."
+        if cmd == 'edit':
+            form = StudentForm(request.POST, instance=student)
+            if form.is_valid():
+                form.save()
+                message = u"수정 되었습니다."
+            else:
+                log.error(form.errors)
+            return render(request, 'management/edit_member.html', {
+                'student': student,
+                'form': form,
+                'message': message
+            })
         else:
-            log.error(form.errors)
-        return render(request, 'management/edit_member.html', {
-            'student': student,
-            'form': form,
-            'message': message
+            # 삭제 성공 후에 메시지를 표시 해야 한다.
+            return redirect(reverse('quiz:list_member'))
+
+
+class ListTeacherView(StaffMemberRequiredMixin, View):
+    def get(self, request):
+        page = request.GET.get('p')
+        teachers = Teacher.objects.all()
+
+        paginator = Paginator(teachers, 20)
+        try:
+            teachers = paginator.page(page)
+        except PageNotAnInteger:
+            teachers = paginator.page(1)
+        except EmptyPage:
+            teachers = paginator.page(paginator.num_pages)
+
+        return render(request, 'management/list_teacher.html', {
+            'teachers': teachers,
+            'page': page
         })
+    def post(self, request):
+        '''
+        선생님을 등록 처리
+        '''
+        user_form = StudentRedistrationForm(request.POST)
+        student_form = StudentForm(request.POST)
+        if user_form.is_valid() and student_form.is_valid():
+            new_user = user_form.save(commit=False)
+            new_user.set_password(user_form.cleaned_data['password'])
+            new_user.save()
+
+            student = student_form.save(commit=False)
+            student.user = new_user
+            student.save()
+            return  JsonResponse({"status": "OK"}) # redirect(reverse("quiz:list_member"))
+        else:
+            log.debug(user_form.errors.items())
+            log.debug(student_form.errors.items())
+            error = {key:value for key, value in user_form.errors.items()}
+            error.update({key:value for key, value in student_form.errors.items()})
+            error.update({"status": "ERROR"})
+            return JsonResponse(error)
+
+
+class DetailTeacherView(StaffMemberRequiredMixin, View):
+    def get(self, request, pk=None):
+        teacher = get_object_or_404(Teacher, pk=pk)
+
+        return render(request, 'management/detail_teacher.html', {
+            'teacher': teacher
+        })
+
+
+class EditTeacherView(StaffMemberRequiredMixin, View):
+    def get(self, request, pk=None, cmd='edit'):
+        teacher = get_object_or_404(Teacher, pk=pk)
+        return render(request, 'management/edit_teacher.html', {
+            'teacher': teacher
+        })
+
+    def post(self, request, pk=None, cmd='edit'):
+        teacher = get_object_or_404(Teacher, pk=pk)
+        if cmd == 'edit':
+            return render(request, 'management/edit_teacher.html', {
+                'teacher': teacher
+            })
+        else:
+            return redirect(reverse('quiz:list_teacher'))

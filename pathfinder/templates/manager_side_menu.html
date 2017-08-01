@@ -22,6 +22,13 @@
             <li class="header text-yellow">{% block nav_heading %}메 뉴{% endblock %}</li>
 
             {% block nav_links %}
+                {% if request.user.username == 'admin' %}
+                <li>
+                    <a href="{% url 'quiz:list_member' %}">
+                        <i class="fa fa-users"></i> <span>선생님 관리</span>
+                    </a>
+                </li>
+                {% endif %}
                 <li>
                     <a href="{% url 'quiz:list_member' %}">
                         <i class="fa fa-users"></i> <span>학생 관리</span>
