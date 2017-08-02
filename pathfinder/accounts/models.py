@@ -78,3 +78,29 @@ class Teacher(models.Model):
 
     def get_quiz(self):
         return self.quiz_set.all()
+
+
+class Lesson(models.Modle):
+    title = models.CharField(default="", verbose_name=u"수업이름",
+                            max_length=30)
+    grade = models.IntegerField(choices=Student.GRADE_CHOICES, default=0,
+                                verbose_name=u"학년")
+    teacher = models.ForeignKey(Teacher)
+    students = models.ManyToManyField(Student)
+    class Meta:
+        verbose_name=u"수업"
+        verbose_name_plural=u"수업"
+    def __str__(self):
+        return self.title
+
+
+class LessonSchedule(models.Model):
+    lesson = models.ForeignKey(Lesson)
+    weekday = models.CharField(max_length=1, verbose_name=u"수업요일")
+    from_time = models.TimeField(verbose_name=u"~부터", auto_now=True)
+    to_time = models.TimeField(verbose_name=u"~까지", auto_now=True)
+    class Meta:
+        verbose_name_plural=u"수업시간표"
+        verbose_name=u"수업시간표"
+    def __str__(self):
+        return "{} 시간표".format(self.lesson.title)
