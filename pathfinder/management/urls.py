@@ -7,8 +7,9 @@ from quiz.views import delete_question, delete_quiz
 from quiz.views import QuestionListView, QuestionDetailView, QuestionEditView, \
     ExamListView, ExamEditView, ExamDetailView, ExamAppendQuestionView, \
     ExamAddMemberView
-from .views import ListMemberView, DetailMemberView, EditMemberView, \
-    ListTeacherView, DetailTeacherView, EditTeacherView
+from .views.member import ListMemberView, DetailMemberView, EditMemberView
+from .views.teacher import ListTeacherView, DetailTeacherView, EditTeacherView
+from .views.lesson import LessonView, ListLessonView, EditLessonView
 
 urlpatterns = [
     url(r'^exam/create/$', ExamEditView.as_view(), name='create_quiz'),
@@ -34,4 +35,9 @@ urlpatterns = [
     url(r'^teacher/(\d+)/$', DetailTeacherView.as_view(), name='show_teacher'),
     url(r'^teacher/(\d+)/(edit|delete)/$', EditTeacherView.as_view(), name='edit_teacher'),
     # url(r'^teacher/(\d+)/delete/$', EditTeacherView.as_view(), name='delete_teacher')
+
+    url(r'^lesson/(\d+)/$', LessonView.as_view(), name='show_lesson'),
+    url(r'^lesson/$', ListLessonView.as_view(), name='list_lesson'),
+    url(r'^lesson/create/$', EditLessonView.as_view(), name='create_lesson'),
+
 ]

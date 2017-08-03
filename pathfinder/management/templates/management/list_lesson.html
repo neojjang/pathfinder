@@ -9,12 +9,12 @@
 {% endblock %}
 
 {% block page_name %}
-학생 관리
+선생님 관리
 {% endblock %}
 {% block breadcrumbs %}
     <ol class="breadcrumb">
         <li><a href="/">관리자 페이지 </a></li>
-        <li class="active">학생 관리</li>
+        <li class="active">선생님 관리</li>
     </ol>
 {% endblock %}
 
@@ -22,20 +22,12 @@
 
         <div class="box">
             <div class="box-header">
-                <button class="btn btn-primary add-student" data-toggle="modal" data-target="#add-student">학생 등록</button>
+                <button class="btn btn-primary add-student" data-toggle="modal" data-target="#add-student">선생님 등록</button>
                 <div class="box-tools" style="top:10px;">
                     <form action="." method="get" >
                         <ul class="list-inline">
                             <li>검색 :</li>
-                            <li>
-                                <select name="level" onchange="this.form.submit()">
-                                    <option value="all">모든 수준</option>
-                                    {% for item in level %}
-                                    <option value="{{ item.id }}" {% if item.id == level_id %}selected{% endif %}>{{ item.title }}</option>
-                                    {% endfor %}
-                                </select>
-                            </li>
-                            <li>
+                            <li> 학년
                                 <select name="grade" onchange="this.form.submit()">
                                     <option value="all">모든 학년</option>
                                     {% for item in grade %}
@@ -48,58 +40,37 @@
                 </div>
             </div>
             <div class="box-body table-responsive">
-{#                <ul class="list-inline pull-right">#}
-{#                    <li>#}
-{#                        <select name="level" onchange="">#}
-{#                            <option value="all">모든 수준</option>#}
-{#                            {% for item in level %}#}
-{#                            <option value="{{ item.id }}">{{ item.title }}</option>#}
-{#                            {% endfor %}#}
-{#                        </select>#}
-{#                    </li>#}
-{#                    <li>#}
-{#                        <select name="grade" onchange="">#}
-{#                            <option value="all">모든 학년</option>#}
-{#                            {% for item in grade %}#}
-{#                            <option value="{{ item.id }}">{{ item.title }}</option>#}
-{#                            {% endfor %}#}
-{#                        </select>#}
-{#                    </li>#}
-{#                </ul>#}
                 <table class="table table-hover">
                     <tbody>
                         <tr>
                             <th class="col-md-1">#</th>
-                            <th class="col-md-2">이름</th>
+                            <th class="col-md-1">이름</th>
                             <th class="col-md-1">아이디</th>
-                            <th class="col-md-2">학교</th>
-                            <th class="col-md-1">학년</th>
-                            <th class="col-md-1">학생 수준</th>
-{#                            <th class="col-md-1">최근 시험</th>#}
+                            <th class="col-md-2">담당 학년</th>
                             <th class="col-md-1">상태</th>
                             <th class="col-md-1">등록일</th>
                             <th class="col-md-2"></th>
                         </tr>
-                    {% for student in students %}
-                        <tr class="student" data-student-id="{{ student.pk }}">
-                            <td class="col-md-1">{{ student.pk }}</td>
-                            <td class="col-md-2">{{ student.user.last_name }}{{ student.user.first_name }}</td>
-                            <td class="col-md-1">{{ student.user.username }}</td>
-                            <td class="col-md-2">{{ student.school_name }}</td>
-                            <td class="col-md-1">{{ student.get_grade_display }}</td>
-                            <td class="col-md-1">{{ student.get_level_display }}</td>
-{#                            <td class="col-md-1">{{ student.get_latest_quiz.title|truncatechars:10 }}</td>#}
-                            <td class="col-md-1">{% if student.is_activated %}활성{% else %}비활성{% endif %}</td>
-                            <td class="col-md-1">{{ student.create_date|date:"Y.m.d" }}</td>
+                    {% for teacher in teachers %}
+                        <tr class="student" data-student-id="{{ teacher.pk }}">
+                            <td class="col-md-1">{{ teacher.pk }}</td>
+                            <td class="col-md-2">{{ teacher.user.last_name }}{{ teacher.user.first_name }}</td>
+                            <td class="col-md-1">{{ teacher.user.username }}</td>
+                            <td class="col-md-2">{% for item in teacher.get_my_grades %}
+                                {{ item }}{% if not forloop.last %},{% endif %}
+                                {% if forloop.counter0|divisibleby:2 == 0 %}<br />{% endif %}
+                            {% endfor %}</td>
+                            <td class="col-md-1">{% if teacher.is_activated %}활성{% else %}비활성{% endif %}</td>
+                            <td class="col-md-1">{{ teacher.create_date|date:"Y.m.d" }}</td>
                             <td class="col-md-2">
-                                <button class="btn btn-primary menu btn-xs" data-href="{% url 'quiz:show_member' student.id %}">보기</button>
-                                <button class="btn btn-success menu btn-xs" data-href="{% url 'quiz:edit_member' student.id 'edit' %}">수정</button>
-                                <button class="btn btn-danger menu btn-xs" data-href="{% url 'quiz:edit_member' student.id 'delete' %}">삭제</button>
+                                <button class="btn btn-primary menu btn-xs" data-href="{% url 'quiz:show_teacher' teacher.id %}">보기</button>
+                                <button class="btn btn-success menu btn-xs" data-href="{% url 'quiz:edit_teacher' teacher.id 'edit' %}">수정</button>
+                                <button class="btn btn-danger menu btn-xs" data-href="{% url 'quiz:edit_teacher' teacher.id 'delete' %}">삭제</button>
                             </td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td class="bg-info" colspan="9"> <p>등록 된 학생이 없습니다. </p></td>
+                            <td class="bg-info" colspan="9"> <p>등록 된 선생님이 없습니다. </p></td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -112,7 +83,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title">패스파인더 : 학생 등록</h4>
+                <h4 class="modal-title">패스파인더 : 선생님 등록</h4>
             </div>
             <div class="modal-body">
                 <form action="." method="post" class="form-horizontal" id="new-student-form">

@@ -58,10 +58,9 @@ class Student(models.Model):
         else:
             return student_score[0].score
 
-
+@python_2_unicode_compatible
 class Teacher(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    students = models.ManyToManyField(Student)
     is_admin = models.BooleanField(default=False)
     is_activated = models.BooleanField(default=False, verbose_name=u"활성화")
     create_date = models.DateTimeField(auto_now_add=True)
@@ -75,28 +74,50 @@ class Teacher(models.Model):
 
     def get_questions(self):
         return self.question_set.all()
-
     def get_quiz(self):
         return self.quiz_set.all()
+    def get_my_grades(self):
+        grade_choices = dict(Student.GRADE_CHOICES)
+        grade = []
+        for item in self.lesson_set.all().values('grade').distinct():
+            grade.append(grade_choices[item.get('grade')])
+        return grade
+    def get_my_lesson(self):
+        return self.lesson_set.all()
+    def get_my_students(self):
+        return Student.objects.filter(lesson__teacher=self)
+    def get_my_students_count(self):
+        # print("get_my_students_count=", self.get_my_students().count())
+        return self.get_my_students().count()
 
 
-class Lesson(models.Modle):
+@python_2_unicode_compatible
+class Lesson(models.Model):
     title = models.CharField(default="", verbose_name=u"수업이름",
                             max_length=30)
     grade = models.IntegerField(choices=Student.GRADE_CHOICES, default=0,
                                 verbose_name=u"학년")
     teacher = models.ForeignKey(Teacher)
     students = models.ManyToManyField(Student)
+    create_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(auto_now=True)
     class Meta:
         verbose_name=u"수업"
         verbose_name_plural=u"수업"
     def __str__(self):
         return self.title
+    def get_students_count(self):
+        return self.students.count()
+    def get_schedules(self):
+        return self.lessonschedule_set.all()
 
 
+@python_2_unicode_compatible
 class LessonSchedule(models.Model):
+    WEEKDAY_CHOICES = ((1, '일'), (2, '월'), (3, '화'), (4, '수'),
+                       (5, '목'), (6, '금'), (7, '토'))
     lesson = models.ForeignKey(Lesson)
-    weekday = models.CharField(max_length=1, verbose_name=u"수업요일")
+    weekday = models.IntegerField(choices=WEEKDAY_CHOICES, verbose_name=u"수업요일")
     from_time = models.TimeField(verbose_name=u"~부터", auto_now=True)
     to_time = models.TimeField(verbose_name=u"~까지", auto_now=True)
     class Meta:

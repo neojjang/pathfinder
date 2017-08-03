@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% load mathfilters %}
+{% load custom_tags %}
+
+{% block title %}패스파인더 : {{ student.user.first_name }} 선생님{% endblock %}
+
+{% block nav_sidebar %}
+        {% include 'manager_side_menu.html' %}
+{% endblock %}
+
+{% block extra_css %}
+{#        table.quiz-table {#}
+{#                width: 100%;#}
+{#            }#}
+{##}
+{#        .quiz-table thead, tbody, tr, td, th { display: block; }#}
+{##}
+{#        .quiz-table  tr:after {#}
+{#            content: ' ';#}
+{#            display: block;#}
+{#            visibility: hidden;#}
+{#            clear: both;#}
+{#        }#}
+{##}
+{#        .quiz-table  thead th {#}
+{#            height: 30px;#}
+{##}
+{#            /*text-align: left;*/#}
+{#        }#}
+{##}
+{#        .quiz-table tbody {#}
+{#            min-height: 250px;#}
+{#            overflow-y: auto;#}
+{#        }#}
+{##}
+{#        .quiz-table thead {#}
+{#            /* fallback */#}
+{#        }#}
+{##}
+{##}
+{#        .quiz-table tbody td, .quiz-table > thead th {#}
+{#            width: 19.2%;#}
+{#            float: left;#}
+{#        }#}
+
+        .container.quiz-detail {
+            width: 100%;
+{#            background-color: white;#}
+        }
+        .row.quiz-detail-border {
+
+            border-bottom: 1px solid gray;
+        }
+{% endblock %}
+
+{% block page_name %}
+선생님 관리 : {{ teacher.user.last_name }}{{ teacher.user.first_name }} 선생님
+{% endblock %}
+{% block breadcrumbs %}
+    <ol class="breadcrumb">
+        <li><a href="/">관리자 페이지 </a></li>
+        <li><a href="/management/student/list/">선생님 관리 </a></li>
+        <li class="active">선생님 상세정보</li>
+    </ol>
+{% endblock %}
+
+
+{% block content %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-primary">
+                    <div class="box-body">
+                        <ul class="list-group ">
+                            <li class="list-group-item">
+                                <b>아이디</b> <span class="pull-right"><b>{{ teacher.user.username }}</b></span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>담당 학년</b> <span class="pull-right">{% for item in teacher.get_my_grades %}
+                                {{ item }}{% if not forloop.last %},{% endif %}
+                            {% endfor %}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>담당 학생 수</b> <span class="pull-right">{{ teacher.get_my_students_count }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <b>등록일</b> <span class="pull-right">{{ teacher.create_date|date:"Y-m-d" }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="box-footer">
+                        <button class="btn btn-success menu" data-href="{% url 'quiz:edit_teacher' teacher.id 'edit' %}">수정</button>
+                        <button class="btn btn-default menu" data-href="{% url 'quiz:list_teacher'  %}">뒤로</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-warning">
+                    <div class="box-header">
+                        <h3 class="box-title">수업 리스트</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover quiz-table">
+                                <thead class="quiz-table-thead">
+                                    <tr>
+                                        <th class="col-md-3">수업 제목</th>
+                                        <th class="col-md-3">담당 학년</th>
+                                        <th class="col-md-2">수업 요일</th>
+                                        <th class="col-md-1">학생수</th>
+                                        <th class="col-md-2">등록 날짜</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="quiz-table-tbody">
+                                    {% for lesson in lesson_list %}
+                                        <tr class="accordion-toggle" data-toggle="collapse" data-target="#{{ lesson.id }}-detail">
+                                            <td >{{ lesson.title }}</td>
+                                            <td >{{ lesson.get_grade_display }}</td>
+                                            <td>{% for schedule in lesson.get_schedules %}
+                                                {{ schedule.get_weekday_display }}
+                                                ({{ schedule.from_time|time:"H:i" }}-{{ schedule.to_time|time:"H:i" }})
+                                                {% if not forloop.last %},<br />{% endif %}
+                                                {% empty %}미정
+                                                {% endfor %}</td>
+                                            <td>{{ lesson.get_students_count }}</td>
+                                            <td >{{ lesson.create_date|date:'Y.m.d' }} <span class="hidden-xs">
+                                                {{ lesson.create_date|date:'H:s:i' }}</span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        {% include 'quiz/paginator.html' with paginator=lesson_list %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+{% endblock %}
+
+{% block extra_foot %}
+
+{% endblock %}
