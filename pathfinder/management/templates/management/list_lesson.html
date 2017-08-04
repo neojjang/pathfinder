@@ -2,19 +2,19 @@
 {% load staticfiles %}
 {% load humanize %}
 
-{% block title %}패스파인더 : 학생 리스트{% endblock %}
+{% block title %}패스파인더 : 강의 리스트{% endblock %}
 
 {% block nav_sidebar %}
         {% include 'manager_side_menu.html' %}
 {% endblock %}
 
 {% block page_name %}
-선생님 관리
+강의 관리
 {% endblock %}
 {% block breadcrumbs %}
     <ol class="breadcrumb">
         <li><a href="/">관리자 페이지 </a></li>
-        <li class="active">선생님 관리</li>
+        <li class="active">강의 관리</li>
     </ol>
 {% endblock %}
 
@@ -22,7 +22,7 @@
 
         <div class="box">
             <div class="box-header">
-                <button class="btn btn-primary add-student" data-toggle="modal" data-target="#add-student">선생님 등록</button>
+                <button class="btn btn-primary add-student" data-toggle="modal" data-target="#add-student">강의 등록</button>
                 <div class="box-tools" style="top:10px;">
                     <form action="." method="get" >
                         <ul class="list-inline">
@@ -44,9 +44,9 @@
                     <tbody>
                         <tr>
                             <th class="col-md-1">#</th>
-                            <th class="col-md-1">이름</th>
-                            <th class="col-md-1">아이디</th>
-                            <th class="col-md-2">담당 학년</th>
+                            <th class="col-md-3">강의 이름</th>
+                            <th class="col-md-1">담당 선생님</th>
+                            <th class="col-md-1">담당 학년</th>
                             <th class="col-md-1">상태</th>
                             <th class="col-md-1">등록일</th>
                             <th class="col-md-2"></th>
@@ -70,7 +70,7 @@
                         </tr>
                     {% empty %}
                         <tr>
-                            <td class="bg-info" colspan="9"> <p>등록 된 선생님이 없습니다. </p></td>
+                            <td class="bg-info" colspan="9"> <p>등록 된 강의가 없습니다. </p></td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -83,7 +83,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title">패스파인더 : 선생님 등록</h4>
+                <h4 class="modal-title">패스파인더 : 강의 등록</h4>
             </div>
             <div class="modal-body">
                 <form action="." method="post" class="form-horizontal" id="new-student-form">
