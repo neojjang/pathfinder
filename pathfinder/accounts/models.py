@@ -62,7 +62,7 @@ class Student(models.Model):
 class Teacher(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
     is_admin = models.BooleanField(default=False)
-    is_activated = models.BooleanField(default=False, verbose_name=u"활성화")
+    is_activated = models.BooleanField(default=True, verbose_name=u"활성화")
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
     class Meta:
