@@ -1,0 +1,111 @@
+{% load staticfiles %}
+
+<div class="modal fade" id="add-student" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">패스파인더 : 강의 등록</h4>
+            </div>
+            <div class="modal-body">
+                <form action="." method="post" class="form-horizontal" id="new-lecture-form">
+
+                   <div class="panel panel-primary " style="margin-top: 0px;">
+                       <div class="panel-body">
+                           <div class="form-group">
+                               <label for="id_title" class="col-sm-3 control-label">
+                                강의 이름
+                               </label>
+                               <div class="col-sm-9">
+                                   {{ form.title }}
+{#                                   <input type="text" id="username" name="username" class="form-control" placeholder="아이디를 입력해 주세요."#}
+{#                                          value="{% if form.username.value %}{{ form.username.value }}{% endif %}"#}
+{#                                   />#}
+                                   <div class="">
+                                       <span class="text-danger form-error-message" id="title-error">{{ form.title.errors.0 }}</span>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="form-group">
+                               <label for="id_grade" class="col-sm-3 control-label">
+                                강의 학년
+                               </label>
+                               <div class="col-sm-9">
+                                   {{ form.grade }}
+                                   <div class="">
+                                       <span class="text-danger form-error-message" id="grade-error">{{ form.grade.errors.0 }}</span>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="form-group">
+                               <label for="id_teacher" class="col-sm-3 control-label">
+                                담당 선생님
+                               </label>
+                               <div class="col-sm-9">
+                                   {{ form.teacher }}
+                                   <div class="">
+                                       <span class="text-danger form-error-message" id="teacher-error">{{ form.teacher.errors.0 }}</span>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="form-group">
+                               <label for="students" class="col-sm-3 control-label">
+                                수강 학생
+                               </label>
+                               <div class="col-sm-9">
+                                   <div class="">
+                                       <span class="text-danger form-error-message" id="students-error">{{ form.students.errors.0 }}</span>
+                                   </div>
+                                   <div style="width:90%; height:200px; overflow-y:scroll;">
+                                       <ul class="no">
+                                   {% for student in students %}
+                                            <li>
+                                                <label for="id_students_{{ forloop.counter0 }}">
+                                                    <input type="checkbox" class="" name="students" id="id_students_{{ forloop.counter0 }}" value="{{ student.id }}">
+                                                    {{ student.user.first_name }}{{ student.user.last_name }}
+                                                </label>
+                                            </li>
+                                   {% endfor %}
+                                       </ul>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="form-group">
+                               <label class="col-sm-3 control-label">수업 일정표</label>
+                               <table class="table- col-sm-8 schedule-formset">
+                                <thead>
+                                   <tr>
+                                       <th>요일</th>
+                                       <th>시작 시간</th>
+                                       <th>종료 시간</th>
+                                       <th>&nbsp;</th>
+                                   </tr>
+                                </thead>
+                                   <tbody>
+                                   {% for schedule_form in schedule_formset %}
+                                    <tr>
+                                        <td>{{ schedule_form.weekday }}</td>
+                                        <td>{{ schedule_form.from_time }}</td>
+                                        <td>{{ schedule_form.to_time }}</td>
+                                        <td></td> <!-- {{ schedule_form.DELETE }} <a href="javascript:void(0)" class="delete-row">삭제</a>-->
+                                    {% endfor %}
+                                    </tr>
+                                   </tbody>
+                               </table>
+                           </div>
+                       </div>
+                   </div>
+                    {{ schedule_formset.management_form }}
+                    {% csrf_token %}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                <button type="submit" value=" 회원 등록 " class="btn btn-primary" id="submit-form"> 강의 등록 </button>
+            </div>
+
+        </div>
+    <!-- /.modal-content -->
+    </div>
+<!-- /.modal-dialog -->
+</div>

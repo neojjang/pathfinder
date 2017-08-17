@@ -5,7 +5,7 @@ Created by yoonju on 2017. 6. 9.
 from django import forms
 
 from common.models import LEVEL_CHOICES
-from accounts.models import Student, Teacher
+from accounts.models import Student, Teacher, Lecture, LectureSchedule
 
 
 
@@ -28,3 +28,19 @@ class TeacherForm(forms.ModelForm):
         #     'is_activated': forms.CheckboxInput(attrs={'class': 'form-control'}),
         #     'is_admin': forms.CheckboxInput(attrs={'class': 'form-control'})
         # }
+
+
+class LectureForm(forms.ModelForm):
+    class Meta:
+        model = Lecture
+        fields = ('title', 'grade', 'teacher', 'students')
+        widgets = {
+            'teacher': forms.Select(attrs={'class': 'form-control'}),
+            'students': forms.CheckboxSelectMultiple(attrs={'class': 'form-control'})
+        }
+
+
+class LectureScheduleForm(forms.ModelForm):
+    class Meta:
+        model = LectureSchedule
+        fields = ('weekday', 'from_time', 'to_time')
