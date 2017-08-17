@@ -79,11 +79,11 @@ class Teacher(models.Model):
     def get_my_grades(self):
         grade_choices = dict(Student.GRADE_CHOICES)
         grade = []
-        for item in self.lesson_set.all().values('grade').distinct():
+        for item in self.lecture_set.all().values('grade').distinct():
             grade.append(grade_choices[item.get('grade')])
         return grade
-    def get_my_lesson(self):
-        return self.lesson_set.all()
+    def get_my_lecture(self):
+        return self.lecture_set.all()
     def get_my_students(self):
         return Student.objects.filter(lesson__teacher=self)
     def get_my_students_count(self):
@@ -92,7 +92,7 @@ class Teacher(models.Model):
 
 
 @python_2_unicode_compatible
-class Lesson(models.Model):
+class Lecture(models.Model):
     title = models.CharField(default="", verbose_name=u"수업이름",
                             max_length=30)
     grade = models.IntegerField(choices=Student.GRADE_CHOICES, default=0,
@@ -109,17 +109,17 @@ class Lesson(models.Model):
     def get_students_count(self):
         return self.students.count()
     def get_schedules(self):
-        return self.lessonschedule_set.all()
+        return self.lectureschedule_set.all()
 
 
 @python_2_unicode_compatible
-class LessonSchedule(models.Model):
-    WEEKDAY_CHOICES = ((1, '일'), (2, '월'), (3, '화'), (4, '수'),
-                       (5, '목'), (6, '금'), (7, '토'))
-    lesson = models.ForeignKey(Lesson)
-    weekday = models.IntegerField(choices=WEEKDAY_CHOICES, verbose_name=u"수업요일")
-    from_time = models.TimeField(verbose_name=u"~부터", auto_now=True)
-    to_time = models.TimeField(verbose_name=u"~까지", auto_now=True)
+class LectureSchedule(models.Model):
+    WEEKDAY_CHOICES = ((0, '일'), (1, '월'), (2, '화'), (3, '수'),
+                       (4, '목'), (5, '금'), (6, '토'))
+    lecture = models.ForeignKey(Lecture)
+    weekday = models.IntegerField(choices=WEEKDAY_CHOICES, default=0, verbose_name=u"수업요일")
+    from_time = models.TimeField(verbose_name=u"~부터", default=None)
+    to_time = models.TimeField(verbose_name=u"~까지", default=None)
     class Meta:
         verbose_name_plural=u"수업시간표"
         verbose_name=u"수업시간표"
