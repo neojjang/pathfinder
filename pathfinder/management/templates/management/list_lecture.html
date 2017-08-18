@@ -61,7 +61,7 @@
                             <th class="col-md-3">강의 이름</th>
                             <th class="col-md-1">담당 선생님</th>
                             <th class="col-md-1">담당 학년</th>
-                            <th class="col-md-1">상태</th>
+                            <th class="col-md-1">시간표</th>
                             <th class="col-md-1">등록일</th>
                             <th class="col-md-2"></th>
                         </tr>
@@ -138,15 +138,11 @@
     });
     $("table.schedule-formset tbody tr").formset({
         addText: '일정 추가',
-        beforeAdd: function(row) {
-
+        deleteText: '삭제',
+        beforeAdded: function(row, count) {
+            return count < 3;
         },
         added: function(row) {
-            var is_first_element = row.find("select[id $= '-3-weekday']");
-            if(is_first_element.length) {
-                alert("nono!!!");
-                row.remove();
-            }
         }
     });
     </script>
