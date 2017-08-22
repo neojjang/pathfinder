@@ -73,18 +73,18 @@ class ListTeacherView(StaffMemberRequiredMixin, View):
 class DetailTeacherView(StaffMemberRequiredMixin, View):
     def get(self, request, pk=None):
         teacher = get_object_or_404(Teacher, pk=pk)
-        lesson_list = teacher.get_my_lesson()
+        lecture_list = teacher.get_my_lecture()
         page = request.GET.get('p')
-        paginator = Paginator(lesson_list, 20)
+        paginator = Paginator(lecture_list, 20)
         try:
-            lesson_list = paginator.page(page)
+            lecture_list = paginator.page(page)
         except PageNotAnInteger:
-            lesson_list = paginator.page(1)
+            lecture_list = paginator.page(1)
         except EmptyPage:
-            lesson_list = paginator.page(paginator.num_pages)
+            lecture_list = paginator.page(paginator.num_pages)
         return render(request, 'management/detail_teacher.html', {
             'teacher': teacher,
-            'lesson_list' : lesson_list
+            'lecture_list' : lecture_list
         })
 
 

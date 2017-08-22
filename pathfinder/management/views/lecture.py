@@ -15,7 +15,8 @@ from django.forms.formsets import formset_factory
 # from django.utils.decorators import method_decorator
 
 from common.models import LEVEL_CHOICES
-from accounts.models import Student, Teacher, Lecture, LectureSchedule
+from accounts.models import Student, Teacher
+from management.models import Lecture, LectureSchedule
 from quiz.views import StaffMemberRequiredMixin
 from management.forms import StudentForm, LectureForm, LectureScheduleForm
 # Create your views here.
@@ -38,18 +39,25 @@ class ListLectureView(StaffMemberRequiredMixin, View):
     def get(self, request):
         page = request.GET.get('p')
         if request.user.teacher.is_admin:
-            lecture_list = Lecture.objects.all()
+            lectures = Lecture.objects.all().order_by('-pk')
+            log.debug(100)
         else:
-            lecture_list = request.user.teacher.lecture_set.all()
-
-        paginator = Paginator(lecture_list, 20)
+            lectures = request.user.teacher.lecture_set.all().order_by('-pk')
+            log.debug(10000)
+        log.debug(lectures)
+        paginator = Paginator(lectures, 10)
+        log.debug(paginator)
         try:
-            lecture_list = paginator.page(page)
+            lectures = paginator.page(page)
+            log.debug(1)
         except PageNotAnInteger:
-            lecture_list = paginator.page(1)
+            lectures = paginator.page(1)
+            log.debug(2)
         except EmptyPage:
-            lecture_list = paginator.page(paginator.num_pages)
+            lectures = paginator.page(paginator.num_pages)
+            log.debug(3)
 
+        log.debug(lectures)
         lecture_form = LectureForm(
             initial={
                 'teacher': request.user.teacher if not request.user.teacher.is_admin else None
@@ -58,15 +66,34 @@ class ListLectureView(StaffMemberRequiredMixin, View):
         ScheduleFormSet = formset_factory(LectureScheduleForm, can_delete=True)
         schedule_form = ScheduleFormSet() # LectureScheduleForm()
 
-        students = Student.objects.all()
+        students = Student.objects.filter(is_activated=True)
 
         return render(request, 'management/list_lecture.html', {
-            'lecture_list': lecture_list,
+            'lecture_list': lectures,
             'page': page,
             'form': lecture_form,
             'schedule_formset': schedule_form,
             'students': students
         })
+    def post(self, request):
+        lecture_form = LectureForm(request.POST)
+        ScheduleFormSet = formset_factory(LectureScheduleForm, can_delete=True)
+        schedule_form = ScheduleFormSet(request.POST)
+        if lecture_form.is_valid() & schedule_form.is_valid():
+            lecture = lecture_form.save()
+            log.debug(lecture)
+            for form in schedule_form.forms:
+                schedule = form.save(commit=False)
+                schedule.lecture = lecture
+                schedule.save()
+            return JsonResponse({"status":"OK"})
+        else:
+            log.debug(lecture_form.errors.items())
+            log.debug(schedule_form.errors)
+            error = {key: value for key, value in lecture_form.errors.items()}
+            error.update({key: value for key, value in schedule_form.errors})
+            error.update({"status": "ERROR"})
+            return JsonResponse(error)
 
 
 class EditLectureView(StaffMemberRequiredMixin, View):

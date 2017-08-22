@@ -45,7 +45,7 @@ class Student(models.Model):
                                     self.get_grade_display(),
                                     self.get_level_display())
     def get_name(self):
-        return "{} {}".format(self.user.last_name, self.user.first_name)
+        return "{}{}".format(self.user.last_name,self.user.first_name)
 
     def get_latest_quiz(self):
         quiz = self.studentscore_set.all().order_by('-pk')[:1]
@@ -72,6 +72,8 @@ class Teacher(models.Model):
         return "{}{} 선생님".format(self.user.last_name,
                          self.user.first_name)
 
+    def get_name(self):
+        return "{}{}".format(self.user.last_name, self.user.first_name)
     def get_questions(self):
         return self.question_set.all()
     def get_quiz(self):
@@ -83,45 +85,45 @@ class Teacher(models.Model):
             grade.append(grade_choices[item.get('grade')])
         return grade
     def get_my_lecture(self):
-        return self.lecture_set.all()
+        return self.lecture_set.all().order_by('-pk')
     def get_my_students(self):
-        return Student.objects.filter(lesson__teacher=self)
+        return Student.objects.filter(lecture__teacher=self)
     def get_my_students_count(self):
         # print("get_my_students_count=", self.get_my_students().count())
-        return self.get_my_students().count()
+        return self.get_my_students().values('id').distinct().count()
 
 
-@python_2_unicode_compatible
-class Lecture(models.Model):
-    title = models.CharField(default="", verbose_name=u"수업이름",
-                            max_length=30)
-    grade = models.IntegerField(choices=Student.GRADE_CHOICES, default=0,
-                                verbose_name=u"학년")
-    teacher = models.ForeignKey(Teacher)
-    students = models.ManyToManyField(Student)
-    create_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(auto_now=True)
-    class Meta:
-        verbose_name=u"수업"
-        verbose_name_plural=u"수업"
-    def __str__(self):
-        return self.title
-    def get_students_count(self):
-        return self.students.count()
-    def get_schedules(self):
-        return self.lectureschedule_set.all()
-
-
-@python_2_unicode_compatible
-class LectureSchedule(models.Model):
-    WEEKDAY_CHOICES = ((0, '일'), (1, '월'), (2, '화'), (3, '수'),
-                       (4, '목'), (5, '금'), (6, '토'))
-    lecture = models.ForeignKey(Lecture)
-    weekday = models.IntegerField(choices=WEEKDAY_CHOICES, default=0, verbose_name=u"수업요일")
-    from_time = models.TimeField(verbose_name=u"~부터", default=None)
-    to_time = models.TimeField(verbose_name=u"~까지", default=None)
-    class Meta:
-        verbose_name_plural=u"수업시간표"
-        verbose_name=u"수업시간표"
-    def __str__(self):
-        return "{} 시간표".format(self.lesson.title)
+# @python_2_unicode_compatible
+# class Lecture(models.Model):
+#     title = models.CharField(default="", verbose_name=u"수업이름",
+#                             max_length=30)
+#     grade = models.IntegerField(choices=Student.GRADE_CHOICES, default=0,
+#                                 verbose_name=u"학년")
+#     teacher = models.ForeignKey(Teacher)
+#     students = models.ManyToManyField(Student)
+#     create_date = models.DateTimeField(auto_now_add=True)
+#     update_date = models.DateTimeField(auto_now=True)
+#     class Meta:
+#         verbose_name=u"수업"
+#         verbose_name_plural=u"수업"
+#     def __str__(self):
+#         return self.title
+#     def get_students_count(self):
+#         return self.students.count()
+#     def get_schedules(self):
+#         return self.lectureschedule_set.all()
+#
+#
+# @python_2_unicode_compatible
+# class LectureSchedule(models.Model):
+#     WEEKDAY_CHOICES = ((0, '일'), (1, '월'), (2, '화'), (3, '수'),
+#                        (4, '목'), (5, '금'), (6, '토'))
+#     lecture = models.ForeignKey(Lecture)
+#     weekday = models.IntegerField(choices=WEEKDAY_CHOICES, default=0, verbose_name=u"수업요일")
+#     from_time = models.TimeField(verbose_name=u"~부터", default=None)
+#     to_time = models.TimeField(verbose_name=u"~까지", default=None)
+#     class Meta:
+#         verbose_name_plural=u"수업시간표"
+#         verbose_name=u"수업시간표"
+#     def __str__(self):
+#         return "{} 시간표".format(self.lesson.title)

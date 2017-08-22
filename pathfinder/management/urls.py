@@ -38,6 +38,6 @@ urlpatterns = [
 
     url(r'^lecture/list/$', ListLectureView.as_view(), name='list_lecture'),
     url(r'^lecture/(\d+)/$', DetailLectureView.as_view(), name='show_lecture'),
-    url(r'^lecture/(\d+)/(edit|delete)/$', EditLectureView.as_view(), name='create_lecture'),
+    url(r'^lecture/(\d+)/(edit|delete)/$', EditLectureView.as_view(), name='edit_lecture'),
 
 ]

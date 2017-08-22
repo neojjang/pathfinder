@@ -5,7 +5,8 @@ Created by yoonju on 2017. 6. 9.
 from django import forms
 
 from common.models import LEVEL_CHOICES
-from accounts.models import Student, Teacher, Lecture, LectureSchedule
+from accounts.models import Student, Teacher
+from management.models import Lecture, LectureSchedule
 
 
 
@@ -44,3 +45,21 @@ class LectureScheduleForm(forms.ModelForm):
     class Meta:
         model = LectureSchedule
         fields = ('weekday', 'from_time', 'to_time')
+        # widgets = {
+        #     'from_time': forms.TimeInput(
+        #         attrs={'class': 'timepicker form-control'},
+        #         format='%H:%M %p'
+        #     ),
+        #     'to_time': forms.TimeInput(
+        #         attrs={'class': 'timepicker form-control'},
+        #         format='%H:%M %p'
+        #     )
+        # }
+    from_time = forms.TimeField(
+        widget=forms.TimeInput(attrs={'class': 'timepicker form-control'}),
+        input_formats=['%H:%M', '%I:%M%p', '%I:%M %p']
+    )
+    to_time = forms.TimeField(
+        widget=forms.TimeInput(attrs={'class': 'timepicker form-control'}),
+        input_formats=['%H:%M', '%I:%M%p', '%I:%M %p']
+    )
