@@ -56,13 +56,13 @@
 {% endblock %}
 
 {% block page_name %}
-선생님 관리 : {{ teacher.user.last_name }}{{ teacher.user.first_name }} 선생님
+강의 관리 : {{ lecture.title }}
 {% endblock %}
 {% block breadcrumbs %}
     <ol class="breadcrumb">
         <li><a href="/">관리자 페이지 </a></li>
-        <li><a href="/management/student/list/">선생님 관리 </a></li>
-        <li class="active">선생님 상세정보</li>
+        <li><a href="/management/student/list/">강의 관리 </a></li>
+        <li class="active">강의 상세정보</li>
     </ol>
 {% endblock %}
 
@@ -74,24 +74,27 @@
                     <div class="box-body">
                         <ul class="list-group ">
                             <li class="list-group-item">
-                                <b>아이디</b> <span class="pull-right"><b>{{ teacher.user.username }}</b></span>
+                                <b>담당 학년</b> <span class="pull-right">{{ lecture.get_grade_display }}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>담당 학년</b> <span class="pull-right">{% for item in teacher.get_my_grades %}
-                                {{ item }}{% if not forloop.last %},{% endif %}
-                            {% endfor %}</span>
+                                <b>담당 선생님</b> <span class="pull-right"><b>{{ lecture.teacher.get_name }}</b></span>
                             </li>
                             <li class="list-group-item">
-                                <b>담당 학생 수</b> <span class="pull-right">{{ teacher.get_my_students_count }}</span>
+                                <b>담당 학생 수</b> <span class="pull-right">{{ student_list.count }}</span>
+                            </li>
+                            <li class="list-group-item" {% if lecture.get_schedules.count > 1 %}style="padding-bottom: 30px;"{% endif %}>
+                                <b>수업일</b> <span class="pull-right">{% for schedule in lecture.get_schedules %}
+                                {{ schedule.get_weekday_display }}, {{ schedule.from_time }} - {{ schedule.to_time }}<br />
+                                {% endfor %}</span>
                             </li>
                             <li class="list-group-item">
-                                <b>등록일</b> <span class="pull-right">{{ teacher.create_date|date:"Y-m-d" }}</span>
+                                <b>등록일</b> <span class="pull-right">{{ lecture.create_date|date:"Y-m-d" }}</span>
                             </li>
                         </ul>
                     </div>
                     <div class="box-footer">
-                        <button class="btn btn-success menu" data-href="{% url 'quiz:edit_teacher' teacher.id 'edit' %}">수정</button>
-                        <button class="btn btn-default menu" data-href="{% url 'quiz:list_teacher'  %}">뒤로</button>
+                        <button class="btn btn-success menu" data-href="{% url 'quiz:edit_lecture' lecture.id 'edit' %}">수정</button>
+                        <button class="btn btn-default menu" data-href="{% url 'quiz:list_lecture'  %}">뒤로</button>
                     </div>
                 </div>
             </div>
@@ -100,35 +103,26 @@
             <div class="col-md-12">
                 <div class="box box-warning">
                     <div class="box-header">
-                        <h3 class="box-title">수업 리스트</h3>
+                        <h3 class="box-title">학생 리스트</h3>
                     </div>
                     <div class="box-body">
                         <div class="table-responsive">
                             <table class="table table-hover quiz-table">
                                 <thead class="quiz-table-thead">
                                     <tr>
-                                        <th class="col-md-3">수업 제목</th>
-                                        <th class="col-md-3">담당 학년</th>
-                                        <th class="col-md-2">수업 요일</th>
-                                        <th class="col-md-1">학생수</th>
-                                        <th class="col-md-2">등록 날짜</th>
+                                        <th class="col-md-3">이름</th>
+                                        <th class="col-md-3">학년</th>
+                                        <th class="col-md-2">학교</th>
+                                        <th class="col-md-1">수준</th>
                                     </tr>
                                 </thead>
                                 <tbody class="quiz-table-tbody">
-                                    {% for lesson in lesson_list %}
+                                    {% for student in student_list %}
                                         <tr class="accordion-toggle" data-toggle="collapse" data-target="#{{ lesson.id }}-detail">
-                                            <td >{{ lesson.title }}</td>
-                                            <td >{{ lesson.get_grade_display }}</td>
-                                            <td>{% for schedule in lesson.get_schedules %}
-                                                {{ schedule.get_weekday_display }}
-                                                ({{ schedule.from_time|time:"H:i" }}-{{ schedule.to_time|time:"H:i" }})
-                                                {% if not forloop.last %},<br />{% endif %}
-                                                {% empty %}미정
-                                                {% endfor %}</td>
-                                            <td>{{ lesson.get_students_count }}</td>
-                                            <td >{{ lesson.create_date|date:'Y.m.d' }} <span class="hidden-xs">
-                                                {{ lesson.create_date|date:'H:s:i' }}</span>
-                                            </td>
+                                            <td >{{ student.get_name }}</td>
+                                            <td >{{ student.get_grade_display }}</td>
+                                            <td>{{ student.school_name }}</td>
+                                            <td>{{ student.get_level_display }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

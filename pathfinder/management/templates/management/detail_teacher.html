@@ -115,19 +115,19 @@
                                     </tr>
                                 </thead>
                                 <tbody class="quiz-table-tbody">
-                                    {% for lesson in lesson_list %}
-                                        <tr class="accordion-toggle" data-toggle="collapse" data-target="#{{ lesson.id }}-detail">
-                                            <td >{{ lesson.title }}</td>
-                                            <td >{{ lesson.get_grade_display }}</td>
-                                            <td>{% for schedule in lesson.get_schedules %}
+                                    {% for lecture in lecture_list %}
+                                        <tr class="accordion-toggle" data-toggle="collapse" data-target="#{{ lecture.id }}-detail">
+                                            <td >{{ lecture.title }}</td>
+                                            <td >{{ lecture.get_grade_display }}</td>
+                                            <td>{% for schedule in lecture.get_schedules %}
                                                 {{ schedule.get_weekday_display }}
                                                 ({{ schedule.from_time|time:"H:i" }}-{{ schedule.to_time|time:"H:i" }})
                                                 {% if not forloop.last %},<br />{% endif %}
                                                 {% empty %}미정
                                                 {% endfor %}</td>
-                                            <td>{{ lesson.get_students_count }}</td>
-                                            <td >{{ lesson.create_date|date:'Y.m.d' }} <span class="hidden-xs">
-                                                {{ lesson.create_date|date:'H:s:i' }}</span>
+                                            <td>{{ lecture.get_students_count }}</td>
+                                            <td >{{ lecture.create_date|date:'Y.m.d' }} <span class="hidden-xs">
+                                                {{ lecture.create_date|date:'H:s:i' }}</span>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -136,7 +136,7 @@
                         </div>
                     </div>
                     <div class="box-footer">
-                        {% include 'quiz/paginator.html' with paginator=lesson_list %}
+                        {% include 'quiz/paginator.html' with paginator=lecture_list %}
                     </div>
                 </div>
 

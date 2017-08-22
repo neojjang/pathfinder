@@ -5,19 +5,20 @@
 {% block title %}패스파인더 : 강의 리스트{% endblock %}
 
 {% block extra_css %}
-<style type="text/css">
 {#    .add-row {#}
 {#        padding-left:18px;#}
 {#        background:url({{ MEDIA_URL }}images/add.png) no-repeat left center;#}
 {#    }#}
-    .delete-row {
-        display:block;
-        margin:6px 0 0 0;
-        padding-left:18px;
-    }
-
-</style>
+{#    .delete-row {#}
+{#        display:block;#}
+{#        margin:6px 0 0 0;#}
+{#        padding-left:18px;#}
+{#    }#}
 {% endblock %}
+{% block extra_head %}
+<link href="{% static 'plugins/timepicker/bootstrap-timepicker.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block nav_sidebar %}
         {% include 'manager_side_menu.html' %}
 {% endblock %}
@@ -61,35 +62,34 @@
                             <th class="col-md-3">강의 이름</th>
                             <th class="col-md-1">담당 선생님</th>
                             <th class="col-md-1">담당 학년</th>
-                            <th class="col-md-1">시간표</th>
+                            <th class="col-md-2">시간표</th>
                             <th class="col-md-1">등록일</th>
                             <th class="col-md-2"></th>
                         </tr>
-                    {% for teacher in teachers %}
-                        <tr class="student" data-student-id="{{ teacher.pk }}">
-                            <td class="col-md-1">{{ teacher.pk }}</td>
-                            <td class="col-md-2">{{ teacher.user.last_name }}{{ teacher.user.first_name }}</td>
-                            <td class="col-md-1">{{ teacher.user.username }}</td>
-                            <td class="col-md-2">{% for item in teacher.get_my_grades %}
-                                {{ item }}{% if not forloop.last %},{% endif %}
-                                {% if forloop.counter0|divisibleby:2 == 0 %}<br />{% endif %}
-                            {% endfor %}</td>
-                            <td class="col-md-1">{% if teacher.is_activated %}활성{% else %}비활성{% endif %}</td>
-                            <td class="col-md-1">{{ teacher.create_date|date:"Y.m.d" }}</td>
+                    {% for lecture in lecture_list %}
+                        <tr class="student" data-lecture-id="{{ lecture.pk }}">
+                            <td class="col-md-1">{{ lecture.pk }}</td>
+                            <td class="col-md-3">{{ lecture.title }}</td>
+                            <td class="col-md-1">{{ lecture.teacher.get_name }}</td>
+                            <td class="col-md-1">{{ lecture.get_grade_display }}</td>
+                            <td class="col-md-2">{% for schedule in lecture.get_schedules %}
+                                {{ schedule.get_weekday_display }}, {{ schedule.from_time }} - {{ schedule.to_time }}<br />
+                                {% endfor %}</td>
+                            <td class="col-md-1">{{ lecture.create_date|date:"Y.m.d" }}</td>
                             <td class="col-md-2">
-                                <button class="btn btn-primary menu btn-xs" data-href="{% url 'quiz:show_teacher' teacher.id %}">보기</button>
-                                <button class="btn btn-success menu btn-xs" data-href="{% url 'quiz:edit_teacher' teacher.id 'edit' %}">수정</button>
-                                <button class="btn btn-danger menu btn-xs" data-href="{% url 'quiz:edit_teacher' teacher.id 'delete' %}">삭제</button>
+                                <button class="btn btn-primary menu btn-xs" data-href="{% url 'quiz:show_lecture' lecture.id %}">보기</button>
+                                <button class="btn btn-success menu btn-xs" data-href="{% url 'quiz:edit_lecture' lecture.id 'edit' %}">수정</button>
+                                <button class="btn btn-danger menu btn-xs" data-href="{% url 'quiz:edit_lecture' lecture.id 'delete' %}">삭제</button>
                             </td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td class="bg-info" colspan="9"> <p>등록 된 강의가 없습니다. </p></td>
+                            <td class="bg-info" colspan="7"> <p>등록 된 강의가 없습니다. </p></td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
-                {% include 'quiz/paginator.html' with paginator=students %}
+                {% include 'quiz/paginator.html' with paginator=lecture_list %}
             </div>
         </div>
 {% include 'management/form_lecture.html'  %}
@@ -103,6 +103,7 @@
 
 {% block extra_foot %}
     <script src="{% static 'js/jquery.formset.js' %}" type="application/javascript"></script>
+    <script src="{% static 'plugins/timepicker/bootstrap-timepicker.js' %}" type="application/javascript"></script>
     <script type="application/javascript">
 {#    $(".student").click(function(e) {#}
 {#        var student_id = $(this).data('student-id');#}
@@ -111,9 +112,9 @@
 {#        location.href = url;#}
 {#    })#}
     $("#submit-form").click(function(e) {
-        // 학생 회원 추가 폼 다이얼로그 팝업
-        var data = $("#new-student-form").serialize();
-        console.log(data)
+        // 강의 추가 폼 다이얼로그 팝업
+        var data = $("#new-lecture-form").serialize();
+        console.log(data);
         $.ajax({
             type: 'POST',
             url: ".",
@@ -134,7 +135,7 @@
                 console.log(xhr.responseJSONText);
 
             }
-        })
+        });
     });
     $("table.schedule-formset tbody tr").formset({
         addText: '일정 추가',
@@ -143,7 +144,15 @@
             return count < 3;
         },
         added: function(row) {
+            $(".timepicker").timepicker({
+                template:'dropdown',
+                showInputs:false
+            });
         }
+    });
+    $(".timepicker").timepicker({
+        template:'dropdown',
+        showInputs:false
     });
     </script>
 {% endblock %}

@@ -56,17 +56,15 @@
                                    <div class="">
                                        <span class="text-danger form-error-message" id="students-error">{{ form.students.errors.0 }}</span>
                                    </div>
-                                   <div style="width:90%; height:200px; overflow-y:scroll;">
-                                       <ul class="no">
+                                   <div class="form-group" style="width:90%; height:200px; overflow-y:scroll;">
                                    {% for student in students %}
-                                            <li>
-                                                <label for="id_students_{{ forloop.counter0 }}">
-                                                    <input type="checkbox" class="" name="students" id="id_students_{{ forloop.counter0 }}" value="{{ student.id }}">
-                                                    {{ student.user.first_name }}{{ student.user.last_name }}
-                                                </label>
-                                            </li>
+                                        <div class="checkbox" >
+                                            <label for="id_students_{{ forloop.counter0 }}">
+                                                <input type="checkbox" class="minimal" name="students" id="id_students_{{ forloop.counter0 }}" value="{{ student.id }}">
+                                                {{ student.get_name }} [{{ student.get_grade_display }}]
+                                            </label>
+                                        </div>
                                    {% endfor %}
-                                       </ul>
                                    </div>
                                </div>
                            </div>
@@ -85,13 +83,18 @@
                                    {% for schedule_form in schedule_formset %}
                                     <tr>
                                         <td>{{ schedule_form.weekday }}</td>
-                                        <td>{{ schedule_form.from_time }}</td>
-                                        <td>{{ schedule_form.to_time }}</td>
+                                        <td><div class="bootstrap-timepicker">
+                                            {{ schedule_form.from_time }}
+                                        </div> </td>
+                                        <td><div class="bootstrap-timepicker">
+                                            {{ schedule_form.to_time }}
+                                        </div></td>
                                         <td></td> <!-- {{ schedule_form.DELETE }} <a href="javascript:void(0)" class="delete-row">삭제</a>-->
                                     {% endfor %}
                                     </tr>
                                    </tbody>
                                </table>
+
                            </div>
                        </div>
                    </div>
